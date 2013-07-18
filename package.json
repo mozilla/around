@@ -1,0 +1,19 @@
+{
+  "name": "around",
+  "author": "Matthew Riley MacPherson <matt@lonelyvegan.com> (http://lonelyvegan.com)",
+  "description": "HTML5 Foursquare App",
+  "version": "0.0.1",
+  "homepage": "https://github.com/tofumatt/around",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tofumatt/around.git"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "version": "0.0.1",
+  "dependencies": {
+    "po2json": "0.0.6",
+    "requirejs": "2.1.5"
+  }
+}

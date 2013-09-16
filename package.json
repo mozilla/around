@@ -11,7 +11,6 @@
   "scripts": {
     "test": "make test"
   },
-  "version": "0.0.1",
   "dependencies": {
     "po2json": "0.0.6",
     "requirejs": "2.1.5"

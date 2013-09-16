@@ -1,4 +1,4 @@
-define ['backbone'], (Backbone) ->
+define ['backbone', 'cs!views/app'], (Backbone, AppView) ->
   'use strict'
 
   appView = undefined
@@ -18,7 +18,7 @@ define ['backbone'], (Backbone) ->
 
     # Main view; shows the timeline view.
     index: ->
-      @navigate 'timeline', {trigger: true}
+      # @navigate 'timeline', {trigger: true}
 
     # User creation route; we get the user's login token here and save
     # it to our datastore.

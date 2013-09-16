@@ -71,6 +71,7 @@ define [], ->
     catch error
       console.log(error)
       mockL10n()
+  window.setLanguage = setLanguage
 
   # Return a timestamp from a JavaScript Date object. If no argument is
   # supplied, return the timestamp for "right now".

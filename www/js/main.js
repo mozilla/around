@@ -11,6 +11,7 @@ require.config({
     paths: {
         async_storage: 'lib/async_storage',
         backbone: 'lib/backbone',
+        brick: 'lib/brick',
         'coffee-script': 'lib/coffee-script',
         cs: 'lib/cs',
         localstorage: 'lib/backbone.localstorage',
@@ -28,6 +29,9 @@ require.config({
                 'zepto'
             ],
             exports: 'Backbone'
+        },
+        brick: {
+            exports: 'Brick'
         },
         underscore: {
             exports: '_'

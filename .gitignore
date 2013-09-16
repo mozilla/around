@@ -2,6 +2,10 @@
 www-built
 www-ghdeploy
 
+# Sass CSS output
+www/css
+.sass-cache
+
 lib-cov
 *.seed
 *.log

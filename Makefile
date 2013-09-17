@@ -7,7 +7,8 @@ build:
 	node ./node_modules/requirejs/bin/r.js -o build-css.js
 	node node_modules/requirejs/bin/r.js -o build-js.js
 	mkdir -p www-built/js/lib/
-	cp -R www/js/lib/require.js www-built/js/lib/require.js
+	cp www/js/lib/require.js www-built/js/lib/require.js
+	cp www/CNAME www-built/CNAME
 	cp -R www/img www-built/img
 	cp -R www/locale www-built/locale
 	cp -R www/*.* www-built/

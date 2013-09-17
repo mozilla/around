@@ -1,6 +1,8 @@
 define [], ->
   # Globals used throughout the app, accessible via window.GLOBALS.
   GLOBALS =
+    API_DATE: "20130901" # https://developer.foursquare.com/overview/versioning
+    API_URL: "https://api.foursquare.com/v2/"
     AUTH_URL: ""
     CLIENT_ID: "Y50ARQDQNJGI2JU3SPTI1MVEM3OZJ1H120H3UXCQVMAI05OJ"
     DATABASE_NAME: "around"

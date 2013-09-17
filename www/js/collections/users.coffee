@@ -8,6 +8,7 @@ define ['underscore', 'backbone', 'localstorage', 'cs!models/user'], (_, Backbon
     model: User
 
     getSelf: ->
-      @findWhere {relationship: User.RELATIONSHIP_SELF}
+      user = @where {relationship: User.RELATIONSHIP_SELF}
+      if user.length then user[0] else null
 
   return new UserCollection()

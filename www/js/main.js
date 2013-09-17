@@ -16,6 +16,7 @@ require.config({
         cs: 'lib/cs',
         localstorage: 'lib/backbone.localstorage',
         jed: 'lib/jed',
+        // oauth: 'lib/javascript-oauth2',
         tpl: 'lib/tpl',
         underscore: 'lib/lodash',
         zepto: 'lib/zepto'
@@ -33,6 +34,9 @@ require.config({
         brick: {
             exports: 'Brick'
         },
+        // oauth: {
+        //     exports: 'oauth'
+        // },
         underscore: {
             exports: '_'
         },

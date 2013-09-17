@@ -4,6 +4,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/users', 'cs!views/use
   'use strict'
 
   AppView = Backbone.View.extend
+    currentView: null
     el: 'body'
     $el: $('body')
     template: AppTemplate
@@ -14,23 +15,31 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/users', 'cs!views/use
     # so they can authorize their account and we can get their OAuth access
     # token.
     initialize: ->
+      _(this).bindAll '_checkForSelfUser'
       # First thing we do: render the app.
       @render()
 
-      # Check to see if there's a User with "self" status. This means we have
-      # authorization and are signed in. If not, we'll show an intro/login
-      # screen so the user can sign in with Foursquare.
-      Users.fetch
-        success: (users) ->
-          if users.length
-            # Load up the app!
-            console.log users
-          else
-            console.log 'No users found', users
-            loginView = new UserViews.Login
-          error: ->
-            # TODO: Obviously, make this better.
-            window.alert "Error loading podcasts data. Contact support: tofumatt@mozilla.com"
-
     render: ->
       $(@$el).html(@template)
+
+      @_checkForSelfUser()
+
+    # Check to see if there's a User with "self" status. This means we have
+    # authorization and are signed in. If not, we'll show an intro/login
+    # screen so the user can sign in with Foursquare.
+    _checkForSelfUser: ->
+      self = this
+
+      Users.fetch
+        success: (users) ->
+          selfUser = Users.getSelf()
+          console.log selfUser
+          if selfUser
+            # Load up the app!
+            console.log selfUser
+          else
+            console.info "No user with relationship: RELATIONSHIP_SELF found"
+            self.currentView = new UserViews.Login
+        error: ->
+          # TODO: Obviously, make this better.
+          window.alert "Error loading podcasts data. Contact support: tofumatt@mozilla.com"

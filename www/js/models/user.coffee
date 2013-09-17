@@ -59,6 +59,7 @@ define ['backbone'], (Backbone) ->
       bio: ''
       tips: null
 
-      _access_token: ''
+      access_token: ''
+    , CONSTANTS
 
-  return User.extend CONSTANTS
+  return User

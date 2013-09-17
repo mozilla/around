@@ -3,6 +3,12 @@
 @import "lib/brick";
 @import "lib/foundation/foundation";
 
+@import "helper";
+
+x-layout {
+    border: none;
+}
+
 x-layout > footer {
     padding: 0;
     text-align: center;

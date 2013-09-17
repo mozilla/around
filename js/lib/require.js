@@ -2011,9 +2011,8 @@ var requirejs, require, define;
      */
     req.exec = function (text) {
         /*jslint evil: true */
-        console.log(text);
-        return text;
-        // return eval(text);
+        // return text;
+        return eval(text);
     };
 
     //Set up with config info.

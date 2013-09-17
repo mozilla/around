@@ -2549,6 +2549,90 @@ return parser;
 
 })(this);
 
+(function() {
+  var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+  define('cs!globals',[], function() {
+    var GLOBALS, formatTime, mockL10n, setLanguage, timestamp;
+    GLOBALS = {
+      AUTH_URL: "",
+      CLIENT_ID: "Y50ARQDQNJGI2JU3SPTI1MVEM3OZJ1H120H3UXCQVMAI05OJ",
+      DATABASE_NAME: "around",
+      HAS: {
+        nativeScroll: (function() {
+          return __indexOf.call(window.document.createElement("div").style, "WebkitOverflowScrolling") >= 0;
+        })()
+      },
+      LANGUAGE: window.navigator.language,
+      MAX_DOWNLOADS: 2,
+      OBJECT_STORE_NAME: "around"
+    };
+    GLOBALS.AUTH_URL = "https://foursquare.com/oauth2/authenticate?client_id=" + GLOBALS.CLIENT_ID + "&response_type=token&redirect_uri=" + window.location.origin;
+    window.GLOBALS = GLOBALS;
+    formatTime = function(secs) {
+      var hours, minutes, seconds;
+      if (isNaN(secs)) {
+        return "--:--";
+      }
+      hours = parseInt(secs / 3600, 10) % 24;
+      hours = hours !== 0 ? "" + hours + ":" : "";
+      minutes = parseInt(secs / 60, 10) % 60;
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      seconds = parseInt(secs % 60, 10);
+      seconds = seconds < 10 ? "0" + seconds : seconds;
+      return "" + hours + minutes + ":" + seconds;
+    };
+    window.formatTime = formatTime;
+    mockL10n = function() {
+      window._l10n = null;
+      return window.l = function(key) {
+        return key;
+      };
+    };
+    setLanguage = function(callback, override) {
+      var error, request;
+      request = new window.XMLHttpRequest();
+      request.open("GET", "locale/" + (override || GLOBALS.LANGUAGE) + ".json", true);
+      request.addEventListener("load", function(event) {
+        var l10n;
+        if (request.status === 200) {
+          l10n = new Jed({
+            locale_data: JSON.parse(request.response)
+          });
+          window._l10n = l10n;
+          window.l = function(key) {
+            return l10n.gettext(key);
+          };
+          $("[data-l10n]").each(function() {
+            return $(this).text(window.l($(this).data("l10n")));
+          });
+        } else {
+          mockL10n();
+        }
+        if (callback) {
+          return callback();
+        }
+      });
+      try {
+        return request.send();
+      } catch (_error) {
+        error = _error;
+        console.log(error);
+        return mockL10n();
+      }
+    };
+    window.setLanguage = setLanguage;
+    timestamp = function(date) {
+      if (date == null) {
+        date = new Date();
+      }
+      return Math.round(date.getTime() / 1000);
+    };
+    return window.timestamp = timestamp;
+  });
+
+}).call(this);
+
 /**
  * @license
  * Lo-Dash 1.0.1 (Custom Build) <http://lodash.com/>
@@ -9113,8 +9197,336 @@ define("backbone", ["underscore","zepto"], (function (global) {
     };
 }(this)));
 
+define('localstorage',["underscore","backbone"],function(_,Backbone){function S4(){return((1+Math.random())*65536|0).toString(16).substring(1)}function guid(){return S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4()}var Store=function(name){this.name=name;var store=localStorage.getItem(this.name);this.data=store&&JSON.parse(store)||{}};_.extend(Store.prototype,{save:function(){localStorage.setItem(this.name,JSON.stringify(this.data))},create:function(model){if(!model.id)model.id=model.attributes.id=guid();
+this.data[model.id]=model;this.save();return model},update:function(model){this.data[model.id]=model;this.save();return model},find:function(model){return this.data[model.id]},findAll:function(){return _.values(this.data)},destroy:function(model){delete this.data[model.id];this.save();return model}});Backbone.sync=function(method,model,options){var resp;var store=model.localStorage||model.collection.localStorage;switch(method){case "read":resp=model.id?store.find(model):store.findAll();break;case "create":resp=
+store.create(model);break;case "update":resp=store.update(model);break;case "delete":resp=store.destroy(model);break}if(resp)options.success(resp);else options.error("Record not found")};return Store});
+
 (function() {
-  define('cs!routes',['backbone'], function(Backbone) {
+  define('cs!models/user',['backbone'], function(Backbone) {
+    
+    var CONSTANTS, User;
+    CONSTANTS = {};
+    CONSTANTS.RELATIONSHIP_SELF = 'self';
+    CONSTANTS.RELATIONSHIP_FRIEND = 'friend';
+    CONSTANTS.RELATIONSHIP_REQUEST_SENT = 'pendingMe';
+    CONSTANTS.RELATIONSHIP_REQUEST_RECEIVED = 'pendingThem';
+    CONSTANTS.RELATIONSHIP_FOLLOWING = 'followingThem';
+    CONSTANTS.RELATIONSHIP_NONE = null;
+    CONSTANTS.TYPE_USER = null;
+    CONSTANTS.TYPE_PAGE = 'page';
+    CONSTANTS.TYPE_CHAIN = 'chain';
+    CONSTANTS.TYPE_CELEBRITY = 'celebrity';
+    CONSTANTS.TYPE_VENUE = 'venuePage';
+    User = Backbone.Model.extend({
+      defaults: {
+        id: void 0,
+        firstName: '',
+        lastName: '',
+        photo: '',
+        relationship: CONSTANTS.RELATIONSHIP_NONE,
+        type: CONSTANTS.TYPE_USER,
+        venue: null,
+        homeCity: '',
+        gender: null,
+        contact: null,
+        bio: '',
+        tips: null,
+        _access_token: ''
+      }
+    });
+    return User.extend(CONSTANTS);
+  });
+
+}).call(this);
+
+(function() {
+  define('cs!collections/users',['underscore', 'backbone', 'localstorage', 'cs!models/user'], function(_, Backbone, Store, User) {
+    
+    var UserCollection;
+    UserCollection = Backbone.Collection.extend({
+      localStorage: new Store('Users'),
+      model: User,
+      getSelf: function() {
+        return this.findWhere({
+          relationship: User.RELATIONSHIP_SELF
+        });
+      }
+    });
+    return new UserCollection();
+  });
+
+}).call(this);
+
+/**
+ * Adapted from the official plugin text.js
+ *
+ * Uses UnderscoreJS micro-templates : http://documentcloud.github.com/underscore/#template
+ * @author Julien Cabanès <julien@zeeagency.com>
+ * @version 0.2
+ * 
+ * @license RequireJS text 0.24.0 Copyright (c) 2010-2011, The Dojo Foundation All Rights Reserved.
+ * Available via the MIT or new BSD license.
+ * see: http://github.com/jrburke/requirejs for details
+ */
+/*jslint regexp: false, nomen: false, plusplus: false, strict: false */
+/*global require: false, XMLHttpRequest: false, ActiveXObject: false,
+  define: false, window: false, process: false, Packages: false,
+  java: false */
+
+(function () {
+    var progIds = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'],
+    
+        xmlRegExp = /^\s*<\?xml(\s)+version=[\'\"](\d)*.(\d)*[\'\"](\s)*\?>/im,
+        
+        bodyRegExp = /<body[^>]*>\s*([\s\S]+)\s*<\/body>/im,
+        
+        buildMap = [],
+        
+        templateSettings = {
+            evaluate    : /<%([\s\S]+?)%>/g,
+            interpolate : /<%=([\s\S]+?)%>/g
+        },
+
+        /**
+         * JavaScript micro-templating, similar to John Resig's implementation.
+         * Underscore templating handles arbitrary delimiters, preserves whitespace,
+         * and correctly escapes quotes within interpolated code.
+         */
+        template = function(str, data) {
+            var c  = templateSettings;
+            var tmpl = 'var __p=[],print=function(){__p.push.apply(__p,arguments);};' +
+                'with(obj||{}){__p.push(\'' +
+                str.replace(/\\/g, '\\\\')
+                    .replace(/'/g, "\\'")
+                    .replace(c.interpolate, function(match, code) {
+                    return "'," + code.replace(/\\'/g, "'") + ",'";
+                    })
+                    .replace(c.evaluate || null, function(match, code) {
+                    return "');" + code.replace(/\\'/g, "'")
+                                        .replace(/[\r\n\t]/g, ' ') + "; __p.push('";
+                    })
+                    .replace(/\r/g, '')
+                    .replace(/\n/g, '')
+                    .replace(/\t/g, '')
+                    + "');}return __p.join('');";
+            return tmpl;
+            
+            /** /
+            var func = new Function('obj', tmpl);
+            return data ? func(data) : func;
+            /**/
+        };
+
+    define('tpl',[],function () {
+        var tpl;
+
+        var get, fs;
+        if (typeof window !== "undefined" && window.navigator && window.document) {
+            get = function (url, callback) {
+                
+                var xhr = tpl.createXhr();
+                xhr.open('GET', url, true);
+                xhr.onreadystatechange = function (evt) {
+                    //Do not explicitly handle errors, those should be
+                    //visible via console output in the browser.
+                    if (xhr.readyState === 4) {
+                        callback(xhr.responseText);
+                    }
+                };
+                xhr.send(null);
+            };
+        } else if (typeof process !== "undefined" &&
+                process.versions &&
+                !!process.versions.node) {
+            //Using special require.nodeRequire, something added by r.js.
+            fs = require.nodeRequire('fs');
+
+            get = function (url, callback) {
+                
+                callback(fs.readFileSync(url, 'utf8'));
+            };
+        }
+        return tpl = {
+            version: '0.24.0',
+            strip: function (content) {
+                //Strips <?xml ...?> declarations so that external SVG and XML
+                //documents can be added to a document without worry. Also, if the string
+                //is an HTML document, only the part inside the body tag is returned.
+                if (content) {
+                    content = content.replace(xmlRegExp, "");
+                    var matches = content.match(bodyRegExp);
+                    if (matches) {
+                        content = matches[1];
+                    }
+                } else {
+                    content = "";
+                }
+                
+                return content;
+            },
+
+            jsEscape: function (content) {
+                return content.replace(/(['\\])/g, '\\$1')
+                    .replace(/[\f]/g, "\\f")
+                    .replace(/[\b]/g, "\\b")
+                    .replace(/[\n]/g, "")
+                    .replace(/[\t]/g, "")
+                    .replace(/[\r]/g, "");
+            },
+
+            createXhr: function () {
+                //Would love to dump the ActiveX crap in here. Need IE 6 to die first.
+                var xhr, i, progId;
+                if (typeof XMLHttpRequest !== "undefined") {
+                    return new XMLHttpRequest();
+                } else {
+                    for (i = 0; i < 3; i++) {
+                        progId = progIds[i];
+                        try {
+                            xhr = new ActiveXObject(progId);
+                        } catch (e) {}
+
+                        if (xhr) {
+                            progIds = [progId];  // so faster next time
+                            break;
+                        }
+                    }
+                }
+
+                if (!xhr) {
+                    throw new Error("require.getXhr(): XMLHttpRequest not available");
+                }
+
+                return xhr;
+            },
+
+            get: get,
+
+            load: function (name, req, onLoad, config) {
+                
+                //Name has format: some.module.filext!strip
+                //The strip part is optional.
+                //if strip is present, then that means only get the string contents
+                //inside a body tag in an HTML string. For XML/SVG content it means
+                //removing the <?xml ...?> declarations so the content can be inserted
+                //into the current doc without problems.
+
+                var strip = false, url, index = name.indexOf("."),
+                    modName = name.substring(0, index),
+                    ext = name.substring(index + 1, name.length);
+
+                index = ext.indexOf("!");
+                
+                if (index !== -1) {
+                    //Pull off the strip arg.
+                    strip = ext.substring(index + 1, ext.length);
+                    strip = strip === "strip";
+                    ext = ext.substring(0, index);
+                }
+
+                //Load the tpl.
+                url = 'nameToUrl' in req ? req.nameToUrl(modName, "." + ext) : req.toUrl(modName + "." + ext);
+                
+                tpl.get(url, function (content) {
+                    content = template(content);
+                    
+                    if(!config.isBuild) {
+                    //if(typeof window !== "undefined" && window.navigator && window.document) {
+                        content = new Function('obj', content);
+                    }
+                    content = strip ? tpl.strip(content) : content;
+                    
+                    if (config.isBuild && config.inlineText) {
+                        buildMap[name] = content;
+                    }
+                    onLoad(content);
+                });
+
+            },
+
+            write: function (pluginName, moduleName, write) {
+                if (moduleName in buildMap) {
+                    var content = tpl.jsEscape(buildMap[moduleName]);
+                    write("define('" + pluginName + "!" + moduleName  +
+                        "', function() {return function(obj) { " +
+                            content.replace(/(\\')/g, "'").replace(/(\\\\)/g, "\\")+
+                        "}});\n");
+                }
+            }
+        };
+        return function() {};   
+    });
+//>>excludeEnd('excludeTpl')
+}());
+
+define('tpl!templates/users/login.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<p>', l("around is a Foursquare app for Firefox OS, mobile phones, and web browsers.") ,'</p><p>', l('Touch the "Sign in" button to get started:') ,'</p><a id="sign-in" class="button" href="', loginURL ,'">Sign in with Foursquare</a>');}return __p.join('');}});
+
+(function() {
+  define('cs!views/users',['zepto', 'underscore', 'backbone', 'cs!collections/users', 'tpl!templates/users/login.html.ejs'], function($, _, Backbone, Users, LoginTemplate) {
+    
+    var LoginView;
+    LoginView = Backbone.View.extend({
+      el: '#content',
+      $el: $('#content'),
+      template: LoginTemplate,
+      initialize: function() {
+        return this.render();
+      },
+      render: function() {
+        var html;
+        console.log($(this.$el));
+        html = this.template({
+          loginURL: window.GLOBALS.AUTH_URL
+        });
+        return $(this.$el).html(html);
+      }
+    });
+    return {
+      Login: LoginView
+    };
+  });
+
+}).call(this);
+
+define('tpl!templates/app.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<x-layout>    <x-appbar>        <div>', l('Back') ,'</div>        <header>', l('around') ,'</header>    </x-appbar>    <section id="content">    </section>    <footer>        <button id="check-in">Check In</button>    </footer></x-layout>');}return __p.join('');}});
+
+(function() {
+  define('cs!views/app',['zepto', 'underscore', 'backbone', 'cs!collections/users', 'cs!views/users', 'tpl!templates/app.html.ejs'], function($, _, Backbone, Users, UserViews, AppTemplate) {
+    
+    var AppView;
+    return AppView = Backbone.View.extend({
+      el: 'body',
+      $el: $('body'),
+      template: AppTemplate,
+      initialize: function() {
+        this.render();
+        return Users.fetch({
+          success: function(users) {
+            var loginView;
+            if (users.length) {
+              console.log(users);
+            } else {
+              console.log('No users found', users);
+              loginView = new UserViews.Login;
+            }
+            return {
+              error: function() {
+                return window.alert("Error loading podcasts data. Contact support: tofumatt@mozilla.com");
+              }
+            };
+          }
+        });
+      },
+      render: function() {
+        return $(this.$el).html(this.template);
+      }
+    });
+  });
+
+}).call(this);
+
+(function() {
+  define('cs!routes',['backbone', 'cs!views/app'], function(Backbone, AppView) {
     
     var AppRouter, appView;
     appView = void 0;
@@ -9130,35 +9542,21 @@ define("backbone", ["underscore","zepto"], (function (global) {
         }
         return this;
       },
-      index: function() {
-        return this.navigate('timeline', {
-          trigger: true
-        });
-      },
-      createUser: function() {
-        return appView.currentView = new UsersViews.Create();
-      }
+      index: function() {},
+      createUser: function() {}
     });
     return AppRouter;
   });
 
 }).call(this);
 
-/*!
- around | https:#github.com/tofumatt/around
-
- HTML5 Foursquare Client
-*/
-
-
 (function() {
-  require(['zepto', 'jed', 'cs!routes'], function($, Jed, Routes, require) {
+  define('cs!app',['zepto', 'jed', 'cs!globals', 'cs!routes'], function($, Jed, GLOBALS, Routes) {
     
-    require('globals');
-    if (GLOBALS.HAS.nativeScroll) {
+    if (window.GLOBALS.HAS.nativeScroll) {
       $('body').addClass('native-scroll');
     }
-    return setLanguage(function() {
+    return window.setLanguage(function() {
       var router;
       router = new Routes();
       window.router = router;
@@ -9181,6 +9579,7 @@ require.config({
     paths: {
         async_storage: 'lib/async_storage',
         backbone: 'lib/backbone',
+        brick: 'lib/brick',
         'coffee-script': 'lib/coffee-script',
         cs: 'lib/cs',
         localstorage: 'lib/backbone.localstorage',
@@ -9198,6 +9597,9 @@ require.config({
                 'zepto'
             ],
             exports: 'Backbone'
+        },
+        brick: {
+            exports: 'Brick'
         },
         underscore: {
             exports: '_'

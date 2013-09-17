@@ -23,6 +23,6 @@ define ['backbone', 'cs!views/app'], (Backbone, AppView) ->
     # User creation route; we get the user's login token here and save
     # it to our datastore.
     createUser: ->
-      appView.currentView = new UsersViews.Create()
+      # appView.currentView = new UserViews.Create
 
   return AppRouter;

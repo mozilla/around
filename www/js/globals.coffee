@@ -1,6 +1,8 @@
 define [], ->
   # Globals used throughout the app, accessible via window.GLOBALS.
   GLOBALS =
+    AUTH_URL: ""
+    CLIENT_ID: "Y50ARQDQNJGI2JU3SPTI1MVEM3OZJ1H120H3UXCQVMAI05OJ"
     DATABASE_NAME: "around"
     HAS:
       nativeScroll: (->
@@ -9,6 +11,7 @@ define [], ->
     LANGUAGE: window.navigator.language # HACK: Better way for this, I assume?
     MAX_DOWNLOADS: 2 # Maximum number of podcast downloads at one time.
     OBJECT_STORE_NAME: "around"
+  GLOBALS.AUTH_URL = "https://foursquare.com/oauth2/authenticate?client_id=#{GLOBALS.CLIENT_ID}&response_type=token&redirect_uri=#{window.location.origin}"
   window.GLOBALS = GLOBALS;
 
   # Format a time in seconds to a pretty 5:22:75 style time. Cribbed from

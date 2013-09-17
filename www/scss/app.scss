@@ -2,3 +2,8 @@
 
 @import "lib/brick";
 @import "lib/foundation/foundation";
+
+x-layout > footer {
+    padding: 0;
+    text-align: center;
+}

@@ -44,6 +44,8 @@ define ['backbone'], (Backbone) ->
     defaults:
       # _self: false # Is this the user we are signed in as on our device?
       # _isFriend: false # By default, we aren't friends with a user.
+      _createdAt: null
+      _updatedAt: null
 
       id: undefined
       firstName: ''
@@ -60,6 +62,12 @@ define ['backbone'], (Backbone) ->
       tips: null
 
       access_token: ''
+
+    name: ->
+      "#{@get('firstName')} #{@get('lastName')}"
+
+    profilePhoto: (size = 100) ->
+      "#{@get('photo').prefix}#{size}x#{size}#{@get('photo').suffix}"
     , CONSTANTS
 
   return User

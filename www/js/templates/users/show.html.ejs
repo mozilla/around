@@ -1,0 +1,8 @@
+<% if (user) { %>
+  <h2><%= user.name() %></h2>
+  <img src="<%= user.profilePhoto() %>" alt="<%= l('Profile photo for ' + user.name()) %>">
+
+  <p><%= user.get('bio') %></p>
+<% } else { %>
+  <p>User not found.</p>
+<% } %>

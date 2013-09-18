@@ -1,18 +1,22 @@
-define ['backbone', 'cs!views/app', 'cs!views/users'], (Backbone, AppView, UserViews) ->
+define ['zepto', 'backbone', 'cs!views/app', 'cs!views/users'], ($, Backbone, AppView, UserViews) ->
   'use strict'
 
   appView = undefined
 
   AppRouter = Backbone.Router.extend
     routes:
-      'access_token=:token': 'createUser',
-      '': 'index'
+      "access_token=:token": "userCreate"
+      # User views
+      # "users": "userList"
+      "users/:id": "userShow"
+      "": "index"
 
     initialize: ->
-      if not appView
-        # Initialize the application view and assign it as a global.
-        appView = new AppView()
-        window.app = appView
+      # Initialize the application view and assign it as a global.
+      appView = new AppView()
+      window.app = appView
+
+      appView._checkForSelfUser()
 
       return this
 
@@ -24,11 +28,20 @@ define ['backbone', 'cs!views/app', 'cs!views/users'], (Backbone, AppView, UserV
 
     # User creation route; we get the user's login token here and save
     # it to our datastore.
-    createUser: (token) ->
+    userCreate: (token) ->
       self = this
       # Create our "self" user and save it to our datastore. After that, we'll
       # navigate back to the index view to load up our app with a user setup.
       UserViews.CreateSelf token, ->
         self.navigate '', {trigger: true}
+
+    # Show a user's profile. The template adjusts for various user
+    # relationships, including the case where this is the active/self user's
+    # profile.
+    userShow: (id) ->
+      appView.currentView = new UserViews.Show
+        el: "#content"
+        $el: $("content")
+        id: id
 
   return AppRouter;

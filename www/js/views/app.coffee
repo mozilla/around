@@ -16,6 +16,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/users', 'cs!views/use
     # token.
     initialize: ->
       _(this).bindAll '_checkForSelfUser'
+
       # First thing we do: render the app.
       @render()
 
@@ -28,15 +29,17 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/users', 'cs!views/use
     # authorization and are signed in. If not, we'll show an intro/login
     # screen so the user can sign in with Foursquare.
     _checkForSelfUser: ->
+      # If we've already checked and @selfUser exists, skip the checks.
+      return if @selfUser
+
       self = this
 
       Users.fetch
         success: (users) ->
-          selfUser = Users.getSelf()
-          console.log selfUser
-          if selfUser
+          self.selfUser = Users.getSelf()
+          if self.selfUser
             # Load up the app!
-            console.log selfUser
+            console.log "selfUser", self.selfUser
           else
             console.info "No user with relationship: RELATIONSHIP_SELF found"
             self.currentView = new UserViews.Login

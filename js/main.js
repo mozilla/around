@@ -2567,7 +2567,8 @@ return parser;
       },
       LANGUAGE: window.navigator.language,
       MAX_DOWNLOADS: 2,
-      OBJECT_STORE_NAME: "around"
+      OBJECT_STORE_NAME: "around",
+      TOKEN: window.localStorage._ACCESS_TOKEN
     };
     GLOBALS.AUTH_URL = "https://foursquare.com/oauth2/authenticate?client_id=" + GLOBALS.CLIENT_ID + "&response_type=token&redirect_uri=" + window.location.origin;
     window.GLOBALS = GLOBALS;
@@ -9221,6 +9222,8 @@ store.create(model);break;case "update":resp=store.update(model);break;case "del
     CONSTANTS.TYPE_VENUE = 'venuePage';
     User = Backbone.Model.extend({
       defaults: {
+        _createdAt: null,
+        _updatedAt: null,
         id: void 0,
         firstName: '',
         lastName: '',
@@ -9234,6 +9237,15 @@ store.create(model);break;case "update":resp=store.update(model);break;case "del
         bio: '',
         tips: null,
         access_token: ''
+      },
+      name: function() {
+        return "" + (this.get('firstName')) + " " + (this.get('lastName'));
+      },
+      profilePhoto: function(size) {
+        if (size == null) {
+          size = 100;
+        }
+        return "" + (this.get('photo').prefix) + size + "x" + size + (this.get('photo').suffix);
       }
     }, CONSTANTS);
     return User;
@@ -9248,6 +9260,27 @@ store.create(model);break;case "update":resp=store.update(model);break;case "del
     UserCollection = Backbone.Collection.extend({
       localStorage: new Store('Users'),
       model: User,
+      get: function(id, callback) {
+        var results, self;
+        results = this.where({
+          id: id
+        });
+        if (results.length) {
+          return callback(results[0]);
+        }
+        self = this;
+        return $.ajax({
+          type: 'GET',
+          dataType: 'json',
+          url: "" + window.GLOBALS.API_URL + "users/" + id + "?oauth_token=" + window.GLOBALS.TOKEN + "&v=" + window.GLOBALS.API_DATE,
+          success: function(data) {
+            var user;
+            user = self.create(data.response.user);
+            user.save();
+            return callback(user);
+          }
+        });
+      },
       getSelf: function() {
         var user;
         user = this.where({
@@ -9467,12 +9500,16 @@ store.create(model);break;case "update":resp=store.update(model);break;case "del
 //>>excludeEnd('excludeTpl')
 }());
 
+define('tpl!templates/users/list.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('');}return __p.join('');}});
+
 define('tpl!templates/users/login.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<p class="center">', l('around is a Foursquare app for Firefox OS, mobile phones, and web browsers.') ,'</p><p class="center">', l('Touch the "Sign in" button to get started:') ,'</p><div class="center">  <a id="sign-in" class="button center" href="', loginURL ,'">', l('Sign in with Foursquare') ,'</a></div>');}return __p.join('');}});
 
+define('tpl!templates/users/show.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push(''); if (user) { ; __p.push('  <h2>', user.name() ,'</h2>  <img src="', user.profilePhoto() ,'" alt="', l('Profile photo for ' + user.name()) ,'">  <p>', user.get('bio') ,'</p>'); } else { ; __p.push('  <p>User not found.</p>'); } ; __p.push('');}return __p.join('');}});
+
 (function() {
-  define('cs!views/users',['zepto', 'underscore', 'backbone', 'cs!collections/users', 'cs!models/user', 'tpl!templates/users/login.html.ejs'], function($, _, Backbone, Users, User, LoginTemplate) {
+  define('cs!views/users',['zepto', 'underscore', 'backbone', 'cs!collections/users', 'cs!models/user', 'tpl!templates/users/list.html.ejs', 'tpl!templates/users/login.html.ejs', 'tpl!templates/users/show.html.ejs'], function($, _, Backbone, Users, User, ListTemplate, LoginTemplate, ShowTemplate) {
     
-    var CreateSelf, LoginView;
+    var CreateSelf, ListView, LoginView, ShowView;
     CreateSelf = function(token, callback) {
       return $.ajax({
         type: 'GET',
@@ -9480,6 +9517,8 @@ define('tpl!templates/users/login.html.ejs', function() {return function(obj) { 
         url: "" + window.GLOBALS.API_URL + "users/self?oauth_token=" + token + "&v=" + window.GLOBALS.API_DATE,
         success: function(data) {
           var user;
+          window.GLOBALS.TOKEN = token;
+          window.localStorage._ACCESS_TOKEN = token;
           user = Users.create(data.response.user);
           user.set({
             access_token: token,
@@ -9490,6 +9529,9 @@ define('tpl!templates/users/login.html.ejs', function() {return function(obj) { 
         }
       });
     };
+    ListView = Backbone.View.extend({
+      template: ListTemplate
+    });
     LoginView = Backbone.View.extend({
       el: '#content',
       $el: $('#content'),
@@ -9500,16 +9542,37 @@ define('tpl!templates/users/login.html.ejs', function() {return function(obj) { 
       },
       render: function() {
         var html;
-        console.log($(this.$el));
         html = this.template({
           loginURL: window.GLOBALS.AUTH_URL
         });
         return $(this.$el).html(html);
       }
     });
+    ShowView = Backbone.View.extend({
+      model: User,
+      template: ShowTemplate,
+      initialize: function() {
+        var self;
+        self = this;
+        return Users.get(this.id, function(user) {
+          self.model = user;
+          return self.render();
+        });
+      },
+      render: function() {
+        var html;
+        console.log("User " + (this.model.get('id')), this.model.attributes);
+        html = this.template({
+          user: this.model
+        });
+        return $(this.$el).html(html);
+      }
+    });
     return {
       CreateSelf: CreateSelf,
-      Login: LoginView
+      List: ListView,
+      Login: LoginView,
+      Show: ShowView
     };
   });
 
@@ -9536,14 +9599,15 @@ define('tpl!templates/app.html.ejs', function() {return function(obj) { var __p=
       },
       _checkForSelfUser: function() {
         var self;
+        if (this.selfUser) {
+          return;
+        }
         self = this;
         return Users.fetch({
           success: function(users) {
-            var selfUser;
-            selfUser = Users.getSelf();
-            console.log(selfUser);
-            if (selfUser) {
-              return console.log(selfUser);
+            self.selfUser = Users.getSelf();
+            if (self.selfUser) {
+              return console.log("selfUser", self.selfUser);
             } else {
               console.info("No user with relationship: RELATIONSHIP_SELF found");
               return self.currentView = new UserViews.Login;
@@ -9560,33 +9624,40 @@ define('tpl!templates/app.html.ejs', function() {return function(obj) { var __p=
 }).call(this);
 
 (function() {
-  define('cs!routes',['backbone', 'cs!views/app', 'cs!views/users'], function(Backbone, AppView, UserViews) {
+  define('cs!routes',['zepto', 'backbone', 'cs!views/app', 'cs!views/users'], function($, Backbone, AppView, UserViews) {
     
     var AppRouter, appView;
     appView = void 0;
     AppRouter = Backbone.Router.extend({
       routes: {
-        'access_token=:token': 'createUser',
-        '': 'index'
+        "access_token=:token": "userCreate",
+        "users/:id": "userShow",
+        "": "index"
       },
       initialize: function() {
-        if (!appView) {
-          appView = new AppView();
-          window.app = appView;
-        }
+        appView = new AppView();
+        window.app = appView;
+        appView._checkForSelfUser();
         return this;
       },
       index: function() {
         console.log("index");
         return appView.render();
       },
-      createUser: function(token) {
+      userCreate: function(token) {
         var self;
         self = this;
         return UserViews.CreateSelf(token, function() {
           return self.navigate('', {
             trigger: true
           });
+        });
+      },
+      userShow: function(id) {
+        return appView.currentView = new UserViews.Show({
+          el: "#content",
+          $el: $("content"),
+          id: id
         });
       }
     });

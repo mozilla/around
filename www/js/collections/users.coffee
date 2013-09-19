@@ -9,9 +9,9 @@ define ['underscore', 'backbone', 'localstorage', 'cs!models/user'], (_, Backbon
 
     # Get a user by their Foursquare ID. Will make a request to the Foursquare
     # API if the user is not available in the local datastore.
-    get: (id, callback) ->
+    get: (id, callbacks = {}) ->
       results = @where {id: id}
-      return callback(results[0]) if results.length
+      return callbacks.success(results[0]) if results.length
 
       self = this
 
@@ -26,7 +26,11 @@ define ['underscore', 'backbone', 'localstorage', 'cs!models/user'], (_, Backbon
           user = self.create(data.response.user)
           user.save()
 
-          callback(user)
+          callbacks.success(user)
+        error: (xhr, type) ->
+          if xhr.status == 400
+            # User doesn't exist if 400 error code.
+            callbacks.error(xhr.response)
 
     getSelf: ->
       user = @where {relationship: User.RELATIONSHIP_SELF}

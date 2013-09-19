@@ -48,12 +48,16 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/users', 'cs!models/us
     initialize: ->
       self = this
 
-      Users.get @id, (user) ->
-        self.model = user
-        self.render()
+      Users.get @id,
+        success: (user) ->
+          self.model = user
+          self.render()
+        error: (response) ->
+          self.model = null
+          self.render()
 
     render: ->
-      console.log "User #{this.model.get('id')}", this.model.attributes
+      console.log "User #{@model}"
       html = @template
         user: @model
       $(@$el).html(html)

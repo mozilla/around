@@ -9,16 +9,16 @@
 // Require.js shortcuts to our libraries.
 require.config({
     paths: {
-        async_storage: 'lib/async_storage',
-        backbone: 'lib/backbone',
-        brick: 'lib/brick',
-        'coffee-script': 'lib/coffee-script',
-        cs: 'lib/cs',
-        localstorage: 'lib/backbone.localstorage',
-        jed: 'lib/jed',
-        tpl: 'lib/tpl',
-        underscore: 'lib/lodash',
-        zepto: 'lib/zepto'
+        async_storage: 'vendor/async_storage',
+        backbone: 'vendor/backbone',
+        brick: 'vendor/brick',
+        'coffee-script': 'vendor/coffee-script',
+        cs: 'vendor/cs',
+        localstorage: 'vendor/backbone.localstorage',
+        jed: 'vendor/jed',
+        tpl: 'vendor/tpl',
+        underscore: 'vendor/lodash',
+        zepto: 'vendor/zepto'
     },
     // The shim config allows us to configure dependencies for scripts that do
     // not call define() to register a module.

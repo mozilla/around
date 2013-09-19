@@ -27,7 +27,7 @@
     <p><%= user.get('bio') %></p>
   </div>
 <% } else { %>
-  <h2>Error</h2>
+  <h2><%= l('Error') %></h2>
 
-  <p>User not found.</p>
+  <p><%= l('User not found.') %></p>
 <% } %>

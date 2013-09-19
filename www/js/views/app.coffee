@@ -30,7 +30,9 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/users', 'cs!views/use
     # screen so the user can sign in with Foursquare.
     _checkForSelfUser: ->
       # If we've already checked and @selfUser exists, skip the checks.
-      return if @selfUser
+      # HACK: Also skip the check if we're in the sign in process. This
+      # prevents the "please sign in screen" from appearing during sign-in.
+      return if @selfUser or window.location.hash.match 'access_token='
 
       self = this
 

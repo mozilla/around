@@ -1,4 +1,4 @@
-define ['underscore', 'backbone', 'localstorage', 'cs!models/user'], (_, Backbone, Store, User) ->
+define ['underscore', 'backbone', 'localstorage', 'cs!api', 'cs!models/user'], (_, Backbone, Store, API, User) ->
   'use strict'
 
   # A super-simple collection of all Users. Mostly useful when looking for the
@@ -16,11 +16,7 @@ define ['underscore', 'backbone', 'localstorage', 'cs!models/user'], (_, Backbon
       self = this
 
       # Get information about this user.
-      $.ajax
-        type: 'GET'
-        dataType: 'json'
-        # TODO: Set our access_token as a global? Roll this into a helper function?
-        url: "#{window.GLOBALS.API_URL}users/#{id}?oauth_token=#{window.GLOBALS.TOKEN}&v=#{window.GLOBALS.API_DATE}"
+      API.request "users/#{id}",
         success: (data) ->
           # console.log "hi", data
           user = self.create(data.response.user)

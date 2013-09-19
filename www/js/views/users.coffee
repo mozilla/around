@@ -68,8 +68,9 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/users', 'cs!models/us
         user: @model
       $(@$el).html(html)
 
-  return
+  return {
     CreateSelf: CreateSelf
     List: ListView
     Login: LoginView
     Show: ShowView
+  }

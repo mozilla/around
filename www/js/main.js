@@ -9,6 +9,7 @@
 // Require.js shortcuts to our libraries.
 require.config({
     paths: {
+        api: 'lib/api',
         async_storage: 'vendor/async_storage',
         backbone: 'vendor/backbone',
         brick: 'vendor/brick',

@@ -5,8 +5,14 @@
 
 @import "helper";
 
+@import "users";
+
 x-layout {
     border: none;
+}
+
+#content {
+    min-height: 300px;
 }
 
 x-layout > footer {

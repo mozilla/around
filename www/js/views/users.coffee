@@ -3,6 +3,9 @@
 define ['zepto', 'underscore', 'backbone', 'cs!collections/users', 'cs!models/user', 'tpl!templates/users/list.html.ejs', 'tpl!templates/users/login.html.ejs', 'tpl!templates/users/show.html.ejs'], ($, _, Backbone, Users, User, ListTemplate, LoginTemplate, ShowTemplate) ->
   'use strict'
 
+  # Static method called to create a user, then run a callback once the user
+  # is created. Callback isn't run until the Foursquare API returns information
+  # about the user.
   CreateSelf = (token, callback) ->
     # Get information about this user.
     $.ajax
@@ -25,6 +28,8 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/users', 'cs!models/us
   ListView = Backbone.View.extend
     template: ListTemplate
 
+  # Login/intro screen shown on first-run or if the user signs out of their
+  # account. Basically just a link to auth with Foursquare.
   LoginView = Backbone.View.extend
     el: '#content'
     $el: $('#content')
@@ -41,6 +46,8 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/users', 'cs!models/us
         loginURL: window.GLOBALS.AUTH_URL
       $(@$el).html(html)
 
+  # User profile view. Includes other views inside like a list of recent
+  # check-ins, mayorships, etc.
   ShowView = Backbone.View.extend
     model: User
     template: ShowTemplate
@@ -57,7 +64,6 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/users', 'cs!models/us
           self.render()
 
     render: ->
-      console.log "User #{@model}"
       html = @template
         user: @model
       $(@$el).html(html)

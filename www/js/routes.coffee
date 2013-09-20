@@ -1,4 +1,4 @@
-define ['zepto', 'backbone', 'cs!views/app', 'cs!views/users'], ($, Backbone, AppView, UserViews) ->
+define ['zepto', 'backbone', 'cs!views/app', 'cs!views/users', 'cs!views/venues'], ($, Backbone, AppView, UserViews, VenueViews) ->
   'use strict'
 
   appView = undefined
@@ -9,6 +9,7 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/users'], ($, Backbone, Ap
       # User views
       # "users": "userList"
       "users/:id": "userShow"
+      "venues/:id": "venueShow"
       "": "index"
 
     initialize: ->
@@ -40,6 +41,14 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/users'], ($, Backbone, Ap
     # profile.
     userShow: (id) ->
       appView.currentView = new UserViews.Show
+        el: "#content"
+        $el: $("content")
+        id: id
+
+    # Show a venue's main page. Will include a check-in button and options to
+    # like/dislike the venue.
+    venueShow: (id) ->
+      appView.currentView = new VenueViews.Show
         el: "#content"
         $el: $("content")
         id: id

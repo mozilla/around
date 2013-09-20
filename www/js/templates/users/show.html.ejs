@@ -25,6 +25,11 @@
     -->
 
     <p><%= user.get('bio') %></p>
+
+    <!-- Show recent checkins -->
+    <% if (user.checkins) { %>
+      <%= user.checkins %>
+    <% } %>
   </div>
 <% } else { %>
   <h2><%= l('Error') %></h2>

@@ -1,0 +1,11 @@
+<% if (venue) { %>
+  <div class="venue-summary">
+    <h2><%= venue.get('name') %></h2>
+
+    <p><%= venue.get('description') %></p>
+  </div>
+<% } else { %>
+  <h2><%= l('Error') %></h2>
+
+  <p><%= l('Venue not found.') %></p>
+<% } %>

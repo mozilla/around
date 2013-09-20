@@ -1,4 +1,4 @@
-define ['zepto', 'jed', 'cs!globals', 'cs!routes'], ($, Jed, GLOBALS, Routes) ->
+define ['zepto', 'jed', 'cs!globals', 'cs!routes', 'cs!collections/venues'], ($, Jed, GLOBALS, Routes, Venues) ->
   'use strict'
 
   # Load up our locale files, then actually start loading routes/views.
@@ -7,8 +7,11 @@ define ['zepto', 'jed', 'cs!globals', 'cs!routes'], ($, Jed, GLOBALS, Routes) ->
 
   # Fire it up!
   window.setLanguage ->
-    # Load the router; we're off to the races!
-    router = new Routes()
-    window.router = router
+    # Awful cascade of callbacks to make sure we have all data available.
+    Venues.fetch
+      success: ->
+        # Load the router; we're off to the races!
+        router = new Routes()
+        window.router = router
 
-    Backbone.history.start()
+        Backbone.history.start()

@@ -1,4 +1,4 @@
-define ['zepto', 'underscore', 'backbone', 'cs!collections/venues', 'cs!models/venue', 'tpl!templates/venues/list.html.ejs', 'tpl!templates/venues/show.html.ejs'], ($, _, Backbone, Venues, Venue, ListTemplate, ShowTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'map', 'cs!collections/venues', 'cs!models/venue', 'tpl!templates/venues/list.html.ejs', 'tpl!templates/venues/show.html.ejs'], ($, _, Backbone, L, Venues, Venue, ListTemplate, ShowTemplate) ->
   'use strict'
 
   # List of venue views, most often used when searching for a venue, using
@@ -44,6 +44,8 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/venues', 'cs!models/v
       html = @template
         venue: @model
       $(@$el).html(html)
+
+      map = window.L.mapbox.map('map', 'examples.map-y7l23tes').setView([@model.get('location').lat, @model.get('location').lng], 15)
 
   return {
     List: ListView

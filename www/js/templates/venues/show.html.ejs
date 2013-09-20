@@ -1,4 +1,6 @@
 <% if (venue) { %>
+  <div id="map"></div>
+
   <div class="venue-summary summary">
     <h2><%= venue.get('name') %></h2>
     <% if (venue.get('categories').length || venue.get('location').city) { %>

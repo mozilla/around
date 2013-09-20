@@ -17,6 +17,7 @@ require.config({
         cs: 'vendor/cs',
         localstorage: 'vendor/backbone.localstorage',
         jed: 'vendor/jed',
+        map: 'vendor/mapbox',
         tpl: 'vendor/tpl',
         underscore: 'vendor/lodash',
         zepto: 'vendor/zepto'
@@ -33,6 +34,9 @@ require.config({
         },
         brick: {
             exports: 'xtag'
+        },
+        map: {
+            exports: 'L'
         },
         underscore: {
             exports: '_'

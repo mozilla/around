@@ -1,6 +1,27 @@
 <% if (venue) { %>
   <div class="venue-summary">
     <h2><%= venue.get('name') %></h2>
+    <% if (venue.get('categories').length || venue.get('location').city) { %>
+      <h3 class="subheader">
+        <% if (venue.get('categories').length) { %>
+          <%= venue.get('categories')[0].name %>
+        <% } %>
+        <% if (venue.get('categories').length || venue.get('location').city) { %>
+          <small><%= l('in') %>
+        <% } %>
+        <% if (venue.get('location').city) { %>
+          <%= venue.get('location').city %>
+
+          <% if (venue.get('categories').length) { %>
+            </small>
+          <% } %>
+        <% } %>
+      </h3>
+    <% } %>
+
+    <!--
+    <p><%= venue.get('location').lat %> / <%= venue.get('location').lng %></p>
+    -->
 
     <p><%= venue.get('description') %></p>
   </div>

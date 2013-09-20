@@ -14,7 +14,7 @@ define ['underscore', 'backbone', 'localstorage', 'cs!api', 'cs!models/venue'], 
 
       # Return a single item if we only looked for one; otherwise return the
       # array of results.
-      return if id.length == 1 and results.length == 1
+      return if typeof(id.length) != 'object' and results.length == 1
       then callbacks.success(results[0]) else callbacks.success(results)
 
       self = this

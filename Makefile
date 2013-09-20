@@ -6,7 +6,7 @@ build:
 	sass www/scss/app.scss www/css/app.css
 	node ./node_modules/requirejs/bin/r.js -o build-css.js
 	node node_modules/requirejs/bin/r.js -o build-js.js
-	mkdir -p www-built/js/lib/
+	mkdir -p www-built/js/vendor/
 	cp www/js/vendor/require.js www-built/js/vendor/require.js
 	cp README.md www-built/README.md
 	cp www/CNAME www-built/CNAME

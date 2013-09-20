@@ -1,7 +1,7 @@
 <% if (user) { %>
   <img src="<%= user.profilePhoto() %>" alt="<%= l('Profile photo for ' + user.name()) %>" class="profile-photo">
 
-  <div class="profile-summary">
+  <div class="profile-summary summary">
     <h2><%= user.name() %></h2>
 
     <!--

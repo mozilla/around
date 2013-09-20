@@ -6,6 +6,7 @@
 @import "helper";
 
 @import "users";
+@import "venues";
 
 x-layout {
     border: none;
@@ -19,3 +20,12 @@ x-layout > footer {
     padding: 0;
     text-align: center;
 }
+
+// Generic summary styles (used when a showView is the main content of the
+// page.)
+#content > .summary {
+    h2 {
+        font-size: emCalc(23);
+    }
+}
+

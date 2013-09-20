@@ -9205,6 +9205,31 @@ this.data[model.id]=model;this.save();return model},update:function(model){this.
 store.create(model);break;case "update":resp=store.update(model);break;case "delete":resp=store.destroy(model);break}if(resp)options.success(resp);else options.error("Record not found")};return Store});
 
 (function() {
+  define('cs!api',['zepto'], function($) {
+    var request;
+    request = function(url, callbacks, requestMethod) {
+      if (callbacks == null) {
+        callbacks = {};
+      }
+      if (requestMethod == null) {
+        requestMethod = "GET";
+      }
+      return $.ajax({
+        type: requestMethod,
+        dataType: 'json',
+        url: "" + window.GLOBALS.API_URL + url + "?oauth_token=" + window.GLOBALS.TOKEN + "&v=" + window.GLOBALS.API_DATE,
+        success: callbacks.success,
+        error: callbacks.error
+      });
+    };
+    return {
+      request: request
+    };
+  });
+
+}).call(this);
+
+(function() {
   define('cs!models/user',['backbone'], function(Backbone) {
     
     var CONSTANTS, User;
@@ -9254,30 +9279,35 @@ store.create(model);break;case "update":resp=store.update(model);break;case "del
 }).call(this);
 
 (function() {
-  define('cs!collections/users',['underscore', 'backbone', 'localstorage', 'cs!models/user'], function(_, Backbone, Store, User) {
+  define('cs!collections/users',['underscore', 'backbone', 'localstorage', 'cs!api', 'cs!models/user'], function(_, Backbone, Store, API, User) {
     
     var UserCollection;
     UserCollection = Backbone.Collection.extend({
       localStorage: new Store('Users'),
       model: User,
-      get: function(id, callback) {
+      get: function(id, callbacks) {
         var results, self;
+        if (callbacks == null) {
+          callbacks = {};
+        }
         results = this.where({
           id: id
         });
         if (results.length) {
-          return callback(results[0]);
+          return callbacks.success(results[0]);
         }
         self = this;
-        return $.ajax({
-          type: 'GET',
-          dataType: 'json',
-          url: "" + window.GLOBALS.API_URL + "users/" + id + "?oauth_token=" + window.GLOBALS.TOKEN + "&v=" + window.GLOBALS.API_DATE,
+        return API.request("users/" + id, {
           success: function(data) {
             var user;
             user = self.create(data.response.user);
             user.save();
-            return callback(user);
+            return callbacks.success(user);
+          },
+          error: function(xhr, type) {
+            if (xhr.status === 400) {
+              return callbacks.error(xhr.response);
+            }
           }
         });
       },
@@ -9504,7 +9534,7 @@ define('tpl!templates/users/list.html.ejs', function() {return function(obj) { v
 
 define('tpl!templates/users/login.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<p class="center">', l('around is a Foursquare app for Firefox OS, mobile phones, and web browsers.') ,'</p><p class="center">', l('Touch the "Sign in" button to get started:') ,'</p><div class="center">  <a id="sign-in" class="button center" href="', loginURL ,'">', l('Sign in with Foursquare') ,'</a></div>');}return __p.join('');}});
 
-define('tpl!templates/users/show.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push(''); if (user) { ; __p.push('  <h2>', user.name() ,'</h2>  <img src="', user.profilePhoto() ,'" alt="', l('Profile photo for ' + user.name()) ,'">  <p>', user.get('bio') ,'</p>'); } else { ; __p.push('  <p>User not found.</p>'); } ; __p.push('');}return __p.join('');}});
+define('tpl!templates/users/show.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push(''); if (user) { ; __p.push('  <img src="', user.profilePhoto() ,'" alt="', l('Profile photo for ' + user.name()) ,'" class="profile-photo">  <div class="profile-summary summary">    <h2>', user.name() ,'</h2>    <!--    <h3 class="subheader">', user.get('checkins').count ,' <small>', l('Check-ins') ,'</small></h3>    -->    '); if (user.get('checkins').items) { ; __p.push('      <h4 class="subheader">        <!--          If the user checked in less than thirty minutes ago, we\'ll say          they\'re still there.        -->        ', window.timestamp() - 1800 < user.get('checkins').items[0].createdAt ? l('Currently at:') : l('Last at:') ,'        <a href="#venues/', user.get('checkins').items[0].venue.id ,'">', user.get('checkins').items[0].venue.name ,'</a>      </h4>    '); } ; __p.push('    <!--    <h4 class="subheader">', l('From') ,' ', user.get('homeCity') ,'</h4>    -->    <p>', user.get('bio') ,'</p>    <!-- Show recent checkins -->    '); if (user.checkins) { ; __p.push('      ', user.checkins ,'    '); } ; __p.push('  </div>'); } else { ; __p.push('  <h2>', l('Error') ,'</h2>  <p>', l('User not found.') ,'</p>'); } ; __p.push('');}return __p.join('');}});
 
 (function() {
   define('cs!views/users',['zepto', 'underscore', 'backbone', 'cs!collections/users', 'cs!models/user', 'tpl!templates/users/list.html.ejs', 'tpl!templates/users/login.html.ejs', 'tpl!templates/users/show.html.ejs'], function($, _, Backbone, Users, User, ListTemplate, LoginTemplate, ShowTemplate) {
@@ -9554,14 +9584,19 @@ define('tpl!templates/users/show.html.ejs', function() {return function(obj) { v
       initialize: function() {
         var self;
         self = this;
-        return Users.get(this.id, function(user) {
-          self.model = user;
-          return self.render();
+        return Users.get(this.id, {
+          success: function(user) {
+            self.model = user;
+            return self.render();
+          },
+          error: function(response) {
+            self.model = null;
+            return self.render();
+          }
         });
       },
       render: function() {
         var html;
-        console.log("User " + (this.model.get('id')), this.model.attributes);
         html = this.template({
           user: this.model
         });
@@ -9578,7 +9613,7 @@ define('tpl!templates/users/show.html.ejs', function() {return function(obj) { v
 
 }).call(this);
 
-define('tpl!templates/app.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<x-layout>    <x-appbar>        <div>', l('Back') ,'</div>        <header>', l('around') ,'</header>    </x-appbar>    <section id="content">    </section>    <footer>        <button id="check-in">Check In</button>    </footer></x-layout>');}return __p.join('');}});
+define('tpl!templates/app.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<x-layout>    <x-appbar>        <div>', l('Back') ,'</div>        <header>', l('around') ,'</header>    </x-appbar>    <section id="content" class="row">    </section>    <footer>        <button id="check-in">', l('Check In') ,'</button>    </footer></x-layout>');}return __p.join('');}});
 
 (function() {
   define('cs!views/app',['zepto', 'underscore', 'backbone', 'cs!collections/users', 'cs!views/users', 'tpl!templates/app.html.ejs'], function($, _, Backbone, Users, UserViews, AppTemplate) {
@@ -9599,7 +9634,7 @@ define('tpl!templates/app.html.ejs', function() {return function(obj) { var __p=
       },
       _checkForSelfUser: function() {
         var self;
-        if (this.selfUser) {
+        if (this.selfUser || window.location.hash.match('access_token=')) {
           return;
         }
         self = this;
@@ -9624,7 +9659,157 @@ define('tpl!templates/app.html.ejs', function() {return function(obj) { var __p=
 }).call(this);
 
 (function() {
-  define('cs!routes',['zepto', 'backbone', 'cs!views/app', 'cs!views/users'], function($, Backbone, AppView, UserViews) {
+  define('cs!models/venue',['backbone'], function(Backbone) {
+    
+    var CONSTANTS, Venue;
+    CONSTANTS = {};
+    Venue = Backbone.Model.extend({
+      defaults: {
+        _createdAt: null,
+        _updatedAt: null,
+        id: null,
+        name: "",
+        contact: {},
+        location: {},
+        categories: [],
+        verified: false,
+        stats: {},
+        url: null,
+        hours: null,
+        popular: null,
+        price: {},
+        specials: {},
+        hereNow: {},
+        mayor: {},
+        tips: {},
+        beenHere: null,
+        shortUrl: null,
+        canonicalUrl: null,
+        photos: {},
+        likes: {},
+        like: null,
+        dislike: null,
+        flags: {
+          outsideRadius: false,
+          exactMatch: false
+        },
+        page: null
+      }
+    });
+    return Venue;
+  });
+
+}).call(this);
+
+(function() {
+  define('cs!collections/venues',['underscore', 'backbone', 'localstorage', 'cs!api', 'cs!models/venue'], function(_, Backbone, Store, API, Venue) {
+    
+    var VenuesCollection;
+    VenuesCollection = Backbone.Collection.extend({
+      localStorage: new Store('Venues'),
+      model: Venue,
+      get: function(id, callbacks) {
+        var results, self;
+        if (callbacks == null) {
+          callbacks = {};
+        }
+        results = this.where({
+          id: id
+        });
+        if (typeof id.length !== 'object' && results.length === 1) {
+          return callbacks.success(results[0]);
+        } else {
+          return callbacks.success(results);
+        }
+        self = this;
+        return API.request("venues/" + id, {
+          success: function(data) {
+            var venue;
+            venue = self.create(data.response.venue);
+            venue.save();
+            return callbacks.success(venue);
+          },
+          error: function(xhr, type) {
+            if (xhr.status === 400) {
+              return callbacks.error(xhr.response);
+            }
+          }
+        });
+      }
+    });
+    return new VenuesCollection();
+  });
+
+}).call(this);
+
+define('tpl!templates/venues/list.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('');}return __p.join('');}});
+
+define('tpl!templates/venues/show.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push(''); if (venue) { ; __p.push('  <div class="venue-summary summary">    <h2>', venue.get('name') ,'</h2>    '); if (venue.get('categories').length || venue.get('location').city) { ; __p.push('      <h3 class="subheader">        '); if (venue.get('categories').length) { ; __p.push('          ', venue.get('categories')[0].name ,'        '); } ; __p.push('        '); if (venue.get('categories').length || venue.get('location').city) { ; __p.push('          <small>', l('in') ,'        '); } ; __p.push('        '); if (venue.get('location').city) { ; __p.push('          ', venue.get('location').city ,'          '); if (venue.get('categories').length) { ; __p.push('            </small>          '); } ; __p.push('        '); } ; __p.push('      </h3>    '); } ; __p.push('    <!--    <p>', venue.get('location').lat ,' / ', venue.get('location').lng ,'</p>    -->    <p>', venue.get('description') ,'</p>  </div>'); } else { ; __p.push('  <h2>', l('Error') ,'</h2>  <p>', l('Venue not found.') ,'</p>'); } ; __p.push('');}return __p.join('');}});
+
+(function() {
+  define('cs!views/venues',['zepto', 'underscore', 'backbone', 'cs!collections/venues', 'cs!models/venue', 'tpl!templates/venues/list.html.ejs', 'tpl!templates/venues/show.html.ejs'], function($, _, Backbone, Venues, Venue, ListTemplate, ShowTemplate) {
+    
+    var ListView, ShowView;
+    ListView = Backbone.View.extend({
+      model: Venue,
+      models: null,
+      template: ListTemplate,
+      initialize: function() {
+        var self;
+        self = this;
+        return Venues.get(this.ids, {
+          success: function(venues) {
+            self.models = venues;
+            return self.render();
+          },
+          error: function(response) {
+            return self.render();
+          }
+        });
+      },
+      render: function() {
+        var html;
+        html = this.template({
+          venues: this.models
+        });
+        return $(this.$el).html(html);
+      }
+    });
+    ShowView = Backbone.View.extend({
+      model: Venue,
+      template: ShowTemplate,
+      initialize: function() {
+        var self;
+        self = this;
+        return Venues.get(this.id, {
+          success: function(venue) {
+            self.model = venue;
+            return self.render();
+          },
+          error: function(response) {
+            self.model = null;
+            return self.render();
+          }
+        });
+      },
+      render: function() {
+        var html;
+        html = this.template({
+          venue: this.model
+        });
+        return $(this.$el).html(html);
+      }
+    });
+    return {
+      List: ListView,
+      Show: ShowView
+    };
+  });
+
+}).call(this);
+
+(function() {
+  define('cs!routes',['zepto', 'backbone', 'cs!views/app', 'cs!views/users', 'cs!views/venues'], function($, Backbone, AppView, UserViews, VenueViews) {
     
     var AppRouter, appView;
     appView = void 0;
@@ -9632,6 +9817,7 @@ define('tpl!templates/app.html.ejs', function() {return function(obj) { var __p=
       routes: {
         "access_token=:token": "userCreate",
         "users/:id": "userShow",
+        "venues/:id": "venueShow",
         "": "index"
       },
       initialize: function() {
@@ -9659,6 +9845,13 @@ define('tpl!templates/app.html.ejs', function() {return function(obj) { var __p=
           $el: $("content"),
           id: id
         });
+      },
+      venueShow: function(id) {
+        return appView.currentView = new VenueViews.Show({
+          el: "#content",
+          $el: $("content"),
+          id: id
+        });
       }
     });
     return AppRouter;
@@ -9667,16 +9860,20 @@ define('tpl!templates/app.html.ejs', function() {return function(obj) { var __p=
 }).call(this);
 
 (function() {
-  define('cs!app',['zepto', 'jed', 'cs!globals', 'cs!routes'], function($, Jed, GLOBALS, Routes) {
+  define('cs!app',['zepto', 'jed', 'cs!globals', 'cs!routes', 'cs!collections/venues'], function($, Jed, GLOBALS, Routes, Venues) {
     
     if (window.GLOBALS.HAS.nativeScroll) {
       $('body').addClass('native-scroll');
     }
     return window.setLanguage(function() {
-      var router;
-      router = new Routes();
-      window.router = router;
-      return Backbone.history.start();
+      return Venues.fetch({
+        success: function() {
+          var router;
+          router = new Routes();
+          window.router = router;
+          return Backbone.history.start();
+        }
+      });
     });
   });
 
@@ -9693,16 +9890,17 @@ define('tpl!templates/app.html.ejs', function() {return function(obj) { var __p=
 // Require.js shortcuts to our libraries.
 require.config({
     paths: {
-        async_storage: 'lib/async_storage',
-        backbone: 'lib/backbone',
-        brick: 'lib/brick',
-        'coffee-script': 'lib/coffee-script',
-        cs: 'lib/cs',
-        localstorage: 'lib/backbone.localstorage',
-        jed: 'lib/jed',
-        tpl: 'lib/tpl',
-        underscore: 'lib/lodash',
-        zepto: 'lib/zepto'
+        api: 'lib/api',
+        async_storage: 'vendor/async_storage',
+        backbone: 'vendor/backbone',
+        brick: 'vendor/brick',
+        'coffee-script': 'vendor/coffee-script',
+        cs: 'vendor/cs',
+        localstorage: 'vendor/backbone.localstorage',
+        jed: 'vendor/jed',
+        tpl: 'vendor/tpl',
+        underscore: 'vendor/lodash',
+        zepto: 'vendor/zepto'
     },
     // The shim config allows us to configure dependencies for scripts that do
     // not call define() to register a module.

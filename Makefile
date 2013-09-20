@@ -1,5 +1,4 @@
-# build: update_locale_json
-build:
+build: update_locale_json
 	- rm -rf www-built
 	- rm -rf www/css
 	mkdir -p www/css

@@ -10,4 +10,6 @@ define ['zepto'], ($) ->
       success: callbacks.success
       error: callbacks.error
 
-  return {request: request}
+  return {
+    request: request
+  }

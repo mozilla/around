@@ -8,7 +8,7 @@
     <h3 class="subheader"><%= user.get('checkins').count %> <small><%= l('Check-ins') %></small></h3>
     -->
 
-    <% if (user.get('checkins').items) { %>
+    <% if (user.get('checkins').items.length) { %>
       <h4 class="subheader">
         <!--
           If the user checked in less than thirty minutes ago, we'll say

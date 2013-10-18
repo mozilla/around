@@ -9,6 +9,7 @@ build: update_locale_json
 	cp www/js/vendor/require.js www-built/js/vendor/require.js
 	cp README.md www-built/README.md
 	cp www/CNAME www-built/CNAME
+	cp -R www/fonts www-built/fonts
 	cp -R www/img www-built/img
 	cp -R www/locale www-built/locale
 	cp -R www/*.* www-built/

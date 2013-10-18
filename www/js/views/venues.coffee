@@ -45,8 +45,6 @@ define ['zepto', 'underscore', 'backbone', 'map', 'cs!collections/venues', 'cs!m
         venue: @model
       $(@$el).html(html)
 
-      map = window.L.mapbox.map('map', 'examples.map-y7l23tes').setView([@model.get('location').lat, @model.get('location').lng], 15)
-
   return {
     List: ListView
     Show: ShowView

@@ -11,6 +11,7 @@ define [], ->
         "WebkitOverflowScrolling" in window.document.createElement("div").style
       )()
     LANGUAGE: window.navigator.language # HACK: Better way for this, I assume?
+    MAP_URL: "http://a.tiles.mapbox.com/v3/tofumatt.map-tdyvgkb6/"
     MAX_DOWNLOADS: 2 # Maximum number of podcast downloads at one time.
     OBJECT_STORE_NAME: "around"
     TOKEN: window.localStorage._ACCESS_TOKEN

@@ -1,6 +1,6 @@
 # The main app view, loaded when the app is started. Not much happens here,
 # it just loads up other views after it loads app.html.ejs into the <body>.
-define ['zepto', 'underscore', 'backbone', 'cs!collections/users', 'cs!views/users', 'tpl!templates/app.html.ejs'], ($, _, Backbone, Users, UserViews, AppTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'brick', 'cs!collections/users', 'cs!views/users', 'tpl!templates/app.html.ejs'], ($, _, Backbone, xtag, Users, UserViews, AppTemplate) ->
   'use strict'
 
   AppView = Backbone.View.extend
@@ -8,6 +8,9 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/users', 'cs!views/use
     el: 'body'
     $el: $('body')
     template: AppTemplate
+
+    events:
+      'click #back': 'goBack'
 
     # Initialize the app. First thing we do is check to see if there's a "self"
     # user already present (there should only ever be one). If there is, we'll
@@ -24,6 +27,13 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/users', 'cs!views/use
       $(@$el).html(@template)
 
       @_checkForSelfUser()
+
+    # Go back one step in the app. For now, we simply use our router to control
+    # all state and thus just go back in history. Cheeky!
+    goBack: ->
+      $('#check-in').hide()
+      $('#content').show()
+      window.history.back()
 
     # Check to see if there's a User with "self" status. This means we have
     # authorization and are signed in. If not, we'll show an intro/login

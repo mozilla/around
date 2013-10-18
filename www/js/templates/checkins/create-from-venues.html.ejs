@@ -1,0 +1,9 @@
+<div></div>
+
+<% if (venues) { %>
+  <ul>
+    <% for (i in venues) { %>
+      <li class="venue" data-venue="<%= venues[i].id %>"><%= venues[i].name %></li>
+    <% } %>
+  </ul>
+<% } %>

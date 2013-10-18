@@ -11,22 +11,21 @@ define ['underscore', 'backbone', 'localstorage', 'cs!api', 'cs!models/user'], (
     # API if the user is not available in the local datastore.
     get: (id, callbacks = {}) ->
       results = @where {id: id}
-      return callbacks.success(results[0]) if results.length
+      return callbacks.success(results[0]) if results.length and callbacks.success
 
       self = this
 
       # Get information about this user.
       API.request "users/#{id}",
         success: (data) ->
-          # console.log "hi", data
           user = self.create(data.response.user)
           user.save()
 
-          callbacks.success(user)
+          callbacks.success(user) if callbacks.success
         error: (xhr, type) ->
           if xhr.status == 400
             # User doesn't exist if 400 error code.
-            callbacks.error(xhr.response)
+            callbacks.error(xhr.response) if callbacks.error
 
     getSelf: ->
       user = @where {relationship: User.RELATIONSHIP_SELF}

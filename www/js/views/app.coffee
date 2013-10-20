@@ -33,6 +33,7 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!collections/users', 'cs!
     goBack: ->
       $('#check-in').hide()
       $('#content').show()
+      $('body').removeClass 'check-in'
       window.history.back()
 
     # Check to see if there's a User with "self" status. This means we have

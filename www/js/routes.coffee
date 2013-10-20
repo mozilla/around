@@ -37,6 +37,7 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/user
     checkinCreate: (id) ->
       $('#check-in').hide()
       $('#content').show()
+      $('body').removeClass 'check-in'
 
       @checkinView = new CheckinViews.Create(id)
 
@@ -45,6 +46,7 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/user
     checkinModal: ->
       $('#content').hide()
       $('#check-in').show()
+      $('body').addClass 'check-in'
 
       @checkinView = new CheckinViews.ModalFromVenues
         el: '#check-in'
@@ -69,7 +71,7 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/user
     userShow: (id) ->
       appView.currentView = new UserViews.Show
         el: "#content"
-        $el: $("content")
+        $el: $("#content")
         id: id
 
     # Show a venue's main page. Will include a check-in button and options to
@@ -77,7 +79,7 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/user
     venueShow: (id) ->
       appView.currentView = new VenueViews.Show
         el: "#content"
-        $el: $("content")
+        $el: $("#content")
         id: id
 
     # Modify the title tag; for now simply a debugging tool to show route in

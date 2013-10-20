@@ -69,6 +69,10 @@ x-appbar {
     min-height: 300px;
 }
 
+.check-in #check-in-button {
+    display: none;
+}
+
 x-layout > footer {
     bottom: 0;
     left: 50%;
@@ -85,6 +89,17 @@ x-layout > footer {
     h2 {
         font-size: emCalc(23);
     }
+}
+
+// Maps
+#map {
+    display: none;
+    height: 125px;
+    width: 100%;
+}
+
+.show-map #map {
+    display: block;
 }
 
 // Modal styles from Brick Style Guide

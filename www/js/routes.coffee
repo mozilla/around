@@ -1,4 +1,4 @@
-define ['zepto', 'backbone', 'cs!views/app', 'cs!views/users', 'cs!views/venues'], ($, Backbone, AppView, UserViews, VenueViews) ->
+define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/users', 'cs!views/venues'], ($, Backbone, AppView, CheckinViews, UserViews, VenueViews) ->
   'use strict'
 
   appView = undefined
@@ -6,6 +6,10 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/users', 'cs!views/venues'
   AppRouter = Backbone.Router.extend
     routes:
       "access_token=:token": "userCreate"
+      # Check-in views
+      "checkin": "checkinModal"
+      "checkins/:id": "checkinShow"
+      "checkins/create/:id": "checkinCreate"
       # User views
       # "users": "userList"
       "users/:id": "userShow"
@@ -13,6 +17,8 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/users', 'cs!views/venues'
       "": "index"
 
     initialize: ->
+      @on "all", @_modifyTitle
+
       # Initialize the application view and assign it as a global.
       appView = new AppView()
       window.app = appView
@@ -27,6 +33,27 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/users', 'cs!views/venues'
       console.log "index"
       appView.render()
 
+    # Create a new check-in at a venue based on its venue ID.
+    checkinCreate: (id) ->
+      $('#check-in').hide()
+      $('#content').show()
+
+      @checkinView = new CheckinViews.Create(id)
+
+    # Activated when the "check in" button at the bottom of the screen is
+    # tapped.
+    checkinModal: ->
+      $('#content').hide()
+      $('#check-in').show()
+
+      @checkinView = new CheckinViews.ModalFromVenues
+        el: '#check-in'
+        $el: $('#check-in')
+
+    # Show information about a check-in including points, comments, etc.
+    checkinShow: ->
+      return
+
     # User creation route; we get the user's login token here and save
     # it to our datastore.
     userCreate: (token) ->
@@ -34,7 +61,7 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/users', 'cs!views/venues'
       # Create our "self" user and save it to our datastore. After that, we'll
       # navigate back to the index view to load up our app with a user setup.
       UserViews.CreateSelf token, ->
-        self.navigate '', {trigger: true}
+        self.navigate '', {replace: true, trigger: true}
 
     # Show a user's profile. The template adjusts for various user
     # relationships, including the case where this is the active/self user's
@@ -53,4 +80,9 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/users', 'cs!views/venues'
         $el: $("content")
         id: id
 
-  return AppRouter;
+    # Modify the title tag; for now simply a debugging tool to show route in
+    # history.
+    _modifyTitle: ->
+      $('title').text "around: #{window.location.hash}"
+
+  return AppRouter

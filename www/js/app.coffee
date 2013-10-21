@@ -5,6 +5,9 @@ define ['zepto', 'jed', 'cs!globals', 'cs!routes', 'cs!collections/venues'], ($,
   if window.GLOBALS.HAS.nativeScroll
     $('body').addClass 'native-scroll'
 
+  if "geolocation" in window.navigator
+    return alert "No geolocation available. Sorry; app won't work for now!"
+
   # Fire it up!
   window.setLanguage ->
     # Awful cascade of callbacks to make sure we have all data available.

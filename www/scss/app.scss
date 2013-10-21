@@ -1,3 +1,5 @@
+@import "/fonts/firasans/stylesheet.css";
+
 @import "settings";
 
 @import "lib/brick";
@@ -5,14 +7,64 @@
 
 @import "helper";
 
+@import "checkins";
 @import "users";
 @import "venues";
+
+body {
+    font-family: "Fira Sans";
+}
 
 x-layout {
     border: none;
 }
 
+x-appbar {
+    background: #00202F;
+    font-family: "Fira Sans";
+    font-size: 34px;
+    color: #FFFFFF;
+    line-height: 42px;
+    height: 45px;
+    left: 0;
+    position: fixed;
+    top: 0;
+    z-index: 50;
+
+    > :before {
+        left: 6px;
+    }
+
+    .text {
+        // background: #D8D8D8;
+        color: #fff;
+        font-family: "Fira Sans";
+        font-size: 24px;
+        font-weight: normal;
+        line-height: 42px;
+        padding-left: 6px;
+    }
+}
+
+//Notification
+
+//    background: #F73325;
+//    font-family: FiraSansOT;
+//    font-size: 28px;
+//    color: #FFFFFF;
+//    line-height: 32px;
+
+
+
+//Button with image
+
+//    width: 90px;
+//    height: 90px;
+
+
 #content {
+    font-family: "Fira Sans";
+    margin-top: 45px !important;
     min-height: 300px;
 }
 
@@ -34,3 +86,58 @@ x-layout > footer {
     }
 }
 
+// Modal styles from Brick Style Guide
+#modal {
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    height: 100%;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+
+    .content {
+        background: #fff;
+        border: 1px solid #979797;
+        border-radius: 6px;
+        color: rgb(75, 87, 92);
+        left: 50%;
+        max-height: 75%;
+        // -moz-transform: translate(-50%, -50%);
+        // -webkit-transform: translate(-50%, -50%);
+        position: relative;
+        text-align: center;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        z-index: 110;
+
+        h2 {
+            color: rgb(75, 87, 92);
+            font-size: 48px;
+            line-height: 58px;
+            margin: 0 auto 1em;
+        }
+
+        .body {
+            font-size: 32px;
+            line-height: 42px;
+        }
+
+        .cancel {
+            font-size: 30px;
+            line-height: 36px;
+        }
+
+        .accept {
+            font-size: 30px;
+            font-weight: bold;
+            line-height: 42px;
+        }
+
+        hr {
+            background: #443f3f;
+        }
+    }
+}

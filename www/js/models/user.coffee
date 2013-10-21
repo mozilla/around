@@ -5,7 +5,7 @@
 # "active"/signed-in user of the app. Most of the user attributes are directly
 # mapped to the response from the Foursquare API
 # (https://developer.foursquare.com/docs/responses/user).
-define ['backbone'], (Backbone) ->
+define ['backbone', 'cs!api', 'cs!collections/checkins', 'cs!collections/venues'], (Backbone, API, Checkins, Venues) ->
   'use strict'
 
   CONSTANTS = {}
@@ -62,6 +62,37 @@ define ['backbone'], (Backbone) ->
       tips: null
 
       access_token: ''
+
+    # Check this user into a venue. Creates a new check-in object added to this
+    # user account.
+    checkIn: (venue, callbacks = {}) ->
+      doCheckIn = (location) ->
+        postData = {venueId: venue}
+
+        # If location has a code and no coords object, the geolocation request
+        # failed and we'll post to the Foursquare API without it.
+        # TODO: Consider abstracting geo requests and storing recent ones in
+        # a global with the timestamp so we can re-use recent requests.
+        unless location.code and !location.coords
+          _.extend postData, {
+            ll: "#{location.coords.latitude},#{location.coords.longitude}"
+            llAcc: location.coords.accuracy
+          }
+
+        API.request 'checkins/add',
+          data: postData
+          success: (response) ->
+            # Add a checkin to this user's colllection.
+            Checkins.add(response.response.checkin)
+
+            if callbacks.success
+              Checkins.get response.response.checkin.id,
+                success: callbacks.success
+          requestMethod: "POST"
+
+      # Try to get the user's exact location to send to Foursquare. Regardless
+      # of location data, we will check-in the user.
+      window.navigator.geolocation.getCurrentPosition doCheckIn, doCheckIn
 
     name: ->
       "#{@get('firstName')} #{@get('lastName')}"

@@ -32,7 +32,7 @@ require.config({
             exports: 'Backbone'
         },
         brick: {
-            exports: 'Brick'
+            exports: 'xtag'
         },
         underscore: {
             exports: '_'

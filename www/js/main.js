@@ -12,10 +12,11 @@ require.config({
         api: 'lib/api',
         async_storage: 'vendor/async_storage',
         backbone: 'vendor/backbone',
+        backbone_store: 'vendor/backbone.localforage',
         brick: 'vendor/brick',
         'coffee-script': 'vendor/coffee-script',
         cs: 'vendor/cs',
-        localstorage: 'vendor/backbone.localstorage',
+        localforage: 'vendor/localforage',
         jed: 'vendor/jed',
         tpl: 'vendor/tpl',
         underscore: 'vendor/lodash',
@@ -24,6 +25,9 @@ require.config({
     // The shim config allows us to configure dependencies for scripts that do
     // not call define() to register a module.
     shim: {
+        async_storage: {
+            exports: 'asyncStorage'
+        },
         backbone: {
             deps: [
                 'underscore',

@@ -13,6 +13,9 @@
 
 body {
     font-family: "Fira Sans";
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
 }
 
 x-layout {

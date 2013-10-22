@@ -78,6 +78,8 @@ x-layout > footer {
     position: fixed;
     text-align: center;
     transform: translate(-50%, 0%);
+    -moz-transform: translate(-50%, 0%);
+    -webkit-transform: translate(-50%, 0%);
     z-index: 45;
 }
 
@@ -107,12 +109,12 @@ x-layout > footer {
         color: rgb(75, 87, 92);
         left: 50%;
         max-height: 75%;
-        // -moz-transform: translate(-50%, -50%);
-        // -webkit-transform: translate(-50%, -50%);
         position: relative;
         text-align: center;
         top: 50%;
         transform: translate(-50%, -50%);
+        -moz-transform: translate(-50%, -50%);
+        -webkit-transform: translate(-50%, -50%);
         width: 90%;
         z-index: 110;
 

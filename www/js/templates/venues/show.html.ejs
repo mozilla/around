@@ -1,4 +1,6 @@
 <% if (venue) { %>
+  <div class="map" style="background: url('<%= window.GLOBALS.MAP_URL %>pin-m+0095dd(<%= venue.get('location').lng %>,<%= venue.get('location').lat %>)/<%= venue.get('location').lng %>,<%= venue.get('location').lat %>,16/<%= $(window).width() %>x125.png')"></div>
+
   <div class="venue-summary summary">
     <h2><%= venue.get('name') %></h2>
     <% if (venue.get('categories').length || venue.get('location').city) { %>

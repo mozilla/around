@@ -89,8 +89,6 @@ define ['zepto', 'underscore', 'backbone', 'map', 'cs!collections/checkins', 'cs
       $(@$el).html(html)
 
       if @position
-        console.log @venues
-
         self = this
 
         $('body').addClass 'show-map'
@@ -113,12 +111,10 @@ define ['zepto', 'underscore', 'backbone', 'map', 'cs!collections/checkins', 'cs
           bounds = new L.Bounds()
 
           # Add the top five venues to the map.
-          _.first(@venues, 5).forEach (v) ->
+          _.first(@venues, 4).forEach (v) ->
             L.marker([v.location.lat, v.location.lng]).addTo(self.map)
             bounds.extend [v.location.lat, v.location.lng]
-            console.log v.location.lat, v.location.lng, v.id, v.name
 
-          console.log bounds
           latLngBounds = new L.LatLngBounds([
             [bounds.min.x, bounds.min.y],
             [bounds.max.x, bounds.max.y]

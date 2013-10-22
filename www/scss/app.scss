@@ -56,6 +56,10 @@ x-appbar {
         background: none;
         display: none;
     }
+
+    x-appbar > header:after {
+        padding-left: 0;
+    }
 }
 
 //Notification

@@ -1,3 +1,10 @@
+// backbone.localForage allows users of Backbone.js to store their collections
+// entirely offline with no communication to a REST server. It uses IndexedDB
+// or localStorage (depending on availability) to store the data. This allows
+// apps on Chrome and Firefox to use async, offline storage, which is cool.
+//
+// Inspiration for this file comes from a few backbone.localstorage
+// implementations.
 define(["underscore", "backbone", "localforage"], function (_, Backbone, LocalForage) {
     function S4() {
         return ((1 + Math.random()) * 65536 | 0).toString(16).substring(1);
@@ -7,17 +14,19 @@ define(["underscore", "backbone", "localforage"], function (_, Backbone, LocalFo
         return S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4();
     }
 
-    var Store = function (name) {
+    var OfflineStore = function(name) {
+        // Initialize data as null so we can test to see if it's been loaded
+        // from our data store later on.
         this.data = null;
         this.name = name;
     };
 
-    _.extend(Store.prototype, {
+    _.extend(OfflineStore.prototype, {
         save: function (callback) {
             LocalForage.setItem(this.name, JSON.stringify(this.data), callback);
         },
 
-        create: function (model, options) {
+        create: function(model, options) {
             if (this.data) {
                 if (!model.id) model.id = model.attributes.id = guid();
                 this.data[model.id] = model;
@@ -39,7 +48,7 @@ define(["underscore", "backbone", "localforage"], function (_, Backbone, LocalFo
             }
         },
 
-        update: function (model, options) {
+        update: function(model, options) {
             if (this.data) {
                 this.data[model.id] = model;
                 this.save(function() {
@@ -59,7 +68,7 @@ define(["underscore", "backbone", "localforage"], function (_, Backbone, LocalFo
             }
         },
 
-        find: function (model, options) {
+        find: function(model, options) {
             if (this.data) {
                 options.success(this.data[model.id]);
             } else {
@@ -72,7 +81,7 @@ define(["underscore", "backbone", "localforage"], function (_, Backbone, LocalFo
             }
         },
 
-        findAll: function (options) {
+        findAll: function(options) {
             if (this.data) {
                 options.success(_.values(this.data));
             } else {
@@ -85,7 +94,7 @@ define(["underscore", "backbone", "localforage"], function (_, Backbone, LocalFo
             }
         },
 
-        destroy: function (model, options) {
+        destroy: function(model, options) {
             if (this.data) {
                 delete this.data[model.id];
                 this.save(function() {
@@ -106,8 +115,9 @@ define(["underscore", "backbone", "localforage"], function (_, Backbone, LocalFo
         }
     });
 
-    Backbone.sync = function (method, model, options) {
-        var resp;
+    // Override Backbone.sync to call our custom offline sync only.
+    // TODO: Allow access to original sync?
+    Backbone.sync = function(method, model, options) {
         var store = model.localStorage || model.collection.localStorage;
 
         switch (method) {
@@ -130,5 +140,5 @@ define(["underscore", "backbone", "localforage"], function (_, Backbone, LocalFo
         }
     };
 
-    return Store;
+    return OfflineStore;
 });

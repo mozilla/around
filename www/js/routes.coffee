@@ -17,6 +17,7 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/user
       "": "index"
 
     initialize: ->
+      @on "all", @_historyCleanup
       @on "all", @_modifyTitle
 
       # Initialize the application view and assign it as a global.
@@ -35,8 +36,6 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/user
 
     # Create a new check-in at a venue based on its venue ID.
     checkinCreate: (id) ->
-      $('#check-in').hide()
-      $('#content').show()
       $('body').removeClass 'check-in'
 
       @checkinView = new CheckinViews.Create(id)
@@ -44,9 +43,8 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/user
     # Activated when the "check in" button at the bottom of the screen is
     # tapped.
     checkinModal: ->
-      $('#content').hide()
-      $('#check-in').show()
       $('body').addClass 'check-in'
+      $('#check-in').html('')
 
       @checkinView = new CheckinViews.ModalFromVenues
         el: '#check-in'
@@ -81,6 +79,16 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/user
         el: "#content"
         $el: $("#content")
         id: id
+
+    # Do some slightly-messy DOM cleanup on history state change.
+    _historyCleanup: ->
+      $('body').removeClass 'show-map'
+      $('body').removeClass 'check-in' unless window.location.hash == '#checkin'
+
+      if window.location.hash.length < 2
+        $('body').addClass 'hide-back-button'
+      else
+        $('body').removeClass 'hide-back-button'
 
     # Modify the title tag; for now simply a debugging tool to show route in
     # history.

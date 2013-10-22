@@ -30,7 +30,7 @@ x-appbar {
     left: 0;
     position: fixed;
     top: 0;
-    z-index: 50;
+    z-index: 10000;
 
     > :before {
         left: 6px;
@@ -44,6 +44,17 @@ x-appbar {
         font-weight: normal;
         line-height: 42px;
         padding-left: 6px;
+    }
+}
+
+.hide-back-button {
+    #back {
+        display: none;
+    }
+
+    x-appbar > *:before {
+        background: none;
+        display: none;
     }
 }
 
@@ -62,11 +73,21 @@ x-appbar {
 //    width: 90px;
 //    height: 90px;
 
+body.check-in #content, #check-in {
+    display: none;
+}
 
-#content {
+#content, body.check-in #check-in {
+    display: block;
     font-family: "Fira Sans";
     margin-top: 45px !important;
     min-height: 300px;
+}
+
+body.show-map {
+    #content, &.check-in #check-in {
+        margin-top: 170px !important;
+    }
 }
 
 .check-in #check-in-button {
@@ -95,7 +116,10 @@ x-layout > footer {
 #map {
     display: none;
     height: 125px;
+    margin: 45px 0 0;
+    position: fixed;
     width: 100%;
+    z-index: 100;
 }
 
 .show-map #map {

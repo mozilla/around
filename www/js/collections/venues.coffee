@@ -48,11 +48,15 @@ define ['underscore', 'backbone', 'localstorage', 'cs!api', 'cs!models/venue'], 
     near: (coords, callbacks = {}) ->
       self = this
 
+      options = _.extend(coords, {
+        sortByDistance: 1
+      })
+
       # TODO: Use a search to find multiple venues? Is that even likely?
       # Probably not?
       # Get information about this venue.
       API.request "venues/explore",
-        data: coords
+        data: options
         success: (data) ->
           callbacks.success(data.response)
         error: (xhr, type) ->

@@ -31,8 +31,6 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!collections/users', 'cs!
     # Go back one step in the app. For now, we simply use our router to control
     # all state and thus just go back in history. Cheeky!
     goBack: ->
-      $('#check-in').hide()
-      $('#content').show()
       $('body').removeClass 'check-in'
       window.history.back()
 

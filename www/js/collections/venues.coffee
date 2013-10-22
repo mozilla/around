@@ -1,4 +1,4 @@
-define ['underscore', 'backbone', 'localstorage', 'cs!api', 'cs!models/venue'], (_, Backbone, Store, API, Venue) ->
+define ['underscore', 'backbone', 'backbone_store', 'cs!api', 'cs!models/venue'], (_, Backbone, Store, API, Venue) ->
   'use strict'
 
   VenuesCollection = Backbone.Collection.extend

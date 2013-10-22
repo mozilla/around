@@ -1,6 +1,6 @@
 # User views. Includes "first run" login screen, and all views related to user
 # tasks.
-define ['zepto', 'underscore', 'backbone', 'cs!collections/users', 'cs!models/user', 'tpl!templates/users/list.html.ejs', 'tpl!templates/users/login.html.ejs', 'tpl!templates/users/show.html.ejs'], ($, _, Backbone, Users, User, ListTemplate, LoginTemplate, ShowTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'localforage', 'cs!collections/users', 'cs!models/user', 'tpl!templates/users/list.html.ejs', 'tpl!templates/users/login.html.ejs', 'tpl!templates/users/show.html.ejs'], ($, _, Backbone, localForage, Users, User, ListTemplate, LoginTemplate, ShowTemplate) ->
   'use strict'
 
   # Static method called to create a user, then run a callback once the user
@@ -15,15 +15,15 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/users', 'cs!models/us
       success: (data) ->
         # Save this user's access_token for future requests.
         window.GLOBALS.TOKEN = token
-        window.localStorage._ACCESS_TOKEN = token
 
         user = Users.create(data.response.user)
         user.set
           access_token: token
           relationship: User.RELATIONSHIP_SELF
         user.save()
-
-        callback(user)
+        
+        localForage.setItem '_ACCESS_TOKEN', token, ->
+          callback(user)
 
   ListView = Backbone.View.extend
     template: ListTemplate

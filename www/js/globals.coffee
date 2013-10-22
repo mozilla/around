@@ -1,4 +1,4 @@
-define [], ->
+define ['localforage'], (localForage) ->
   # Globals used throughout the app, accessible via window.GLOBALS.
   GLOBALS =
     API_DATE: "20130901" # https://developer.foursquare.com/overview/versioning
@@ -14,7 +14,7 @@ define [], ->
     MAP_URL: "http://a.tiles.mapbox.com/v3/tofumatt.map-tdyvgkb6/"
     MAX_DOWNLOADS: 2 # Maximum number of podcast downloads at one time.
     OBJECT_STORE_NAME: "around"
-    TOKEN: window.localStorage._ACCESS_TOKEN
+    TOKEN: undefined # Set in app.coffee
   GLOBALS.AUTH_URL = "https://foursquare.com/oauth2/authenticate?client_id=#{GLOBALS.CLIENT_ID}&response_type=token&redirect_uri=#{window.location.origin}"
   window.GLOBALS = GLOBALS;
 

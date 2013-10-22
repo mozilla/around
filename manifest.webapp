@@ -1,0 +1,27 @@
+{
+  "version": "0.1",
+  "name": "around",
+  "description": "HTML5 Foursquare client.",
+  "icons": {
+    "16": "/img/icon-16.png",
+    "30": "/img/icon-30.png",
+    "32": "/img/icon-32.png",
+    "48": "/img/icon-48.png",
+    "60": "/img/icon-60.png",
+    "64": "/img/icon-64.png",
+    "128": "/img/icon-128.png",
+    "256": "/img/icon-256.png"
+  },
+  "developer": {
+    "name": "Matthew Riley MacPherson",
+    "url": "http://lonelyvegan.com/"
+  },
+  "launch_path": "/",
+  "installs_allowed_from": ["https://marketplace.firefox.com"],
+  "appcache_path": "/manifest.appcache",
+  "permissions": {
+    "geolocation": {
+      "description": "Used to check your location and for check-ins"
+    }
+  }
+}

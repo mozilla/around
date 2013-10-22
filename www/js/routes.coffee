@@ -29,8 +29,6 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/user
 
     # Main view; shows the timeline view.
     index: ->
-      # @navigate 'timeline', {trigger: true}
-      console.log "index"
       appView.render()
 
     # Create a new check-in at a venue based on its venue ID.

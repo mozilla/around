@@ -49,6 +49,7 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!collections/users', 'cs!
       Users.fetch
         success: (users) ->
           self.selfUser = Users.getSelf()
+
           if self.selfUser
             # Load up the app!
             console.log "selfUser", self.selfUser

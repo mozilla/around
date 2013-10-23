@@ -1,4 +1,4 @@
-define ['zepto', 'underscore', 'backbone', 'map', 'cs!collections/checkins', 'cs!collections/users', 'cs!collections/venues', 'cs!models/checkin', 'tpl!templates/checkins/create-from-venues.html.ejs', 'tpl!templates/checkins/insight.html.ejs'], ($, _, Backbone, Map, Checkins, Users, Venues, Checkin, CreateFromVenuesTemplate, InsightTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'cs!collections/checkins', 'cs!collections/users', 'cs!collections/venues', 'cs!models/checkin', 'tpl!templates/checkins/create-from-venues.html.ejs', 'tpl!templates/checkins/insight.html.ejs'], ($, _, Backbone, Checkins, Users, Venues, Checkin, CreateFromVenuesTemplate, InsightTemplate) ->
   'use strict'
 
   # View to create a check-in for a user. Pass a user and a venue object in

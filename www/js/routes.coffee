@@ -20,6 +20,8 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/user
       @on "all", @_historyCleanup
       @on "all", @_modifyTitle
 
+      @_historyCleanup()
+
       # Initialize the application view and assign it as a global.
       appView = new AppView()
       window.app = appView
@@ -81,7 +83,14 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/user
     # Do some slightly-messy DOM cleanup on history state change.
     _historyCleanup: ->
       $('body').removeClass 'show-map'
-      $('body').removeClass 'check-in' unless window.location.hash == '#checkin'
+
+      unless window.location.hash == '#checkin'
+        if @checkinView
+          @checkinView._cancelMap = true
+          @checkinView.remove()
+          delete @checkinView
+
+        $('body').removeClass 'check-in'
 
       if window.location.hash.length < 2
         $('body').addClass 'hide-back-button'

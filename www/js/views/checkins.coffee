@@ -68,12 +68,14 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/checkins', 'cs!collec
     user: null
     venues: []
 
+    _cancelMap: false
+
     events:
       "click .venue": "checkInToVenue"
 
     # Get the relevant local venues for this user while we render the template.
     initialize: ->
-      _(this).bindAll "render", "_geoSuccess"
+      _(this).bindAll "render", "showMap", "_geoSuccess"
 
       window.navigator.geolocation.getCurrentPosition(
         @_geoSuccess, @_geoError
@@ -90,21 +92,6 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/checkins', 'cs!collec
 
       if @position
         self = this
-
-        $('body').addClass 'show-map'
-
-        unless @map
-          @map = L.mapbox.map('map', 'tofumatt.map-tdyvgkb6', {
-            zoomControl: false
-          }).setView([@position.coords.latitude, @position.coords.longitude], 14)
-
-          # Disable drag and zoom handlers
-          @map.dragging.disable()
-          @map.touchZoom.disable()
-          @map.doubleClickZoom.disable()
-          @map.scrollWheelZoom.disable()
-          # Disable tap handler, if present.
-          @map.tap.disable() if @map.tap
 
         if @venues.length
           # Create bounds for the map to focus on.
@@ -128,10 +115,28 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/checkins', 'cs!collec
         replace: true
         trigger: true
 
+    showMap: ->
+      unless @map
+        $('body').addClass 'show-map'
+
+        @map = L.mapbox.map('map', 'tofumatt.map-tdyvgkb6', {
+          zoomControl: false
+        }).setView([@position.coords.latitude, @position.coords.longitude], 14)
+
+        # Disable drag and zoom handlers
+        @map.dragging.disable()
+        @map.touchZoom.disable()
+        @map.doubleClickZoom.disable()
+        @map.scrollWheelZoom.disable()
+        # Disable tap handler, if present.
+        @map.tap.disable() if @map.tap
+
     _geoSuccess: (position) ->
       self = this
 
       @position = position
+
+      @showMap() unless @_cancelMap
 
       Venues.near {
           ll: "#{@position.coords.latitude},#{@position.coords.longitude}"

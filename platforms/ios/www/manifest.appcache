@@ -1,0 +1,51 @@
+CACHE MANIFEST
+# v 0.1 / 1
+
+CACHE:
+index.html
+css/app.css
+fonts/firesans/firasans-bold-webfont.eot
+fonts/firesans/firasans-bold-webfont.svg
+fonts/firesans/firasans-bold-webfont.ttf
+fonts/firesans/firasans-bold-webfont.woff
+fonts/firesans/firasans-bolditalic-webfont.eot
+fonts/firesans/firasans-bolditalic-webfont.svg
+fonts/firesans/firasans-bolditalic-webfont.ttf
+fonts/firesans/firasans-bolditalic-webfont.woff
+fonts/firesans/firasans-light-webfont.eot
+fonts/firesans/firasans-light-webfont.svg
+fonts/firesans/firasans-light-webfont.ttf
+fonts/firesans/firasans-light-webfont.woff
+fonts/firesans/firasans-lightitalic-webfont.eot
+fonts/firesans/firasans-lightitalic-webfont.svg
+fonts/firesans/firasans-lightitalic-webfont.ttf
+fonts/firesans/firasans-lightitalic-webfont.woff
+fonts/firesans/firasans-medium-webfont.eot
+fonts/firesans/firasans-medium-webfont.svg
+fonts/firesans/firasans-medium-webfont.ttf
+fonts/firesans/firasans-medium-webfont.woff
+fonts/firesans/firasans-mediumitalic-webfont.eot
+fonts/firesans/firasans-mediumitalic-webfont.svg
+fonts/firesans/firasans-mediumitalic-webfont.ttf
+fonts/firesans/firasans-mediumitalic-webfont.woff
+fonts/firesans/firasans-regular-webfont.eot
+fonts/firesans/firasans-regular-webfont.svg
+fonts/firesans/firasans-regular-webfont.ttf
+fonts/firesans/firasans-regular-webfont.woff
+fonts/firesans/firasans-regularitalic-webfont.eot
+fonts/firesans/firasans-regularitalic-webfont.svg
+fonts/firesans/firasans-regularitalic-webfont.ttf
+fonts/firesans/firasans-regularitalic-webfont.woff
+js/vendor/require.js
+js/main.js
+
+# catch-all for anything else
+NETWORK:
+*
+http://*
+https://*
+
+# FALLBACK:
+# /main.py /static.html
+# images/large/ images/offline.jpg
+# *.html /offline.html

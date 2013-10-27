@@ -1,0 +1,13 @@
+<div></div>
+
+<% if (position && venues.length) { %>
+  <ul>
+    <% for (i in venues) { %>
+      <li class="venue" data-venue="<%= venues[i].id %>"><%= venues[i].name %></li>
+    <% } %>
+  </ul>
+<% } else if (position) { %>
+  <p id="loading-text"><%= l('Finding places near you.') %></p>
+<% } else { %>
+  <p id="loading-text"><%= l('Getting your location.') %></p>
+<% } %>

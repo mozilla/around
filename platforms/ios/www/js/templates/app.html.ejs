@@ -1,0 +1,18 @@
+<x-layout>
+  <x-appbar>
+    <div id="back" class="text"><%= l('Back') %></div>
+    <header><%= l('around') %></header>
+  </x-appbar>
+
+  <div id="map"></div>
+
+  <section id="content" class="row"></section>
+
+  <section id="check-in" class="row"></section>
+
+  <footer>
+    <a id="check-in-button" class="button" href="#checkin"><%= l('Check In') %></a>
+  </footer>
+</x-layout>
+
+<div id="modal"></div>

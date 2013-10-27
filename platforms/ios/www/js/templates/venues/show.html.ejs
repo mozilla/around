@@ -1,0 +1,34 @@
+<% if (venue) { %>
+  <div class="map" style="background: url('<%= window.GLOBALS.MAP_URL %>pin-m+0095dd(<%= venue.get('location').lng %>,<%= venue.get('location').lat %>)/<%= venue.get('location').lng %>,<%= venue.get('location').lat %>,16/<%= $(window).width() %>x125.png')"></div>
+
+  <div class="venue-summary summary">
+    <h2><%= venue.get('name') %></h2>
+    <% if (venue.get('categories').length || venue.get('location').city) { %>
+      <h3 class="subheader">
+        <% if (venue.get('categories').length) { %>
+          <%= venue.get('categories')[0].name %>
+        <% } %>
+        <% if (venue.get('categories').length || venue.get('location').city) { %>
+          <small><%= l('in') %>
+        <% } %>
+        <% if (venue.get('location').city) { %>
+          <%= venue.get('location').city %>
+
+          <% if (venue.get('categories').length) { %>
+            </small>
+          <% } %>
+        <% } %>
+      </h3>
+    <% } %>
+
+    <!--
+    <p><%= venue.get('location').lat %> / <%= venue.get('location').lng %></p>
+    -->
+
+    <p><%= venue.get('description') %></p>
+  </div>
+<% } else { %>
+  <h2><%= l('Error') %></h2>
+
+  <p><%= l('Venue not found.') %></p>
+<% } %>

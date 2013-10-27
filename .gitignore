@@ -2,9 +2,8 @@
 www-built
 www-ghdeploy
 
-# Sass CSS output
+# CSS output from Stylus
 www/css
-.sass-cache
 
 lib-cov
 *.seed

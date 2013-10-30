@@ -5,6 +5,8 @@ www-ghdeploy
 # CSS output from Stylus
 www/css
 
+.DS_Store
+
 lib-cov
 *.seed
 *.log

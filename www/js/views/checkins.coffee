@@ -119,7 +119,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/checkins', 'cs!collec
       unless @map
         $('body').addClass 'show-map'
 
-        @map = L.mapbox.map('map', 'tofumatt.map-tdyvgkb6', {
+        @map = L.mapbox.map('map', window.GLOBALS.MAP_ID, {
           zoomControl: false
         }).setView([@position.coords.latitude, @position.coords.longitude], 14)
 

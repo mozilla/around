@@ -1,4 +1,6 @@
 define ['localforage'], (localForage) ->
+  mapID = "tofumatt.map-tdyvgkb6"
+
   # Globals used throughout the app, accessible via window.GLOBALS.
   GLOBALS =
     API_DATE: "20130901" # https://developer.foursquare.com/overview/versioning
@@ -11,7 +13,8 @@ define ['localforage'], (localForage) ->
         "WebkitOverflowScrolling" in window.document.createElement("div").style
       )()
     LANGUAGE: window.navigator.language # HACK: Better way for this, I assume?
-    MAP_URL: "http://a.tiles.mapbox.com/v3/tofumatt.map-tdyvgkb6/"
+    MAP_ID: mapID
+    MAP_URL: "http://a.tiles.mapbox.com/v3/#{mapID}/"
     MAX_DOWNLOADS: 2 # Maximum number of podcast downloads at one time.
     OBJECT_STORE_NAME: "around"
     TOKEN: undefined # Set in app.coffee

@@ -49,12 +49,11 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!collections/users', 'cs!
         success: (users) ->
           self.selfUser = Users.getSelf()
 
-          if self.selfUser
-            # Load up the app!
-            console.log "selfUser", self.selfUser
-          else
+          # If there's no "selfUser", we need to display an intro screen/login
+          # prompt and authorize the user's device.
+          if not self.selfUser
             console.info "No user with relationship: RELATIONSHIP_SELF found"
             self.currentView = new UserViews.Login
         error: ->
           # TODO: Obviously, make this better.
-          window.alert "Error loading podcasts data. Contact support: tofumatt@mozilla.com"
+          window.alert "Error loading data. Contact support: tofumatt@mozilla.com"

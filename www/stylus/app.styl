@@ -10,6 +10,7 @@
 @import "helper"
 
 @import "checkins"
+@import "timeline"
 @import "users"
 @import "venues"
 
@@ -21,6 +22,9 @@ body
 
 x-layout
     border none
+
+x-layout > section > :only-child
+    position inherit
 
 x-appbar
     background #00202F
@@ -57,6 +61,14 @@ x-appbar
     x-appbar > header:after
         padding-left 0
 
+a {
+    color: blue;
+
+    &:hover, &:visited {
+        color: blue;
+    }
+}
+
 //Notification
 
 //    background #F73325
@@ -89,6 +101,8 @@ body.show-map
     display none
 
 #check-in-button
+    // display none
+    color: #fff
     font-size 20px
 
 x-layout > footer

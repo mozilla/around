@@ -33,7 +33,7 @@ define ['underscore', 'backbone', 'backbone_store', 'cs!api', 'cs!models/venue']
           venue = self.create(data.response.venue)
           venue.save()
 
-          callbacks.success(venue)
+          callbacks.success(venue) if callbacks.success
         error: (xhr, type) ->
           if xhr.status == 400
             # Venue doesn't exist if 400 error code.

@@ -43,21 +43,14 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!collections/users', 'tpl
       # prevents the "please sign in screen" from appearing during sign-in.
       return if @selfUser or window.location.hash.match 'access_token='
 
-      self = this
+      @selfUser = Users.getSelf()
 
-      Users.fetch
-        success: (users) ->
-          self.selfUser = Users.getSelf()
-
-          # If there's no "selfUser", we need to display an intro screen/login
-          # prompt and authorize the user's device.
-          if not self.selfUser
-            console.info "No user with relationship: RELATIONSHIP_SELF found"
-            # We manually set the location.hash here because the router hasn't
-            # actually finished loading yet (and thus isn't assigned to
-            # `window.router`, where we'd usually access its `.navigate`
-            # method).
-            window.location.hash = "login"
-        error: ->
-          # TODO: Obviously, make this better.
-          window.alert "Error loading data. Contact support: tofumatt@mozilla.com"
+      # If there's no "selfUser", we need to display an intro screen/login
+      # prompt and authorize the user's device.
+      unless @selfUser
+        console.info "No user with relationship: RELATIONSHIP_SELF found"
+        # We manually set the location.hash here because the router hasn't
+        # actually finished loading yet (and thus isn't assigned to
+        # `window.router`, where we'd usually access its `.navigate`
+        # method).
+        window.location.hash = "login"

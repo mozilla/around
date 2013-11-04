@@ -1,5 +1,7 @@
-<% for (var i in checkins) { %>
-    <%= CheckinShowTemplate({checkin: checkins[i]}) %>
-<% } %>
+<div id="timeline">
+  <h1><%= l("What's Happening") %></h1>
 
-<a id="check-in-button" class="button" href="#checkin"><%= l('Check In') %></a>
+  <% for (var i in checkins) { %>
+    <%= CheckinShowTemplate({checkin: checkins[i]}) %>
+  <% } %>
+</div>

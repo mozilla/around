@@ -1,4 +1,4 @@
-define ['localforage'], (localForage) ->
+define ['localforage', 'moment'], (localForage, moment) ->
   mapID = "tofumatt.map-tdyvgkb6"
 
   # Globals used throughout the app, accessible via window.GLOBALS.
@@ -21,7 +21,9 @@ define ['localforage'], (localForage) ->
     OBJECT_STORE_NAME: "around"
     TOKEN: undefined # Set in app.coffee
   GLOBALS.AUTH_URL = "https://foursquare.com/oauth2/authenticate?client_id=#{GLOBALS.CLIENT_ID}&response_type=token&redirect_uri=#{window.location.origin}"
-  window.GLOBALS = GLOBALS;
+  window.GLOBALS = GLOBALS
+
+  window.moment = moment
 
   # Format a time in seconds to a pretty 5:22:75 style time. Cribbed from
   # the Gaia Music app.

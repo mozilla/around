@@ -1,4 +1,10 @@
 <div class="checkin">
-  <h4><%= checkin.get('user').firstName %></h4>
-  <h3><a href="#/venues/<%= checkin.get('venue').id %>"><%= checkin.get('venue').name %></a></h3>
+  <img src="<%= checkin.get('user').photo.prefix %>/100x100/<%= checkin.get('user').photo.suffix %>" alt="<%= checkin.get('user').firstName %>" class="profile-photo">
+  <h3 class="user"><%= checkin.get('user').firstName %></h3>
+  <!--
+  <h3 class="venue"><a href="#/venues/<%= checkin.get('venue').id %>"><%= checkin.get('venue').name %></a></h3>
+  -->
+  <h2 class="venue"><%= checkin.get('venue').name %></h2>
+
+  <h4><%= window.moment.unix(checkin.get('createdAt')).fromNow() %></h4>
 </div>

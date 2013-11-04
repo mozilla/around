@@ -1,4 +1,4 @@
-define ['underscore', 'backbone', 'backbone_store', 'localforage', 'cs!api', 'cs!collections/users', 'cs!models/checkin'], (_, Backbone, Store, localForage, API, Users, Checkin) ->
+define ['underscore', 'backbone', 'backbone_store', 'localforage', 'cs!api', 'cs!models/checkin'], (_, Backbone, Store, localForage, API, Checkin) ->
   'use strict'
 
   CheckinCollection = Backbone.Collection.extend
@@ -48,8 +48,6 @@ define ['underscore', 'backbone', 'backbone_store', 'localforage', 'cs!api', 'cs
                   checkin = self.create(c)
                   checkin.save()
                   checkins.push(checkin)
-
-                  # Users.get(c.user.id)
 
                 args.success(checkins) if args.success
             error: (xhr, type) ->

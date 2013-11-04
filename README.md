@@ -5,10 +5,9 @@ HTML5 foursquare client.
 
 ## Installation ##
 
-You need `gem` and `npm` (and thus Ruby and Node.js).
+You need `npm` (and thus Node.js).
 
-    gem install sass
-    gem install --version '~> 0.9' rb-fsevent
+    npm install -g stylus volo volo-ghdeploy
     npm install
     ./serve
 

@@ -84,28 +84,13 @@ a {
 //    width 90px
 //    height 90px
 
-body.check-in #content, #check-in
-    display none
-
-#content, body.check-in #check-in
+#content
     display block
     font-family "Fira Sans"
     margin-top 45px !important
     min-height 300px
 
-body.show-map
-    #content, &.check-in #check-in
-        margin-top 170px !important
-
-.check-in #check-in-button
-    display none
-
-#check-in-button
-    // display none
-    color: #fff
-    font-size 20px
-
-x-layout > footer
+footer
     bottom 5px
     left 50%
     padding 0
@@ -124,26 +109,22 @@ x-layout > footer
 
 // Maps
 #map
-    display none
     height 125px
-    margin 45px 0 0
-    position fixed
+    margin 0
+    position relative
     width 100%
-    z-index 100
-
-.show-map #map
-    display block
+    z-index 12000
 
 // Modal styles from Brick Style Guide
-#modal
+#modal, #full-modal
     background rgba(0, 0, 0, 0.5)
-    display none
     height 100%
     left 0
+    overflow-y hidden
     position fixed
     top 0
     width 100%
-    z-index 100
+    z-index 11000
 
     .content
         background #fff
@@ -152,6 +133,7 @@ x-layout > footer
         color rgb(75, 87, 92)
         left 50%
         max-height 75%
+        overflow-y scroll
         position relative
         text-align center
         top 50%
@@ -159,7 +141,7 @@ x-layout > footer
         -moz-transform translate(-50%, -50%)
         -webkit-transform translate(-50%, -50%)
         width 90%
-        z-index 110
+        z-index 11000
 
         h2
             color rgb(75, 87, 92)
@@ -183,6 +165,42 @@ x-layout > footer
         hr
             background #443f3f
 
+#full-modal
+    .content
+        height 95%
+        max-height none
+        text-align left
+        width 95%
+        // top: 10px
+        // transform translate(-50%, 0)
+        // -moz-transform translate(-50%, 0)
+        // -webkit-transform translate(-50%, 0)
+
+        &:after
+            clear both
+            content ""
+            display block
+            height 42px
+
+    .accept, .cancel
+        background #efefef
+        // border 1px solid #979797
+        border-top 1px solid #443f3f
+        border-radius 6px
+        bottom 2.5%
+        font-size 30px
+        font-weight bold
+        left 50%
+        line-height 42px
+        padding 6px 0 0
+        position fixed
+        text-align center
+        transform translate(-50%, 0%)
+        -moz-transform translate(-50%, 0%)
+        -webkit-transform translate(-50%, 0%)
+        width 95%
+        z-index 11001
+
 button, .button
     background #0095dd
     border 1px solid #297091
@@ -190,7 +208,8 @@ button, .button
     color #fff
     display inline-block
     line-height 1em
-    padding .5em .5em .25em
+    padding .5em
+    text-align center
     text-decoration none
 
     &:active
@@ -198,4 +217,3 @@ button, .button
         -moz-box-shadow inset 0px 1px 3px 0px rgba(0,0,0,0.50)
         -webkit-box-shadow inset 0px 1px 3px 0px rgba(0,0,0,0.50)
         box-shadow inset 0px 1px 3px 0px rgba(0,0,0,0.50)
-

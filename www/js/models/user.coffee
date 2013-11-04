@@ -5,7 +5,7 @@
 # "active"/signed-in user of the app. Most of the user attributes are directly
 # mapped to the response from the Foursquare API
 # (https://developer.foursquare.com/docs/responses/user).
-define ['backbone', 'cs!api', 'cs!collections/checkins', 'cs!collections/venues'], (Backbone, API, Checkins, Venues) ->
+define ['zepto', 'backbone', 'cs!api', 'cs!collections/checkins', 'cs!collections/venues'], ($, Backbone, API, Checkins, Venues) ->
   'use strict'
 
   CONSTANTS = {}
@@ -66,6 +66,8 @@ define ['backbone', 'cs!api', 'cs!collections/checkins', 'cs!collections/venues'
     # Check this user into a venue. Creates a new check-in object added to this
     # user account.
     checkIn: (venue, callbacks = {}) ->
+      d = $.Deferred()
+
       doCheckIn = (location) ->
         postData = {venueId: venue}
 
@@ -81,18 +83,23 @@ define ['backbone', 'cs!api', 'cs!collections/checkins', 'cs!collections/venues'
 
         API.request 'checkins/add',
           data: postData
-          success: (response) ->
-            # Add a checkin to this user's colllection.
-            Checkins.add(response.response.checkin)
-
-            if callbacks.success
-              Checkins.get response.response.checkin.id,
-                success: callbacks.success
           requestMethod: "POST"
+        .done (response) ->
+          # Add a checkin to this user's colllection.
+          Checkins.add(response.response.checkin)
+
+          Checkins.get response.response.checkin.id,
+            success: (checkin) ->
+              callbacks.success(checkin) if callbacks.success
+
+              d.resolve(checkin)
 
       # Try to get the user's exact location to send to Foursquare. Regardless
       # of location data, we will check-in the user.
       window.navigator.geolocation.getCurrentPosition doCheckIn, doCheckIn
+
+      d.promise()
+
 
     name: ->
       "#{@get('firstName')} #{@get('lastName')}"

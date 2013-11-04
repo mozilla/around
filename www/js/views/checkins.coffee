@@ -1,4 +1,4 @@
-define ['zepto', 'underscore', 'backbone', 'cs!collections/checkins', 'cs!collections/users', 'cs!collections/venues', 'cs!models/checkin', 'tpl!templates/checkins/create-from-venues.html.ejs', 'tpl!templates/checkins/insight.html.ejs', 'tpl!templates/checkins/show.html.ejs'], ($, _, Backbone, Checkins, Users, Venues, Checkin, CreateFromVenuesTemplate, InsightTemplate, ShowTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'cs!collections/checkins', 'cs!collections/users', 'cs!collections/venues', 'cs!models/checkin', 'tpl!templates/checkins/create-from-venues.html.ejs', 'tpl!templates/checkins/insight.html.ejs', 'tpl!templates/checkins/show.html.ejs', 'tpl!templates/full-modal.html.ejs'], ($, _, Backbone, Checkins, Users, Venues, Checkin, CreateFromVenuesTemplate, InsightTemplate, ShowTemplate, FullModalTemplate) ->
   'use strict'
 
   # View to create a check-in for a user. Pass a user and a venue object in
@@ -9,18 +9,17 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/checkins', 'cs!collec
 
       self = this
 
-      user.checkIn venue,
-        success: (checkin) ->
-          # Navigate to the venue page first, then load our insight modal.
-          # TODO: This shouldn't be part of state; load it in as a special
-          # modal view instead?
-          window.router.navigate "venues/#{checkin.get('venue').id}",
-            replace: true
-            trigger: true
+      $.when(user.checkIn venue).done (checkin) ->
+        # Navigate to the venue page first, then load our insight modal.
+        # TODO: This shouldn't be part of state; load it in as a special
+        # modal view instead?
+        window.router.navigate "/venues/#{checkin.get('venue').id}",
+          replace: true
+          trigger: true
 
-          $('#modal').show()
-          new InsightModalView
-            id: checkin.get('id')
+        $('#modal').show()
+        new InsightModalView
+          id: checkin.get('id')
 
   InsightModalView = Backbone.View.extend
     el: '#modal'
@@ -62,6 +61,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/checkins', 'cs!collec
   # appears when the user taps the "check in" button at the bottom of the
   # screen.
   ModalFromVenuesView = Backbone.View.extend
+    headerLocation: null
     map: null
     position: null
     template: CreateFromVenuesTemplate
@@ -75,18 +75,24 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/checkins', 'cs!collec
 
     # Get the relevant local venues for this user while we render the template.
     initialize: ->
-      _(this).bindAll "render", "showMap", "_geoSuccess"
+      _.bindAll this # "render", "showMap", "_geoSuccess"
 
       window.navigator.geolocation.getCurrentPosition(
         @_geoSuccess, @_geoError
       )
 
+      $('body').append FullModalTemplate {
+        element: @options._el
+        fixedContent: '<div id="map"></div>'
+        templateHTML: @template(@_templateData())
+      }
+
+      @setElement @options._el
+
       @render()
 
     render: ->
-      html = @template
-        position: @position
-        venues: @venues
+      html = @template(@_templateData())
 
       $(@$el).html(html)
 
@@ -111,49 +117,61 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/checkins', 'cs!collec
           })
 
     checkInToVenue: (event) ->
+      window.app.destroyFullModal()
+
       window.router.navigate "checkins/create/#{$(event.currentTarget).data('venue')}",
-        replace: true
+        replace: false
         trigger: true
 
     showMap: ->
-      unless @map
-        $('body').addClass 'show-map'
+      @map = L.mapbox.map('map', window.GLOBALS.MAP_ID, {
+        zoomControl: false
+      }).setView([@position.coords.latitude, @position.coords.longitude], 14)
 
-        @map = L.mapbox.map('map', window.GLOBALS.MAP_ID, {
-          zoomControl: false
-        }).setView([@position.coords.latitude, @position.coords.longitude], 14)
-
-        # Disable drag and zoom handlers
-        @map.dragging.disable()
-        @map.touchZoom.disable()
-        @map.doubleClickZoom.disable()
-        @map.scrollWheelZoom.disable()
-        # Disable tap handler, if present.
-        @map.tap.disable() if @map.tap
+      # Disable drag and zoom handlers
+      @map.dragging.disable()
+      @map.touchZoom.disable()
+      @map.doubleClickZoom.disable()
+      @map.scrollWheelZoom.disable()
+      # Disable tap handler, if present.
+      @map.tap.disable() if @map.tap
 
     _geoSuccess: (position) ->
       self = this
 
       @position = position
 
-      @showMap() unless @_cancelMap
+      @showMap()
 
-      Venues.near {
-          ll: "#{@position.coords.latitude},#{@position.coords.longitude}"
-          accuracy: @position.coords.accuracy
-        },
-        success: (venues) ->
-          _(venues.groups[0].items).each (item) ->
-            self.venues.push item.venue
+      Venues.near
+        ll: "#{@position.coords.latitude},#{@position.coords.longitude}"
+        accuracy: @position.coords.accuracy
+      .done (apiResponse) ->
+        response = apiResponse.response
+        _(response.groups[0].items).each (item) ->
+          self.venues.push item.venue
 
-          self.render()
-        error: (response) ->
-          window.alert "Error!"
+        self.headerLocation = response.headerFullLocation
+
+        self.render()
+      .fail ->
+        window.alert "Error getting venues!"
 
       @render()
 
-    _geoError: () ->
+    _geoError: ->
       return
+
+    _cleanUpMap: ->
+      @_cancelMap = true
+      @map.remove()
+
+    _templateData: ->
+      {
+        headerLocation: @headerLocation
+        position: @position
+        venues: @venues
+      }
 
   ShowView = Backbone.View.extend
     template: ShowTemplate

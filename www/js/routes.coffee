@@ -7,7 +7,6 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/time
     routes:
       "access_token=:token": "userCreate"
       # Check-in views
-      "checkin": "checkinModal"
       "checkins/:id": "checkinShow"
       "checkins/create/:id": "checkinCreate"
       # User views
@@ -18,16 +17,19 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/time
       "": "index"
 
     initialize: ->
+      _.bindAll this
+
       @on "all", @_historyCleanup
       @on "all", @_modifyTitle
 
       @_historyCleanup()
 
+      # Redirect to the /# URL for history purposes if it's not set.
+      window.location.hash = '#' if window.location.hash is ''
+
       # Initialize the application view and assign it as a global.
       appView = new AppView()
       window.app = appView
-
-      appView._checkForSelfUser()
 
       return this
 
@@ -41,16 +43,6 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/time
 
       @checkinView = new CheckinViews.Create(id)
 
-    # Activated when the "check in" button at the bottom of the screen is
-    # tapped.
-    checkinModal: ->
-      $('body').addClass 'check-in'
-      $('#check-in').html('')
-
-      @checkinView = new CheckinViews.ModalFromVenues
-        el: '#check-in'
-        $el: $('#check-in')
-
     # Show information about a check-in including points, comments, etc.
     checkinShow: ->
       return
@@ -61,7 +53,7 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/time
       self = this
       # Create our "self" user and save it to our datastore. After that, we'll
       # navigate back to the index view to load up our app with a user setup.
-      UserViews.CreateSelf token, ->
+      $.when(UserViews.CreateSelf token).done ->
         self.navigate '', {replace: true, trigger: true}
 
     userLogin: ->
@@ -86,16 +78,6 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/time
 
     # Do some slightly-messy DOM cleanup on history state change.
     _historyCleanup: ->
-      $('body').removeClass 'show-map'
-
-      unless window.location.hash == '#checkin'
-        if @checkinView
-          @checkinView._cancelMap = true
-          @checkinView.remove()
-          delete @checkinView
-
-        $('body').removeClass 'check-in'
-
       if window.location.hash.length < 2
         $('body').addClass 'hide-back-button'
       else

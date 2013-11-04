@@ -1,8 +1,9 @@
-define ['localforage', 'moment'], (localForage, moment) ->
+define ['zepto', 'localforage', 'moment'], ($, localForage, moment) ->
   mapID = "tofumatt.map-tdyvgkb6"
+  mapID = "mozilla-webprod.g7in06ib"
 
   # Globals used throughout the app, accessible via window.GLOBALS.
-  GLOBALS =
+  window.GLOBALS = GLOBALS =
     API_DATE: "20130901" # https://developer.foursquare.com/overview/versioning
     API_URL: "https://api.foursquare.com/v2/"
     AUTH_URL: ""
@@ -21,13 +22,14 @@ define ['localforage', 'moment'], (localForage, moment) ->
     OBJECT_STORE_NAME: "around"
     TOKEN: undefined # Set in app.coffee
   GLOBALS.AUTH_URL = "https://foursquare.com/oauth2/authenticate?client_id=#{GLOBALS.CLIENT_ID}&response_type=token&redirect_uri=#{window.location.origin}"
-  window.GLOBALS = GLOBALS
 
+  # We want the moment library available everywhere, especially inside
+  # templates.
   window.moment = moment
 
   # Format a time in seconds to a pretty 5:22:75 style time. Cribbed from
   # the Gaia Music app.
-  formatTime = (secs) ->
+  window.formatTime = formatTime = (secs) ->
     return "--:--" if isNaN(secs)
 
     hours = parseInt(secs / 3600, 10) % 24
@@ -38,7 +40,6 @@ define ['localforage', 'moment'], (localForage, moment) ->
     seconds = if seconds < 10 then "0#{seconds}" else seconds
 
     "#{hours}#{minutes}:#{seconds}"
-  window.formatTime = formatTime
 
   # Return gettext-style strings as they were supplied. An easy way to mock
   # out gettext calls, in case no locale data is available.
@@ -49,10 +50,11 @@ define ['localforage', 'moment'], (localForage, moment) ->
 
   # Set the language of the app and retrieve the proper localization files.
   # This could be improved, but for now works fine.
-  setLanguage = (callback, override) ->
+  window.setLanguage = setLanguage = ->
+    d = $.Deferred()
     request = new window.XMLHttpRequest()
 
-    request.open "GET", "locale/#{override || GLOBALS.LANGUAGE}.json", true
+    request.open "GET", "locale/#{GLOBALS.LANGUAGE}.json", true
 
     request.addEventListener "load", (event) ->
       if request.status is 200
@@ -76,18 +78,19 @@ define ['localforage', 'moment'], (localForage, moment) ->
       else
         mockL10n()
 
-      if callback
-        callback()
+      d.resolve()
 
     try
       request.send();
     catch error
       console.log(error)
       mockL10n()
-  window.setLanguage = setLanguage
+
+    d.promise()
 
   # Return a timestamp from a JavaScript Date object. If no argument is
   # supplied, return the timestamp for "right now".
-  timestamp = (date = new Date()) ->
+  window.timestamp = timestamp = (date = new Date()) ->
     Math.round(date.getTime() / 1000)
-  window.timestamp = timestamp
+
+  GLOBALS

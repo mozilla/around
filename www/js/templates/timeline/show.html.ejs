@@ -1,0 +1,5 @@
+<% for (var i in checkins) { %>
+    <%= CheckinShowTemplate({checkin: checkins[i]}) %>
+<% } %>
+
+<a id="check-in-button" class="button" href="#checkin"><%= l('Check In') %></a>

@@ -12,10 +12,12 @@ define ['localforage'], (localForage) ->
       nativeScroll: (->
         "WebkitOverflowScrolling" in window.document.createElement("div").style
       )()
+    HOUR: 3600
     LANGUAGE: window.navigator.language # HACK: Better way for this, I assume?
     MAP_ID: mapID
     MAP_URL: "http://a.tiles.mapbox.com/v3/#{mapID}/"
     MAX_DOWNLOADS: 2 # Maximum number of podcast downloads at one time.
+    MINUTE: 60
     OBJECT_STORE_NAME: "around"
     TOKEN: undefined # Set in app.coffee
   GLOBALS.AUTH_URL = "https://foursquare.com/oauth2/authenticate?client_id=#{GLOBALS.CLIENT_ID}&response_type=token&redirect_uri=#{window.location.origin}"
@@ -24,8 +26,7 @@ define ['localforage'], (localForage) ->
   # Format a time in seconds to a pretty 5:22:75 style time. Cribbed from
   # the Gaia Music app.
   formatTime = (secs) ->
-    if isNaN(secs)
-      return "--:--"
+    return "--:--" if isNaN(secs)
 
     hours = parseInt(secs / 3600, 10) % 24
     hours = if hours != 0 then "#{hours}:" else ""

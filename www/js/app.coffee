@@ -1,9 +1,9 @@
-define ['zepto', 'jed', 'localforage', 'cs!globals', 'cs!routes', 'cs!collections/venues'], ($, Jed, localForage, GLOBALS, Routes, Venues) ->
+define ['zepto', 'jed', 'localforage', 'cs!globals', 'cs!routes', 'cs!collections/checkins', 'cs!collections/users', 'cs!collections/venues'], ($, Jed, localForage, GLOBALS, Routes, Checkins, Users, Venues) ->
   'use strict'
 
-  # Load up our locale files, then actually start loading routes/views.
-  if window.GLOBALS.HAS.nativeScroll
-    $('body').addClass 'native-scroll'
+  # Set some browser/device classes so we can add specific bits of "feel" to
+  # certain engines/devices/etc.
+  $('body').addClass 'native-scroll' if window.GLOBALS.HAS.nativeScroll
 
   if "geolocation" in window.navigator
     return alert "No geolocation available. Sorry; app won't work for now!"
@@ -14,10 +14,14 @@ define ['zepto', 'jed', 'localforage', 'cs!globals', 'cs!routes', 'cs!collection
 
     window.setLanguage ->
       # Awful cascade of callbacks to make sure we have all data available.
-      Venues.fetch
+      Checkins.fetch
         success: ->
-          # Load the router; we're off to the races!
-          router = new Routes()
-          window.router = router
+          Users.fetch
+            success: ->
+              Venues.fetch
+                success: ->
+                  # Load the router; we're off to the races!
+                  router = new Routes()
+                  window.router = router
 
-          Backbone.history.start()
+                  Backbone.history.start()

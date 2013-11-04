@@ -1,6 +1,6 @@
 # The main app view, loaded when the app is started. Not much happens here,
 # it just loads up other views after it loads app.html.ejs into the <body>.
-define ['zepto', 'underscore', 'backbone', 'brick', 'cs!collections/users', 'cs!views/users', 'tpl!templates/app.html.ejs'], ($, _, Backbone, xtag, Users, UserViews, AppTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'brick', 'cs!collections/users', 'tpl!templates/app.html.ejs'], ($, _, Backbone, xtag, Users, AppTemplate) ->
   'use strict'
 
   AppView = Backbone.View.extend
@@ -53,7 +53,11 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!collections/users', 'cs!
           # prompt and authorize the user's device.
           if not self.selfUser
             console.info "No user with relationship: RELATIONSHIP_SELF found"
-            self.currentView = new UserViews.Login
+            # We manually set the location.hash here because the router hasn't
+            # actually finished loading yet (and thus isn't assigned to
+            # `window.router`, where we'd usually access its `.navigate`
+            # method).
+            window.location.hash = "login"
         error: ->
           # TODO: Obviously, make this better.
           window.alert "Error loading data. Contact support: tofumatt@mozilla.com"

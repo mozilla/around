@@ -3,7 +3,7 @@ www-built
 www-ghdeploy
 
 # CSS output from Stylus
-www/css
+www/css/*.css
 
 .DS_Store
 

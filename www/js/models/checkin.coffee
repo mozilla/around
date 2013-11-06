@@ -5,6 +5,10 @@ define ['backbone'], (Backbone) ->
 
   Checkin = Backbone.Model.extend
     defaults:
+      userId: null
+
+      _isInRecent: false
+
       _createdAt: null
       _updatedAt: null
 

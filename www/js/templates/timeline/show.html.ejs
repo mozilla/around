@@ -1,0 +1,7 @@
+<div id="timeline">
+  <h1><%= l("What's Happening") %></h1>
+
+  <% for (var i in checkins) { %>
+    <%= CheckinShowTemplate({checkin: checkins[i]}) %>
+  <% } %>
+</div>

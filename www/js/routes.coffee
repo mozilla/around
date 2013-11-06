@@ -1,4 +1,4 @@
-define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/users', 'cs!views/venues'], ($, Backbone, AppView, CheckinViews, UserViews, VenueViews) ->
+define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/timeline', 'cs!views/users', 'cs!views/venues'], ($, Backbone, AppView, CheckinViews, TimelineViews, UserViews, VenueViews) ->
   'use strict'
 
   appView = undefined
@@ -11,6 +11,7 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/user
       "checkins/:id": "checkinShow"
       "checkins/create/:id": "checkinCreate"
       # User views
+      "login": "userLogin"
       # "users": "userList"
       "users/:id": "userShow"
       "venues/:id": "venueShow"
@@ -32,7 +33,7 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/user
 
     # Main view; shows the timeline view.
     index: ->
-      appView.render()
+      appView.currentView = new TimelineViews.Show()
 
     # Create a new check-in at a venue based on its venue ID.
     checkinCreate: (id) ->
@@ -62,6 +63,9 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/user
       # navigate back to the index view to load up our app with a user setup.
       UserViews.CreateSelf token, ->
         self.navigate '', {replace: true, trigger: true}
+
+    userLogin: ->
+      appView.currentView = new UserViews.Login
 
     # Show a user's profile. The template adjusts for various user
     # relationships, including the case where this is the active/self user's

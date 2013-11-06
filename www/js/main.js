@@ -18,6 +18,7 @@ require.config({
         cs: 'vendor/cs',
         localforage: 'vendor/localforage',
         jed: 'vendor/jed',
+        moment: 'vendor/moment',
         tpl: 'vendor/tpl',
         underscore: 'vendor/lodash',
         zepto: 'vendor/zepto'
@@ -37,6 +38,9 @@ require.config({
         },
         brick: {
             exports: 'xtag'
+        },
+        moment: {
+            exports: 'moment'
         },
         underscore: {
             exports: '_'

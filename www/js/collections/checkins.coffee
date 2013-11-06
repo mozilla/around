@@ -1,4 +1,4 @@
-define ['underscore', 'backbone', 'backbone_store', 'cs!api', 'cs!models/checkin'], (_, Backbone, Store, API, Checkin) ->
+define ['underscore', 'backbone', 'backbone_store', 'localforage', 'cs!api', 'cs!models/checkin'], (_, Backbone, Store, localForage, API, Checkin) ->
   'use strict'
 
   CheckinCollection = Backbone.Collection.extend
@@ -24,5 +24,35 @@ define ['underscore', 'backbone', 'backbone_store', 'cs!api', 'cs!models/checkin
           if xhr.status == 400
             # Checkin doesn't exist if 400 error code.
             callbacks.error(xhr.response) if callbacks.error
+
+    recent: (args) ->
+      self = this
+
+      checkins = @where {_isInRecent: true}
+
+      args.success(checkins) if args.success
+
+      # Check to see if we've made a request to the "recent" API endpoint in
+      # the past hour.
+      localForage.getItem "lastUpdatedTimestamp-checkins/recent", (lastUpdatedTimestamp) ->
+        # Unless we are more than an hour out-of-date or this method was told
+        # to force an update, we won't make another API call.
+        if !lastUpdatedTimestamp or lastUpdatedTimestamp > window.timestamp() + window.HOUR or args.force
+          API.request "checkins/recent",
+            data:
+              afterTimestamp: lastUpdatedTimestamp or '1'
+            success: (data) ->
+              localForage.setItem "lastUpdatedTimestamp-checkins/recent", window.timestamp(), ->
+                data.response.recent.forEach (c) ->
+                  c._isInRecent = true
+                  checkin = self.create(c)
+                  checkin.save()
+                  checkins.push(checkin)
+
+                args.success(checkins) if args.success
+            error: (xhr, type) ->
+              if xhr.status == 400
+                # Checkin doesn't exist if 400 error code.
+                args.error(xhr.response) if args.error
 
   return new CheckinCollection()

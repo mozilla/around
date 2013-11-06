@@ -1,4 +1,4 @@
-define ['zepto', 'underscore', 'backbone', 'cs!collections/checkins', 'cs!collections/users', 'cs!collections/venues', 'cs!models/checkin', 'tpl!templates/checkins/create-from-venues.html.ejs', 'tpl!templates/checkins/insight.html.ejs'], ($, _, Backbone, Checkins, Users, Venues, Checkin, CreateFromVenuesTemplate, InsightTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'cs!collections/checkins', 'cs!collections/users', 'cs!collections/venues', 'cs!models/checkin', 'tpl!templates/checkins/create-from-venues.html.ejs', 'tpl!templates/checkins/insight.html.ejs', 'tpl!templates/checkins/show.html.ejs'], ($, _, Backbone, Checkins, Users, Venues, Checkin, CreateFromVenuesTemplate, InsightTemplate, ShowTemplate) ->
   'use strict'
 
   # View to create a check-in for a user. Pass a user and a venue object in
@@ -154,6 +154,9 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/checkins', 'cs!collec
 
     _geoError: () ->
       return
+
+  ShowView = Backbone.View.extend
+    template: ShowTemplate
 
   return {
     Create: CreateView

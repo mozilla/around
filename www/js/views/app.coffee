@@ -1,6 +1,6 @@
 # The main app view, loaded when the app is started. Not much happens here,
 # it just loads up other views after it loads app.html.ejs into the <body>.
-define ['zepto', 'underscore', 'backbone', 'brick', 'cs!collections/users', 'cs!views/users', 'tpl!templates/app.html.ejs'], ($, _, Backbone, xtag, Users, UserViews, AppTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'brick', 'cs!collections/users', 'tpl!templates/app.html.ejs'], ($, _, Backbone, xtag, Users, AppTemplate) ->
   'use strict'
 
   AppView = Backbone.View.extend
@@ -43,17 +43,14 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!collections/users', 'cs!
       # prevents the "please sign in screen" from appearing during sign-in.
       return if @selfUser or window.location.hash.match 'access_token='
 
-      self = this
+      @selfUser = Users.getSelf()
 
-      Users.fetch
-        success: (users) ->
-          self.selfUser = Users.getSelf()
-
-          # If there's no "selfUser", we need to display an intro screen/login
-          # prompt and authorize the user's device.
-          if not self.selfUser
-            console.info "No user with relationship: RELATIONSHIP_SELF found"
-            self.currentView = new UserViews.Login
-        error: ->
-          # TODO: Obviously, make this better.
-          window.alert "Error loading data. Contact support: tofumatt@mozilla.com"
+      # If there's no "selfUser", we need to display an intro screen/login
+      # prompt and authorize the user's device.
+      unless @selfUser
+        console.info "No user with relationship: RELATIONSHIP_SELF found"
+        # We manually set the location.hash here because the router hasn't
+        # actually finished loading yet (and thus isn't assigned to
+        # `window.router`, where we'd usually access its `.navigate`
+        # method).
+        window.location.hash = "login"

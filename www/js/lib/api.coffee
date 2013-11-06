@@ -33,13 +33,18 @@ define ['zepto'], ($) ->
       data: data
       dataType: 'json'
       url: "#{window.GLOBALS.API_URL}#{url}"
-      success: args.success
+      success: args.success || defaultSuccessHandler
       error: args.error || defaultErrorHander
 
   # The default error handler for requests to Foursquare that don't define
   # their own error handler. Simply spits out raw error information.
   defaultErrorHander = (xhr, errorType, error) ->
     console.error xhr, errorType, error
+
+  # If, for some reason, an API request opts to do nothing with its success
+  # callback, we'll output some info to the console.
+  defaultSuccessHander = (response) ->
+    console.info response
 
   return {
     request: request

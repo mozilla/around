@@ -39,12 +39,13 @@ define ['zepto'], ($) ->
   # The default error handler for requests to Foursquare that don't define
   # their own error handler. Simply spits out raw error information.
   defaultErrorHander = (xhr, errorType, error) ->
-    console.error xhr, errorType, error
+    console.error "Foursquare API Error", xhr, errorType, error
 
-  # If, for some reason, an API request opts to do nothing with its success
-  # callback, we'll output some info to the console.
-  defaultSuccessHander = (response) ->
-    console.info response
+  # The default success handler for requests to Foursquare that don't define
+  # their own success handler. Outputs the request to the console with INFO
+  # level. This will always be called when using promises.
+  defaultSuccessHandler = (response) ->
+    console.info "Foursquare API Response", response
 
   return {
     request: request

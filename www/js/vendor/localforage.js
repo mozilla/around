@@ -2,7 +2,7 @@
 
 // localForage is a library that allows users to create offline Backbone models
 // and use IndexedDB to store large pieces of data.
-define(['async_storage'], function(asyncStorage) {
+define(['async_storage', 'promise'], function(asyncStorage, promise) {
     // Initialize IndexedDB; fall back to vendor-prefixed versions if needed.
     var indexedDB = indexedDB || window.indexedDB || window.webkitIndexedDB ||
                     window.mozIndexedDB || window.OIndexedDB ||
@@ -23,16 +23,23 @@ define(['async_storage'], function(asyncStorage) {
     // Remove all keys from the datastore, effectively destroying all data in
     // the app's key/value store!
     function clear(callback) {
+        var p = promise();
+
         localStorage.clear();
         if (callback) {
             callback();
         }
+
+        p.fulfill();
+
+        return p;
     }
 
     // Retrieve an item from the store. Unlike the original async_storage
     // library in Gaia, we don't modify return values at all. If a key's value
     // is `undefined`, we pass that value to the callback function.
     function getItem(key, callback) {
+        var p = promise();
         var result = localStorage.getItem(key);
 
         // If a result was found, parse it from serialized JSON into a
@@ -45,28 +52,52 @@ define(['async_storage'], function(asyncStorage) {
         if (callback) {
             callback(result);
         }
+
+        p.fulfill(result);
+
+        return p;
     }
 
     // Same as localStorage's key() method, except takes a callback.
     function key(n, callback) {
+        var p = promise();
+        var result = localStorage.key(n);
+
         if (callback) {
-            callback(localStorage.key(n));
+            callback(result);
         }
+
+        p.fulfill(result);
+
+        return p;
     }
 
     // Supply the number of keys in the datastore to the callback function.
     function length(callback) {
+        var p = promise();
+        var result = localStorage.length;
+
         if (callback) {
-            callback(localStorage.length);
+            callback(result);
         }
+
+        p.fulfill(result);
+
+        return p;
     }
 
     // Remove an item from the store, nice and simple.
     function removeItem(key, callback) {
+        var p = promise();
+
         localStorage.removeItem(key);
         if (callback) {
             callback();
         }
+
+        p.fulfill();
+
+        return p;
     }
 
     // Set a key's value and run an optional callback once the value is set.
@@ -74,6 +105,8 @@ define(['async_storage'], function(asyncStorage) {
     // in case you want to operate on that value only after you're sure it
     // saved, or something like that.
     function setItem(key, value, callback) {
+        var p = promise();
+
         try {
             value = JSON.stringify(value);
         } catch (e) {
@@ -85,13 +118,10 @@ define(['async_storage'], function(asyncStorage) {
         if (callback) {
             callback(value);
         }
-    }
 
-    // Standard error handler for all IndexedDB transactions. Simply logs the
-    // error to the console.
-    function _errorHandler(request, errorText) {
-        console.error((errorText || 'storage error') + ': ',
-                      request.error.name);
+        p.fulfill(value);
+
+        return p;
     }
 
     return {

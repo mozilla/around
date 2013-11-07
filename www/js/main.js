@@ -9,24 +9,29 @@
 // Require.js shortcuts to our libraries.
 require.config({
     paths: {
-        api: 'lib/api',
-        async_storage: 'vendor/async_storage',
-        backbone: 'vendor/backbone',
-        backbone_store: 'vendor/backbone.localforage',
-        brick: 'vendor/brick',
+        'api': 'lib/api',
+        'async_storage': 'vendor/async_storage',
+        'backbone': 'vendor/backbone',
+        'backbone_store': 'vendor/backbone.localforage',
+        'brick': 'vendor/brick',
         'coffee-script': 'vendor/coffee-script',
-        cs: 'vendor/cs',
-        localforage: 'vendor/localforage',
-        jed: 'vendor/jed',
-        moment: 'vendor/moment',
-        tpl: 'vendor/tpl',
-        underscore: 'vendor/lodash',
-        zepto: 'vendor/zepto'
+        'cs': 'vendor/cs',
+        'deferred': 'vendor/deferred',
+        'jed': 'vendor/jed',
+        'localforage': 'vendor/localforage',
+        'moment': 'vendor/moment',
+        'promise': 'vendor/promise',
+        'tpl': 'vendor/tpl',
+        'underscore': 'vendor/lodash',
+        'zepto': 'vendor/zepto'
     },
     // The shim config allows us to configure dependencies for scripts that do
     // not call define() to register a module.
     shim: {
         async_storage: {
+            deps: [
+                'promise'
+            ],
             exports: 'asyncStorage'
         },
         backbone: {
@@ -39,8 +44,17 @@ require.config({
         brick: {
             exports: 'xtag'
         },
+        deferred: {
+            deps: [
+                'zepto'
+            ],
+            exports: 'deferred'
+        },
         moment: {
             exports: 'moment'
+        },
+        promise: {
+            exports: 'promise'
         },
         underscore: {
             exports: '_'

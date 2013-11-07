@@ -11,6 +11,7 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!collections/users', 'tpl
 
     events:
       'click #back': 'goBack'
+      'click #full-modal .accept': 'destroyFullModal'
 
     # Initialize the app. First thing we do is check to see if there's a "self"
     # user already present (there should only ever be one). If there is, we'll
@@ -18,20 +19,35 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!collections/users', 'tpl
     # so they can authorize their account and we can get their OAuth access
     # token.
     initialize: ->
-      _(this).bindAll '_checkForSelfUser'
+      _.bindAll this
 
       # First thing we do: render the app.
       @render()
+
+      @_resizeContent()
+
+      # Setup our window resize event magic.
+      @_resizing = false
+      $(window).on 'resize', (->
+        return if @_resizing
+
+        @_resizing = true
+
+        setTimeout @_resizeContent, 300
+      ).bind this
 
     render: ->
       $(@$el).html(@template)
 
       @_checkForSelfUser()
 
+    destroyFullModal: ->
+      @trigger 'destroy:modal'
+      $('#full-modal').remove()
+
     # Go back one step in the app. For now, we simply use our router to control
     # all state and thus just go back in history. Cheeky!
     goBack: ->
-      $('body').removeClass 'check-in'
       window.history.back()
 
     # Check to see if there's a User with "self" status. This means we have
@@ -47,10 +63,17 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!collections/users', 'tpl
 
       # If there's no "selfUser", we need to display an intro screen/login
       # prompt and authorize the user's device.
-      unless @selfUser
+      if not @selfUser
         console.info "No user with relationship: RELATIONSHIP_SELF found"
         # We manually set the location.hash here because the router hasn't
         # actually finished loading yet (and thus isn't assigned to
         # `window.router`, where we'd usually access its `.navigate`
         # method).
+        # self.render()
         window.location.hash = "login"
+
+    # Set the minimum height of the #content section to be the height of the
+    # device.
+    _resizeContent: ->
+      $('#content').css 'min-height', $(window).height() - $('x-appbar').height()
+      @_resizing = false

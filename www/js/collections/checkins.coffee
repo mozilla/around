@@ -1,4 +1,4 @@
-define ['underscore', 'backbone', 'backbone_store', 'localforage', 'cs!api', 'cs!models/checkin'], (_, Backbone, Store, localForage, API, Checkin) ->
+define ['underscore', 'zepto', 'backbone', 'backbone_store', 'localforage', 'cs!api', 'cs!models/checkin'], (_, $, Backbone, Store, localForage, API, Checkin) ->
   'use strict'
 
   CheckinCollection = Backbone.Collection.extend
@@ -14,16 +14,15 @@ define ['underscore', 'backbone', 'backbone_store', 'localforage', 'cs!api', 'cs
       self = this
 
       # Get information about this checkin.
-      API.request "checkins/#{id}",
-        success: (data) ->
-          checkin = self.create(data.response.checkin)
-          checkin.save()
+      $.when(API.request "checkins/#{id}").done (data) ->
+        checkin = self.create(data.response.checkin)
+        checkin.save()
 
-          callbacks.success(checkin) if callbacks.success
-        error: (xhr, type) ->
-          if xhr.status == 400
-            # Checkin doesn't exist if 400 error code.
-            callbacks.error(xhr.response) if callbacks.error
+        callbacks.success(checkin) if callbacks.success
+      .fail (xhr, type) ->
+        if xhr.status == 400
+          # Checkin doesn't exist if 400 error code.
+          callbacks.error(xhr.response) if callbacks.error
 
     recent: (args) ->
       self = this

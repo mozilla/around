@@ -1,4 +1,4 @@
-define ['underscore', 'backbone', 'backbone_store', 'cs!api', 'cs!models/user'], (_, Backbone, Store, API, User) ->
+define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!api', 'cs!models/user'], (_, $, Backbone, Store, API, User) ->
   'use strict'
 
   # A super-simple collection of all Users. Mostly useful when looking for the

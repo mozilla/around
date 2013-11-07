@@ -6,24 +6,30 @@ define ['zepto', 'underscore', 'backbone', 'localforage', 'cs!collections/users'
   # Static method called to create a user, then run a callback once the user
   # is created. Callback isn't run until the Foursquare API returns information
   # about the user.
-  CreateSelf = (token, callback) ->
+  CreateSelf = (token) ->
+    d = $.Deferred()
+
     # Get information about this user.
-    $.ajax
+    request = $.ajax
       type: 'GET'
       dataType: 'json'
       url: "#{window.GLOBALS.API_URL}users/self?oauth_token=#{token}&v=#{window.GLOBALS.API_DATE}"
-      success: (data) ->
-        # Save this user's access_token for future requests.
-        window.GLOBALS.TOKEN = token
 
-        user = Users.create(data.response.user)
-        user.set
-          access_token: token
-          relationship: User.RELATIONSHIP_SELF
-        user.save()
-        
-        localForage.setItem '_ACCESS_TOKEN', token, ->
-          callback(user)
+    request.done (data) ->
+      # Save this user's access_token for future requests.
+      window.GLOBALS.TOKEN = token
+
+      user = Users.create(data.response.user)
+      user.set
+        access_token: token
+        relationship: User.RELATIONSHIP_SELF
+      user.save()
+      console.log "user", user
+      
+      $.when(localForage.setItem '_ACCESS_TOKEN', token).done ->
+        d.resolve(user)
+
+    d.promise()
 
   ListView = Backbone.View.extend
     template: ListTemplate

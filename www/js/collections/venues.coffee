@@ -1,4 +1,4 @@
-define ['underscore', 'backbone', 'backbone_store', 'cs!api', 'cs!models/venue'], (_, Backbone, Store, API, Venue) ->
+define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!api', 'cs!models/venue'], (_, $, Backbone, Store, API, Venue) ->
   'use strict'
 
   VenuesCollection = Backbone.Collection.extend
@@ -57,8 +57,6 @@ define ['underscore', 'backbone', 'backbone_store', 'cs!api', 'cs!models/venue']
       # Get information about this venue.
       API.request "venues/explore",
         data: options
-        success: (data) ->
-          callbacks.success(data.response)
         error: (xhr, type) ->
           if xhr.status == 400 and callbacks.error
             # Venue doesn't exist if 400 error code.

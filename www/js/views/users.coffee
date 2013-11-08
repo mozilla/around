@@ -24,7 +24,6 @@ define ['zepto', 'underscore', 'backbone', 'localforage', 'cs!collections/users'
         access_token: token
         relationship: User.RELATIONSHIP_SELF
       user.save()
-      console.log "user", user
       
       $.when(localForage.setItem '_ACCESS_TOKEN', token).done ->
         d.resolve(user)

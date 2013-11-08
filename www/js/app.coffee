@@ -14,6 +14,10 @@ define ['zepto', 'jed', 'localforage', 'deferred', 'cs!globals', 'cs!routes', 'c
   prepCollections = ->
     d = $.Deferred()
 
+    unless window.GLOBALS.TOKEN
+      d.resolve()
+      return d.promise()
+
     # I hate myself and want to die.
     Checkins.fetch
       success: ->

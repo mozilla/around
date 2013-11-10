@@ -1,5 +1,7 @@
 <div id="venues">
-  <h3><%= headerLocation %></h3>
+  <% if (headerLocation) { %>
+    <h3><%= headerLocation %></h3>
+  <% } %>
 
   <% if (position && venues.length) { %>
     <ul>
@@ -8,8 +10,8 @@
       <% } %>
     </ul>
   <% } else if (position) { %>
-    <p id="loading-text"><%= l('Finding places near you.') %></p>
+    <p id="loading-text"><span class="circle-small"></span><%= l('Finding places near you.') %></p>
   <% } else { %>
-    <p id="loading-text"><%= l('Getting your location.') %></p>
+    <p id="loading-text"><span class="circle-small"></span><%= l('Getting your location.') %></p>
   <% } %>
 </div>

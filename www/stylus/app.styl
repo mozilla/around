@@ -11,6 +11,7 @@
 
 @import "checkins"
 @import "timeline"
+@import "spinner"
 @import "users"
 @import "venues"
 
@@ -20,47 +21,24 @@ body
     -webkit-user-select none
     -webkit-touch-callout none
 
-x-layout
-    border none
+#back
+    cursor pointer
+    margin-right -55px
+    padding-left 5px
+    z-index 9000
 
-x-layout > section > :only-child
-    position inherit
-
-x-appbar
-    background #00202F
-    font-family "Fira Sans"
-    font-size 34px
-    color #fff
-    line-height 42px
-    height 45px
-    left 0
-    position fixed
-    top 0
-    z-index 10000
-
-    > :before
-        left 6px
-
-    .text
-        color #fff
-        cursor: pointer
-        font-family "Fira Sans"
-        font-size 24px
-        font-weight normal
-        line-height 42px
-        padding-left 6px
+    &:before
+        content "<"
+        display inline-block
+        font-size 1.5em
+        margin 1px 2.5px 0 0
+        vertical-align top
 
 .hide-back-button
     #back
-        display none
+        visibility hidden
 
-    x-appbar > *:before
-        background none
-        display none
-
-    x-appbar > header:after
-        padding-left 0
-
+/*
 a {
     color: blue;
 
@@ -89,6 +67,7 @@ a {
     font-family "Fira Sans"
     margin-top 45px !important
     min-height 300px
+*/
 
 footer
     bottom 5px
@@ -106,14 +85,6 @@ footer
 #content > .summary
     h2
         font-size 24px
-
-// Maps
-#map
-    height 125px
-    margin 0
-    position relative
-    width 100%
-    z-index 12000
 
 // Modal styles from Brick Style Guide
 #modal, #full-modal
@@ -184,10 +155,10 @@ footer
 
     .accept, .cancel
         background #efefef
-        // border 1px solid #979797
         border-top 1px solid #443f3f
         border-radius 6px
         bottom 2.5%
+        cursor pointer
         font-size 30px
         font-weight bold
         left 50%
@@ -201,13 +172,20 @@ footer
         width 95%
         z-index 11001
 
+        &:active
+            background #dedede
+            -moz-box-shadow inset 0px 1px 3px 0px rgba(0,0,0,0.50)
+            -webkit-box-shadow inset 0px 1px 3px 0px rgba(0,0,0,0.50)
+            box-shadow inset 0px 1px 3px 0px rgba(0,0,0,0.50)
+
 button, .button
     background #0095dd
     border 1px solid #297091
     border-radius 6px
     color #fff
+    cursor pointer
     display inline-block
-    line-height 1em
+    line-height .8em
     padding .5em
     text-align center
     text-decoration none

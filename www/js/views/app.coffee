@@ -39,7 +39,8 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!collections/users', 'tpl
     render: ->
       $(@$el).html(@template)
 
-      @_checkForSelfUser()
+      Users.fetch
+        success: @_checkForSelfUser
 
     destroyFullModal: ->
       @trigger 'destroy:modal'

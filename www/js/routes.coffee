@@ -1,4 +1,4 @@
-define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/timeline', 'cs!views/users', 'cs!views/venues'], ($, Backbone, AppView, CheckinViews, TimelineViews, UserViews, VenueViews) ->
+define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/checkins', 'cs!views/timeline', 'cs!views/users', 'cs!views/venues'], ($, Backbone, BackboneRoutefilter, AppView, CheckinViews, TimelineViews, UserViews, VenueViews) ->
   'use strict'
 
   appView = undefined
@@ -77,8 +77,8 @@ define ['zepto', 'backbone', 'cs!views/app', 'cs!views/checkins', 'cs!views/time
         id: id
 
     # Do some slightly-messy DOM cleanup on history state change.
-    _historyCleanup: ->
-      if window.location.hash.length < 2
+    _historyCleanup: (route, id) ->
+      if route is 'route:index'
         $('body').addClass 'hide-back-button'
       else
         $('body').removeClass 'hide-back-button'

@@ -1,0 +1,107 @@
+.circle
+    -moz-animation spinPulse 1.25s infinite ease-in-out
+    -webkit-animation spinPulse 1.25s infinite ease-in-out
+    animation spinPulse 1.25s infinite ease-in-out
+    background-color rgba(0, 0, 0, 0)
+    border 5px solid rgba(0, 183, 229, 0.9)
+    border-left 5px solid rgba(0, 0, 0, 0)
+    border-radius 50px
+    border-right 5px solid rgba(0, 0, 0, 0)
+    box-shadow 0 0 35px #2187e7
+    display inline-block
+    margin 0 auto
+    opacity .9
+    height 50px
+    width 50px
+
+.circle-small
+    -moz-animation spinoffPulse 1.25s infinite linear
+    -webkit-animation spinoffPulse 1.25s infinite linear
+    animation spinoffPulse 1.25s infinite linear
+    background-color rgba(0, 0, 0, 0)
+    border 5px solid rgba(0, 183, 229, 0.9)
+    border-left 5px solid rgba(0, 0, 0, 0)
+    border-radius 50px
+    border-right 5px solid rgba(0, 0, 0, 0)
+    box-shadow 0 0 15px #2187e7
+    display inline-block
+    height 30px
+    margin 0 auto
+    opacity .9
+    position relative
+    top -50px
+    width 30px
+
+span.circle-small
+    border-width 2.5px
+    // box-shadow 0px 0px 5px rgb(33, 135, 231)
+    box-shadow none
+    height 1em
+    margin 0 2.5px
+    position static
+    top auto
+    vertical-align bottom
+    width 1em
+
+@-moz-keyframes spinPulse
+    0%
+        box-shadow 0 0 1px #2187e7
+        opacity 0
+        -moz-transform rotate(160deg)
+
+    50%
+        opacity 1
+        -moz-transform rotate(145deg)
+
+    100%
+        opacity 0
+        -moz-transform rotate(-320deg)
+
+@-webkit-keyframes spinPulse
+    0%
+        box-shadow 0 0 1px #2187e7
+        opacity 0
+        -webkit-transform rotate(160deg)
+
+    50%
+        opacity 1
+        -webkit-transform rotate(145deg)
+
+    100%
+        opacity 0
+        -webkit-transform rotate(-320deg)
+
+@keyframes spinPulse
+    0%
+        box-shadow 0 0 1px #2187e7
+        opacity 0
+        transform rotate(160deg)
+
+    50%
+        opacity 1
+        transform rotate(145deg)
+
+    100%
+        opacity 0
+        transform rotate(-320deg)
+
+@-moz-keyframes spinoffPulse
+    0%
+        -moz-transform rotate(0deg)
+
+    100%
+        -moz-transform rotate(360deg)
+
+@-webkit-keyframes spinoffPulse
+    0%
+        -webkit-transform rotate(0deg)
+
+    100%
+        -webkit-transform rotate(360deg)
+
+@keyframes spinoffPulse
+    0%
+        transform rotate(0deg)
+
+    100%
+        transform rotate(360deg)

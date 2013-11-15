@@ -12,6 +12,7 @@ require.config({
         'api': 'lib/api',
         'async_storage': 'vendor/async_storage',
         'backbone': 'vendor/backbone',
+        'backbone_routefilter': 'vendor/backbone.routefilter',
         'backbone_store': 'vendor/backbone.localforage',
         'brick': 'vendor/brick',
         'coffee-script': 'vendor/coffee-script',
@@ -40,6 +41,9 @@ require.config({
                 'zepto'
             ],
             exports: 'Backbone'
+        },
+        backbone_routefilter: {
+            deps: ['backbone']
         },
         brick: {
             exports: 'xtag'

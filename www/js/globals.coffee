@@ -1,4 +1,4 @@
-define ['zepto', 'localforage', 'moment'], ($, localForage, moment) ->
+define ['zepto', 'localforage', 'moment'], ($, localForage, moment, UserCollection) ->
   mapID = "tofumatt.map-tdyvgkb6"
   mapID = "mozilla-webprod.g7in06ib"
 

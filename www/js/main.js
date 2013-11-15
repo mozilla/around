@@ -1,5 +1,4 @@
-'use strict';
-
+/* global require:true */
 /*!
  around | https://github.com/tofumatt/around
 
@@ -12,12 +11,14 @@ require.config({
         'api': 'lib/api',
         'async_storage': 'vendor/async_storage',
         'backbone': 'vendor/backbone',
+        'backbone_promises': 'vendor/backbone.promises',
         'backbone_routefilter': 'vendor/backbone.routefilter',
         'backbone_store': 'vendor/backbone.localforage',
         'brick': 'vendor/brick',
         'coffee-script': 'vendor/coffee-script',
         'cs': 'vendor/cs',
         'deferred': 'vendor/deferred',
+        'human_model': 'vendor/human-model',
         'jed': 'vendor/jed',
         'localforage': 'vendor/localforage',
         'moment': 'vendor/moment',
@@ -43,7 +44,9 @@ require.config({
             exports: 'Backbone'
         },
         backbone_routefilter: {
-            deps: ['backbone']
+            deps: [
+                'backbone'
+            ]
         },
         brick: {
             exports: 'xtag'
@@ -53,6 +56,12 @@ require.config({
                 'zepto'
             ],
             exports: 'deferred'
+        },
+        human_model: {
+            deps: [
+                'backbone'
+            ],
+            exports: 'HumanModel'
         },
         moment: {
             exports: 'moment'
@@ -69,4 +78,4 @@ require.config({
     }
 });
 
-require(['cs!app']);
+require(['backbone_promises', 'cs!app']);

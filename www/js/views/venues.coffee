@@ -1,4 +1,4 @@
-define ['zepto', 'underscore', 'backbone', 'cs!collections/venues', 'cs!models/venue', 'tpl!templates/venues/list.html.ejs', 'tpl!templates/venues/show.html.ejs'], ($, _, Backbone, Venues, Venue, ListTemplate, ShowTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'cs!models/venue', 'tpl!templates/venues/list.html.ejs', 'tpl!templates/venues/show.html.ejs'], ($, _, Backbone, Venue, ListTemplate, ShowTemplate) ->
   'use strict'
 
   # List of venue views, most often used when searching for a venue, using
@@ -9,14 +9,11 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/venues', 'cs!models/v
     template: ListTemplate
 
     initialize: ->
-      self = this
-
-      Venues.get @ids,
-        success: (venues) ->
-          self.models = venues
-          self.render()
-        error: (response) ->
-          self.render()
+      window.GLOBALS.Venues.where(@ids).done (venues) =>
+        @models = venues
+        @render()
+      .fail =>
+        @render()
 
     render: ->
       html = @template
@@ -30,15 +27,12 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/venues', 'cs!models/v
     template: ShowTemplate
 
     initialize: ->
-      self = this
-
-      Venues.get @id,
-        success: (venue) ->
-          self.model = venue
-          self.render()
-        error: (response) ->
-          self.model = null
-          self.render()
+      window.GLOBALS.Venues.get(@id).done (venue) =>
+        console.log venue
+        @model = venue
+        @render()
+      .fail =>
+        @render()
 
     render: ->
       html = @template

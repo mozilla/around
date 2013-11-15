@@ -189,7 +189,7 @@ define(["underscore", "zepto", "backbone", "localforage"], function (_, $, Backb
     // Override Backbone.sync to call our custom offline sync only.
     // TODO: Allow access to original sync?
     Backbone.sync = function(method, model, options) {
-        var store = model.localStorage || model.collection.localStorage;
+        var store = model.offlineStore || model.localStorage || model.collection.offlineStore || model.collection.localStorage;
 
         switch (method) {
             case "read":

@@ -1,15 +1,23 @@
 # Check-in Model
 # ==============
-define ['backbone'], (Backbone) ->
+define ['human_model'], (HumanModel) ->
   'use strict'
 
-  Checkin = Backbone.Model.extend
-    defaults:
-      userId: null
+  Checkin = HumanModel.define
+    type: "checkin"
 
-      _isInRecent: false
+    props:
+      id:
+        setOnce: true
+        type: "string"
 
-      _createdAt: null
-      _updatedAt: null
+      comments: ['object']
+      photos: ['object']
+      source: ['object']
+      user: ['object']
+      venue: ['object']
+
+      createdAt: ['date']
+      _isInRecent: ['boolean', true, false]
 
   return Checkin

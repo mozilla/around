@@ -34,11 +34,12 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!api', 'cs!model
     # TODO: Deal with caching of coords and explore/nearby venue requests.
     # The coords object is an HTML5 Geolocation `Coordinates` object. Read more
     # here: https://developer.mozilla.org/en-US/docs/Web/API/Coordinates
-    near: (coords) ->
+    near: (coords, section = null) ->
       options = _.extend(coords, {
         sortByDistance: 1
         venuePhotos: 1
       })
+      options.section = section if section
 
       # Search for venues nearby.
       API.request "venues/explore",

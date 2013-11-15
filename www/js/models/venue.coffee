@@ -1,10 +1,25 @@
 # Venue Model
 # ===========
-define ['human_model'], (HumanModel) ->
-  'use strict'
+define ["human_model"], (HumanModel) ->
+  "use strict"
 
   # Venue constants
-  CONSTANTS = {}
+  CONSTANTS =
+    # Available "section" queries, mostly for reference.
+    SECTIONS:
+      "Everything": null
+      "Food": "food"
+      "Drinks": "drinks"
+      "Coffee": "coffee"
+      "Shopping": "shops"
+      "Arts": "arts"
+      "Outdoors": "outdoors"
+      "Sights": "sights"
+      "Trending": "trending"
+
+      "Specials": "specials"
+      "Where to go next?": "nextVenues"
+      "Top Picks": "topPicks"
 
   Venue = HumanModel.define
     type: "venue"

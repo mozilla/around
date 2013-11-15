@@ -1,17 +1,25 @@
-<div id="venues">
-  <% if (headerLocation) { %>
-    <h3><%= headerLocation %></h3>
-  <% } %>
-
-  <% if (position && venues.length) { %>
-    <ul>
-      <% for (i in venues) { %>
-        <li class="venue" data-venue="<%= venues[i].id %>"><%= venues[i].name %></li>
+<% if (sections) { %>
+  <div id="sections">
+    <select>
+      <% for (var s in sections) { %>
+        <option value="<%= sections[s] %>" <%= sectionEnabled === sections[s] ? 'selected' : '' %>><%= s %></option>
       <% } %>
-    </ul>
-  <% } else if (position) { %>
-    <p id="loading-text"><span class="circle-small"></span><%= l('Finding places near you.') %></p>
-  <% } else { %>
-    <p id="loading-text"><span class="circle-small"></span><%= l('Getting your location.') %></p>
-  <% } %>
-</div>
+    </select>
+  </div>
+<% } %>
+
+<% if (headerLocation) { %>
+  <h3>near <%= headerLocation %></h3>
+<% } %>
+
+<% if (position && venues.length) { %>
+  <ul>
+    <% for (i in venues) { %>
+      <li class="venue" data-venue="<%= venues[i].id %>"><%= venues[i].name %></li>
+    <% } %>
+  </ul>
+<% } else if (position) { %>
+  <p id="loading-text"><span class="circle-small"></span><%= l('Finding places near you.') %></p>
+<% } else { %>
+  <p id="loading-text"><span class="circle-small"></span><%= l('Getting your location.') %></p>
+<% } %>

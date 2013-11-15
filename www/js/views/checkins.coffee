@@ -1,4 +1,4 @@
-define ['zepto', 'underscore', 'backbone', 'cs!models/checkin', 'tpl!templates/checkins/create-from-venues.html.ejs', 'tpl!templates/checkins/insight.html.ejs', 'tpl!templates/checkins/show.html.ejs', 'tpl!templates/full-modal.html.ejs'], ($, _, Backbone, Checkin, CreateFromVenuesTemplate, InsightTemplate, ShowTemplate, FullModalTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'cs!models/checkin', 'cs!models/venue', 'tpl!templates/checkins/create-from-venues.html.ejs', 'tpl!templates/checkins/insight.html.ejs', 'tpl!templates/checkins/show.html.ejs', 'tpl!templates/full-modal.html.ejs'], ($, _, Backbone, Checkin, Venue, CreateFromVenuesTemplate, InsightTemplate, ShowTemplate, FullModalTemplate) ->
   'use strict'
 
   # View to create a check-in for a user. Pass a user and a venue object in
@@ -50,6 +50,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!models/checkin', 'tpl!templates/c
     headerLocation: null
     map: null
     position: null
+    section: null
     template: CreateFromVenuesTemplate
     user: null
     venues: []
@@ -57,6 +58,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!models/checkin', 'tpl!templates/c
     _cancelMap: false
 
     events:
+      "click option": "changeSectionSearch"
       "click .venue": "checkInToVenue"
 
     # Get the relevant local venues for this user while we render the template.
@@ -68,17 +70,15 @@ define ['zepto', 'underscore', 'backbone', 'cs!models/checkin', 'tpl!templates/c
       $('body').append FullModalTemplate {
         element: @options._el
         fixedContent: '<div id="map"></div>'
-        templateHTML: @template(@_templateData())
+        templateHTML: "<div id=\"#{@options._el.replace '#', ''}\">#{@template(@_templateData())}</div>"
       }
 
       @setElement @options._el
 
-      @render()
-
     render: ->
       html = @template(@_templateData())
 
-      $(@$el).html(html)
+      @$el.html(html)
 
       if @position and @venues.length
         # Create bounds for the map to focus on.
@@ -97,12 +97,36 @@ define ['zepto', 'underscore', 'backbone', 'cs!models/checkin', 'tpl!templates/c
           padding: [25, 25]
         })
 
+    changeSectionSearch: (event) ->
+      @section = event.currentTarget.value
+      @venues = []
+      @getVenues()
+      @render()
+
     checkInToVenue: (event) ->
       window.app.destroyFullModal()
 
       window.router.navigate "checkins/create/#{$(event.currentTarget).data('venue')}",
         replace: false
         trigger: true
+
+    getVenues: ->
+      return unless @position
+
+      window.GLOBALS.Venues.near({
+        ll: "#{@position.coords.latitude},#{@position.coords.longitude}"
+        accuracy: @position.coords.accuracy
+      }, @section).done (apiResponse) =>
+        @venues = []
+        response = apiResponse.response
+        _(response.groups[0].items).each (item) =>
+          @venues.push item.venue
+
+        @headerLocation = response.headerFullLocation
+
+        @render()
+      .fail ->
+        window.alert "Error getting venues!"
 
     showMap: ->
       @map = L.mapbox.map('map', window.GLOBALS.MAP_ID, {
@@ -122,19 +146,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!models/checkin', 'tpl!templates/c
 
       @showMap()
 
-      window.GLOBALS.Venues.near
-        ll: "#{@position.coords.latitude},#{@position.coords.longitude}"
-        accuracy: @position.coords.accuracy
-      .done (apiResponse) =>
-        response = apiResponse.response
-        _(response.groups[0].items).each (item) =>
-          @venues.push item.venue
-
-        @headerLocation = response.headerFullLocation
-
-        @render()
-      .fail ->
-        window.alert "Error getting venues!"
+      @getVenues()
 
       @render()
 
@@ -148,6 +160,8 @@ define ['zepto', 'underscore', 'backbone', 'cs!models/checkin', 'tpl!templates/c
     _templateData: ->
       {
         headerLocation: @headerLocation
+        sectionEnabled: @section
+        sections: Venue.SECTIONS
         position: @position
         venues: @venues
       }

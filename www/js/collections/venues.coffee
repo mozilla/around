@@ -12,7 +12,7 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!api', 'cs!model
 
       results = @where {id: id}
 
-      if results
+      if results.length
         d.resolve(results[0])
         return d.promise()
 

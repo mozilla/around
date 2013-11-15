@@ -1,6 +1,6 @@
 # The main app view, loaded when the app is started. Not much happens here,
 # it just loads up other views after it loads app.html.ejs into the <body>.
-define ['zepto', 'underscore', 'backbone', 'brick', 'cs!collections/users', 'tpl!templates/app.html.ejs'], ($, _, Backbone, xtag, Users, AppTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'brick', 'cs!models/user', 'tpl!templates/app.html.ejs'], ($, _, Backbone, xtag, User, AppTemplate) ->
   'use strict'
 
   AppView = Backbone.View.extend
@@ -28,19 +28,17 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!collections/users', 'tpl
 
       # Setup our window resize event magic.
       @_resizing = false
-      $(window).on 'resize', (->
+      $(window).on 'resize', =>
         return if @_resizing
 
         @_resizing = true
 
         setTimeout @_resizeContent, 300
-      ).bind this
 
     render: ->
       $(@$el).html(@template)
 
-      Users.fetch
-        success: @_checkForSelfUser
+      window.GLOBALS.Users.fetch().done @_checkForSelfUser
 
     destroyFullModal: ->
       @trigger 'destroy:modal'
@@ -60,7 +58,7 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!collections/users', 'tpl
       # prevents the "please sign in screen" from appearing during sign-in.
       return if @selfUser or window.location.hash.match 'access_token='
 
-      @selfUser = Users.getSelf()
+      @selfUser = window.GLOBALS.Users.getSelf()
 
       # If there's no "selfUser", we need to display an intro screen/login
       # prompt and authorize the user's device.

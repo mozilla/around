@@ -2,42 +2,31 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!api', 'cs!model
   'use strict'
 
   VenuesCollection = Backbone.Collection.extend
-    localStorage: new Store 'Venues'
     model: Venue
+    offlineStore: new Store 'Venues'
 
     # Get a venue (or venues) by its ID. Will make a request to the Foursquare
     # API if the user is not available in the local datastore.
-    get: (id, callbacks = {}) ->
-      # If the item already exists, skip the API call and return a cached
-      # version.
+    get: (id) ->
+      d = $.Deferred()
+
       results = @where {id: id}
 
-      # Return a single item if we only looked for one; otherwise return the
-      # array of results.
-      # It's possible that the `id` argument is a single venue ID or an array
-      # of venues to display. If we only looked for a single venue and found
-      # one locally we can skip the API call. Likewise, if we found the same
-      # number of venues locally as we requested, we'll skip the API request.
-      if typeof(id) is 'object' and results.length > 1 and callbacks.success
-        return callbacks.success(results)
-      else if results.length == 1 and callbacks.success
-        return callbacks.success(results[0])
+      if results
+        d.resolve(results[0])
+        return d.promise()
 
-      self = this
-
-      # TODO: Use a search to find multiple venues? Is that even likely?
-      # Probably not?
       # Get information about this venue.
-      API.request "venues/#{id}",
-        success: (data) ->
-          venue = self.create(data.response.venue)
-          venue.save()
+      API.request("venues/#{id}").done (data) =>
+        venue = new Venue(data.response.venue)
+        @add(venue)
+        venue.save()
 
-          callbacks.success(venue) if callbacks.success
-        error: (xhr, type) ->
-          if xhr.status == 400
-            # Venue doesn't exist if 400 error code.
-            callbacks.error(xhr.response) if callbacks.error
+        d.resolve(venue)
+      .fail (xhr, type) ->
+        d.reject(xhr.response) # if xhr.status == 400
+
+      d.promise()
 
     # Return a list of venues from the Foursquare API based on a location.
     # For now, this always makes a request to the Foursquare API, but we should
@@ -45,21 +34,14 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!api', 'cs!model
     # TODO: Deal with caching of coords and explore/nearby venue requests.
     # The coords object is an HTML5 Geolocation `Coordinates` object. Read more
     # here: https://developer.mozilla.org/en-US/docs/Web/API/Coordinates
-    near: (coords, callbacks = {}) ->
-      self = this
-
+    near: (coords) ->
       options = _.extend(coords, {
         sortByDistance: 1
+        venuePhotos: 1
       })
 
-      # TODO: Use a search to find multiple venues? Is that even likely?
-      # Probably not?
-      # Get information about this venue.
+      # Search for venues nearby.
       API.request "venues/explore",
         data: options
-        error: (xhr, type) ->
-          if xhr.status == 400 and callbacks.error
-            # Venue doesn't exist if 400 error code.
-            callbacks.error(xhr.response)
 
-  return new VenuesCollection()
+  return VenuesCollection

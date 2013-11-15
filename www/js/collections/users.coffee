@@ -4,31 +4,41 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!api', 'cs!model
   # A super-simple collection of all Users. Mostly useful when looking for the
   # "self" user on init.
   UserCollection = Backbone.Collection.extend
-    localStorage: new Store 'Users'
     model: User
+    offlineStore: new Store "Users"
+
+    initialize: (storeName) ->
+      @offlineStore = new Store(storeName) if storeName
 
     # Get a user by their Foursquare ID. Will make a request to the Foursquare
     # API if the user is not available in the local datastore.
-    get: (id, callbacks = {}) ->
-      results = @where {id: id}
-      return callbacks.success(results[0]) if results.length and callbacks.success
+    get: (id) ->
+      d = $.Deferred()
 
-      self = this
+      results = @where {id: id}
+
+      if results.length
+        d.resolve(results[0])
+        return d.promise()
 
       # Get information about this user.
-      API.request "users/#{id}",
-        success: (data) ->
-          user = self.create(data.response.user)
-          user.save()
+      API.request("users/#{id}").done (data) =>
+        user = new User(data.response.user)
+        @add(user)
+        user.save()
 
-          callbacks.success(user) if callbacks.success
-        error: (xhr, type) ->
-          if xhr.status == 400
-            # User doesn't exist if 400 error code.
-            callbacks.error(xhr.response) if callbacks.error
+        d.resolve(user)
+      .fail (xhr, type) ->
+        d.reject(xhr, type) # if xhr.status == 400
+
+      d.promise()
 
     getSelf: ->
-      user = @where {relationship: User.RELATIONSHIP_SELF}
-      if user.length then user[0] else null
+      user = @where {relationship: User.RELATIONSHIP.SELF}
 
-  return new UserCollection()
+      if user.length
+        user[0]
+      else
+        null
+
+  return UserCollection

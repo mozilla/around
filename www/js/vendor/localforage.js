@@ -9,7 +9,7 @@ define(['async_storage', 'promise'], function(asyncStorage, promise) {
                     window.msIndexedDB;
 
     // Because indexedDB is available, we'll use it to store data.
-    if (indexedDB) {
+    if (!window._FORCE_LOCALSTORAGE && indexedDB) {
         return asyncStorage;
     }
 

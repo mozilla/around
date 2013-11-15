@@ -1,4 +1,4 @@
-define ['zepto', 'underscore', 'backbone', 'cs!collections/checkins', 'cs!collections/users', 'cs!collections/venues', 'cs!views/checkins', 'tpl!templates/checkins/show.html.ejs', 'tpl!templates/timeline/show.html.ejs'], ($, _, Backbone, Checkins, Users, Venues, CheckinViews, CheckinShowTemplate, TimelineShowTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'cs!views/checkins', 'tpl!templates/checkins/show.html.ejs', 'tpl!templates/timeline/show.html.ejs'], ($, _, Backbone, CheckinViews, CheckinShowTemplate, TimelineShowTemplate) ->
   'use strict'
 
   ShowView = Backbone.View.extend
@@ -15,8 +15,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/checkins', 'cs!collec
     initialize: ->
       _.bindAll this
 
-      Checkins.recent
-        success: @loadCheckins
+      window.GLOBALS.Checkins.recent().done @loadCheckins
 
       @render()
 
@@ -34,15 +33,6 @@ define ['zepto', 'underscore', 'backbone', 'cs!collections/checkins', 'cs!collec
 
     loadCheckins: (checkins) ->
       @checkins = checkins
-
-      # Add any users or venues not in our data store.
-      for c in @checkins
-        Users.get c.get('user').id,
-          success: (user) ->
-            Users.create(user).save()
-        Venues.get c.get('venue').id,
-          success: (venue) ->
-            Venues.create(venue).save()
 
       @render()
 

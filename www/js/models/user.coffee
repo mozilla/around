@@ -5,67 +5,82 @@
 # "active"/signed-in user of the app. Most of the user attributes are directly
 # mapped to the response from the Foursquare API
 # (https://developer.foursquare.com/docs/responses/user).
-define ['zepto', 'backbone', 'cs!api', 'cs!collections/checkins', 'cs!collections/venues'], ($, Backbone, API, Checkins, Venues) ->
+define ['zepto', 'human_model', 'cs!api', 'cs!models/checkin'], ($, HumanModel, API, Checkin) ->
   'use strict'
 
-  CONSTANTS = {}
+  CONSTANTS =
+    # Options for relationship are from the Foursquare API:
+    #
+    # * self
+    # * friend
+    # * pendingMe (user sent acting user a friend request)
+    # * pendingThem (acting user sent a friend request)
+    # * followingThem (user is a celebrity/page)
+    #
+    # We add the option "null" because if there is no relationship the Foursquare
+    # API will omit this field. null, obviously, implies no
+    # relationship.
+    RELATIONSHIP:
+      SELF: 'self'
+      FRIEND: 'friend'
+      REQUEST_SENT: 'pendingMe'
+      REQUEST_RECEIVED: 'pendingThem'
+      FOLLOWING: 'followingThem'
+      NONE: null
 
-  # Options for relationship are from the Foursquare API:
-  #
-  # * self
-  # * friend
-  # * pendingMe (user sent acting user a friend request)
-  # * pendingThem (acting user sent a friend request)
-  # * followingThem (user is a celebrity/page)
-  #
-  # We add the option "null" because if there is no relationship the Foursquare
-  # API will omit this field. null, obviously, implies no
-  # relationship.
-  CONSTANTS.RELATIONSHIP_SELF = 'self'
-  CONSTANTS.RELATIONSHIP_FRIEND = 'friend'
-  CONSTANTS.RELATIONSHIP_REQUEST_SENT = 'pendingMe'
-  CONSTANTS.RELATIONSHIP_REQUEST_RECEIVED = 'pendingThem'
-  CONSTANTS.RELATIONSHIP_FOLLOWING = 'followingThem'
-  CONSTANTS.RELATIONSHIP_NONE = null
+    # Options for special types of users.
+    #
+    # * page (example: https://foursquare.com/bravo)
+    # * chain (example: https://foursquare.com/starbucks)
+    # * celebrity (example: https://foursquare.com/mariobatali)
+    # * venuePage (example: https://foursquare.com/v/my-arena/4f70bbfa7b0caa2285cc0de9)
+    TYPE:
+      USER: null
+      PAGE: 'page'
+      CHAIN: 'chain'
+      CELEBRITY: 'celebrity'
+      VENUE: 'venuePage'
 
-  # Options for special types of users.
-  #
-  # * page (example: https://foursquare.com/bravo)
-  # * chain (example: https://foursquare.com/starbucks)
-  # * celebrity (example: https://foursquare.com/mariobatali)
-  # * venuePage (example: https://foursquare.com/v/my-arena/4f70bbfa7b0caa2285cc0de9)
-  CONSTANTS.TYPE_USER = null
-  CONSTANTS.TYPE_PAGE = 'page'
-  CONSTANTS.TYPE_CHAIN = 'chain'
-  CONSTANTS.TYPE_CELEBRITY = 'celebrity'
-  CONSTANTS.TYPE_VENUE = 'venuePage'
+  User = HumanModel.define
+    type: "user"
 
-  User = Backbone.Model.extend
-    defaults:
-      # _self: false # Is this the user we are signed in as on our device?
-      # _isFriend: false # By default, we aren't friends with a user.
-      _createdAt: null
-      _updatedAt: null
-
-      id: undefined
-      firstName: ''
-      lastName: ''
-      photo: ''
-      relationship: CONSTANTS.RELATIONSHIP_NONE
+    props:
+      id:
+        setOnce: true
+        type: "string"
+      firstName: ['string']
+      lastName: ['string']
+      # photo: ['string']
+      relationship:
+        allowNull: true
+        default: CONSTANTS.RELATIONSHIP.NONE
+        type: "string"
+        # values: [_.filter _.values(CONSTANTS.RELATIONSHIP), (v) -> v]
+      type:
+        allowNull: true
+        default: CONSTANTS.TYPE.USER
+        type: "string"
+        # values: [_.filter _.values(CONSTANTS.TYPE), (v) -> v]
       # friends: null
-      type: CONSTANTS.TYPE_USER
-      venue: null
-      homeCity: ''
-      gender: null
-      contact: null
-      bio: ''
-      tips: null
+      homeCity: ['string']
+      gender: ['string']
+      # contact: null
+      bio: ['string']
+      # tips: null
 
-      access_token: ''
+      access_token: ['string', true]
 
+    derived:
+      # User's full name.
+      name:
+        deps: ['firstName', 'lastName']
+        fn: ->
+          "#{@firstName} #{@lastName}"
+
+    # otherMethods:
     # Check this user into a venue. Creates a new check-in object added to this
     # user account.
-    checkIn: (venue, callbacks = {}) ->
+    checkIn: (venue) ->
       d = $.Deferred()
 
       doCheckIn = (location) ->
@@ -84,28 +99,21 @@ define ['zepto', 'backbone', 'cs!api', 'cs!collections/checkins', 'cs!collection
         API.request 'checkins/add',
           data: postData
           requestMethod: "POST"
-        .done (response) ->
-          # Add a checkin to this user's colllection.
-          Checkins.add(response.response.checkin)
+        .done (data) ->
+          # Add a checkin to this user's collection.
+          checkin = new Checkin(data.response.checkin)
+          window.GLOBALS.Checkins.add(checkin)
+          checkin.save()
 
-          Checkins.get response.response.checkin.id,
-            success: (checkin) ->
-              callbacks.success(checkin) if callbacks.success
-
-              d.resolve(checkin)
+          d.resolve(checkin)
 
       # Try to get the user's exact location to send to Foursquare. Regardless
       # of location data, we will check-in the user.
-      window.navigator.geolocation.getCurrentPosition doCheckIn, doCheckIn
+      window.navigator.geolocation.getCurrentPosition(doCheckIn, doCheckIn)
 
       d.promise()
 
-
-    name: ->
-      "#{@get('firstName')} #{@get('lastName')}"
-
     profilePhoto: (size = 100) ->
-      "#{@get('photo').prefix}#{size}x#{size}#{@get('photo').suffix}"
-    , CONSTANTS
+      "#{@photo.prefix}#{size}x#{size}#{@photo.suffix}"
 
-  return User
+  return _.extend User, CONSTANTS

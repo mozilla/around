@@ -1,4 +1,4 @@
-define ['underscore', 'zepto', 'backbone', 'backbone_store', 'localforage', 'cs!api', 'cs!models/checkin'], (_, $, Backbone, Store, localForage, API, Checkin) ->
+define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!geo', 'localforage', 'cs!api', 'cs!models/checkin'], (_, $, Backbone, Store, Geo, localForage, API, Checkin) ->
   'use strict'
 
   CheckinCollection = Backbone.Collection.extend
@@ -48,27 +48,39 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'localforage', 'cs!
           # Save the current time so we don't update for another hour.
           localForage.setItem "lastUpdatedTimestamp-checkins/recent", window.timestamp()
 
-          API.request "checkins/recent",
-            data:
-              afterTimestamp: lastUpdatedTimestamp or '1'
-          .done (data) =>
-            data.response.recent.forEach (c) =>
-              checkin = new Checkin(c)
-              checkin._isInRecent = true
+          Geo.getCurrentPosition().always (position, latLng) =>
+            apiParams = {afterTimestamp: lastUpdatedTimestamp or '1'}
+            apiParams.ll = "#{latLng.lat},#{latLng.lng}" if latLng
 
-              @add(checkin)
-              checkin.save()
+            API.request "checkins/recent",
+              data: apiParams
+            .done (data) =>
+              data.response.recent.forEach (c) =>
+                checkin = new Checkin(c)
+                checkin._isInRecent = true
 
-              window.GLOBALS.Users.get(checkin.user.id)
-              window.GLOBALS.Venues.get(checkin.venue.id)
+                @add(checkin)
+                checkin.save()
 
-              checkins.push(checkin)
+                window.GLOBALS.Users.get(checkin.user.id)
+                window.GLOBALS.Venues.get(checkin.venue.id)
 
-            d.resolve(checkins)
-          .fail d.reject
+                checkins.push(checkin)
+
+              d.resolve(@_onePerUser(checkins))
+            .fail d.reject
         else
-          d.resolve(checkins)
+          d.resolve(@_onePerUser(checkins))
 
       d.promise()
+
+    _onePerUser: (collection) ->
+      users = []
+      _.filter collection, (model) ->
+        if _.contains(users, model.user.id)
+          false
+        else
+          users.push model.user.id
+          true
 
   return CheckinCollection

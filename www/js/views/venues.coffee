@@ -28,7 +28,6 @@ define ['zepto', 'underscore', 'backbone', 'cs!models/venue', 'tpl!templates/ven
 
     initialize: ->
       window.GLOBALS.Venues.get(@id).done (venue) =>
-        console.log venue
         @model = venue
         @render()
       .fail =>

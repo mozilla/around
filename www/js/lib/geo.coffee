@@ -26,6 +26,10 @@ define ['zepto', 'localforage'], ($, localForage) ->
           d.resolve(geoCache, geoCache.coords, geoCache.coords.accuracy)
 
         window.navigator.geolocation.getCurrentPosition (position) ->
+          # Extend the position object with some shortcuts.
+          position.coords.lat = position.coords.latitude
+          position.coords.lng = position.coords.longitude
+
           # We can't clone the Position object, so we do a shallow copy.
           positionCopy = {
             coords: {}

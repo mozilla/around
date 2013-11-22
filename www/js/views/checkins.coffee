@@ -137,7 +137,6 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/checkin', 'cs!mo
       @map = L.mapbox.map('map', window.GLOBALS.MAP_ID, {
         zoomControl: false
       }).setView([@position.coords.latitude, @position.coords.longitude], 14)
-      console.log @map
 
       # Disable drag and zoom handlers
       @map.dragging.disable()
@@ -149,7 +148,6 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/checkin', 'cs!mo
 
     _geoSuccess: (position, coords, accuracy) ->
       @position = position
-      console.log position, coords, accuracy
 
       @showMap()
 

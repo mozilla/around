@@ -5,7 +5,7 @@
 # "active"/signed-in user of the app. Most of the user attributes are directly
 # mapped to the response from the Foursquare API
 # (https://developer.foursquare.com/docs/responses/user).
-define ['zepto', 'human_model', 'cs!api', 'cs!models/checkin'], ($, HumanModel, API, Checkin) ->
+define ['zepto', 'cs!geo', 'human_model', 'cs!api', 'cs!models/checkin'], ($, Geo, HumanModel, API, Checkin) ->
   'use strict'
 
   CONSTANTS =
@@ -83,17 +83,19 @@ define ['zepto', 'human_model', 'cs!api', 'cs!models/checkin'], ($, HumanModel, 
     checkIn: (venue) ->
       d = $.Deferred()
 
-      doCheckIn = (location) ->
+      # Try to get the user's exact location to send to Foursquare. Regardless
+      # of location data, we will check-in the user.
+      $.when(Geo.getCurrentPosition).always (position, latLng, accuracy) ->
         postData = {venueId: venue}
 
         # If location has a code and no coords object, the geolocation request
         # failed and we'll post to the Foursquare API without it.
         # TODO: Consider abstracting geo requests and storing recent ones in
         # a global with the timestamp so we can re-use recent requests.
-        unless location.code and !location.coords
+        unless position.code and !position.coords
           _.extend postData, {
-            ll: "#{location.coords.latitude},#{location.coords.longitude}"
-            llAcc: location.coords.accuracy
+            ll: "#{latLng.lat},#{latLng.lng}"
+            llAcc: accuracy
           }
 
         API.request 'checkins/add',
@@ -106,10 +108,6 @@ define ['zepto', 'human_model', 'cs!api', 'cs!models/checkin'], ($, HumanModel, 
           checkin.save()
 
           d.resolve(checkin)
-
-      # Try to get the user's exact location to send to Foursquare. Regardless
-      # of location data, we will check-in the user.
-      window.navigator.geolocation.getCurrentPosition(doCheckIn, doCheckIn)
 
       d.promise()
 

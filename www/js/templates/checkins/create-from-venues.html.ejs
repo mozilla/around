@@ -9,13 +9,26 @@
 <% } %>
 
 <% if (headerLocation) { %>
-  <h3>near <%= headerLocation %></h3>
+  <h2>near <%= headerLocation %></h2>
 <% } %>
 
 <% if (position && venues.length) { %>
   <ul>
     <% for (i in venues) { %>
-      <li class="venue" data-venue="<%= venues[i].id %>"><%= venues[i].name %></li>
+      <li class="venue" data-venue="<%= venues[i].id %>" <% if (venues[i].photos.count) { %>style="background-image: url('<%= venues[i].photos.groups[0].items[0].prefix %><%= venues[i].photos.groups[0].items[0].width %>x<%= venues[i].photos.groups[0].items[0].height %><%= venues[i].photos.groups[0].items[0].suffix %>')"<% } %>>
+        <h3><%= venues[i].name %></h3>
+
+        <% if (venues[i].hereNow.count) { %>
+          <p>
+            <%= venues[i].hereNow.count %>
+            <% if (venues[i].hereNow.count == 1) { %>
+              <%= l('person is here.') %>
+            <% } else { %>
+              <%= l('people are here.') %>
+            <% } %>
+          </p>
+        <% } %>
+      </li>
     <% } %>
   </ul>
 <% } else if (position) { %>

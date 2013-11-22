@@ -19,6 +19,7 @@ require.config({
         'cs': 'vendor/cs',
         'deferred': 'vendor/deferred',
         'human_model': 'vendor/human-model',
+        'geo': 'lib/geo',
         'jed': 'vendor/jed',
         'localforage': 'vendor/localforage',
         'moment': 'vendor/moment',
@@ -77,5 +78,7 @@ require.config({
         }
     }
 });
+
+window._FORCE_LOCALSTORAGE = true;
 
 require(['backbone_promises', 'cs!app']);

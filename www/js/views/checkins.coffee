@@ -1,4 +1,4 @@
-define ['zepto', 'underscore', 'backbone', 'cs!models/checkin', 'cs!models/venue', 'tpl!templates/checkins/create-from-venues.html.ejs', 'tpl!templates/checkins/insight.html.ejs', 'tpl!templates/checkins/show.html.ejs', 'tpl!templates/full-modal.html.ejs'], ($, _, Backbone, Checkin, Venue, CreateFromVenuesTemplate, InsightTemplate, ShowTemplate, FullModalTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/checkin', 'cs!models/venue', 'tpl!templates/checkins/create-from-venues.html.ejs', 'tpl!templates/checkins/insight.html.ejs', 'tpl!templates/checkins/show.html.ejs', 'tpl!templates/full-modal.html.ejs'], ($, _, Backbone, Geo, Checkin, Venue, CreateFromVenuesTemplate, InsightTemplate, ShowTemplate, FullModalTemplate) ->
   'use strict'
 
   # View to create a check-in for a user. Pass a user and a venue object in
@@ -58,14 +58,12 @@ define ['zepto', 'underscore', 'backbone', 'cs!models/checkin', 'cs!models/venue
     _cancelMap: false
 
     events:
-      "click option": "changeSectionSearch"
+      "change select": "changeSectionSearch"
       "click .venue": "checkInToVenue"
 
     # Get the relevant local venues for this user while we render the template.
     initialize: ->
       _.bindAll this
-
-      window.navigator.geolocation.getCurrentPosition(@_geoSuccess, @_geoError)
 
       $('body').append FullModalTemplate {
         element: @options._el
@@ -74,6 +72,8 @@ define ['zepto', 'underscore', 'backbone', 'cs!models/checkin', 'cs!models/venue
       }
 
       @setElement @options._el
+
+      Geo.getCurrentPosition().done(@_geoSuccess).fail(@_geoError)
 
     render: ->
       html = @template(@_templateData())
@@ -85,7 +85,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!models/checkin', 'cs!models/venue
         bounds = new L.Bounds()
 
         # Add the top five venues to the map.
-        _.first(@venues, 4).forEach (v) =>
+        _.first(@venues, 5).forEach (v) =>
           L.marker([v.location.lat, v.location.lng]).addTo(@map)
           bounds.extend [v.location.lat, v.location.lng]
 
@@ -98,7 +98,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!models/checkin', 'cs!models/venue
         })
 
     changeSectionSearch: (event) ->
-      @section = event.currentTarget.value
+      @section = $(event.target).children('option')[event.target.selectedIndex].value
       @venues = []
       @getVenues()
       @render()
@@ -124,7 +124,12 @@ define ['zepto', 'underscore', 'backbone', 'cs!models/checkin', 'cs!models/venue
 
         @headerLocation = response.headerFullLocation
 
-        @render()
+        if @venues.length
+          @render()
+        else
+          console.info "Nothing available for #{@section}; searching for everything instead."
+          @section = null
+          @getVenues()
       .fail ->
         window.alert "Error getting venues!"
 
@@ -132,6 +137,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!models/checkin', 'cs!models/venue
       @map = L.mapbox.map('map', window.GLOBALS.MAP_ID, {
         zoomControl: false
       }).setView([@position.coords.latitude, @position.coords.longitude], 14)
+      console.log @map
 
       # Disable drag and zoom handlers
       @map.dragging.disable()
@@ -141,8 +147,9 @@ define ['zepto', 'underscore', 'backbone', 'cs!models/checkin', 'cs!models/venue
       # Disable tap handler, if present.
       @map.tap.disable() if @map.tap
 
-    _geoSuccess: (position) ->
+    _geoSuccess: (position, coords, accuracy) ->
       @position = position
+      console.log position, coords, accuracy
 
       @showMap()
 

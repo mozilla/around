@@ -5,6 +5,10 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'localforage', 'cs!
     model: Checkin
     offlineStore: new Store 'Checkins'
 
+    # Sort all checkins based on their creation date.
+    comparator: (episode) ->
+      -(new Date(episode.createdAt).getTime())
+
     # Get a checkin based on Foursquare ID. Will make a request to the
     # Foursquare API if this checkin is not available in the local datastore.
     get: (id) ->

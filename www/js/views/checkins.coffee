@@ -59,7 +59,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/checkin', 'cs!mo
 
     events:
       "change select": "changeSectionSearch"
-      "click .venue": "checkInToVenue"
+      "longTap .venue": "checkInToVenue"
 
     # Get the relevant local venues for this user while we render the template.
     initialize: ->

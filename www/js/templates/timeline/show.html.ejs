@@ -1,9 +1,25 @@
 <div id="timeline">
   <h1><%= l("What's Happening") %></h1>
 
-  <% for (var i in checkins) { %>
-    <%= CheckinShowTemplate({checkin: checkins[i]}) %>
-  <% } %>
+  <x-tabbar>
+    <x-tabbar-tab target-selector="#timeline .nearby"><%= l('Near me') %></x-tabbar-tab>
+    <x-tabbar-tab target-selector="#timeline .worldwide"><%= l('Worldwide') %></x-tabbar-tab>
+  </x-tabbar>
+
+  <x-slidebox orientation="x">
+    <x-slides>
+      <x-slide class="nearby">
+        <% for (var i in nearbyCheckins) { %>
+          <%= CheckinShowTemplate({checkin: nearbyCheckins[i]}) %>
+        <% } %>
+      </x-slide>
+      <x-slide class="worldwide">
+        <% for (var i in checkins) { %>
+          <%= CheckinShowTemplate({checkin: checkins[i]}) %>
+        <% } %>
+      </x-slide>
+    </x-slides>
+  </x-slidebox>
 
   <footer>
     <button class="check-in"><%= l('Check In') %></button>

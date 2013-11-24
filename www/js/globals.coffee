@@ -1,6 +1,6 @@
 define ['zepto', 'localforage', 'moment'], ($, localForage, moment, UserCollection) ->
   mapID = "tofumatt.map-tdyvgkb6"
-  mapID = "mozilla-webprod.g7in06ib"
+  # mapID = "mozilla-webprod.g7in06ib"
 
   # Globals used throughout the app, accessible via window.GLOBALS.
   window.GLOBALS = GLOBALS =

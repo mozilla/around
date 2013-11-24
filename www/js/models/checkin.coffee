@@ -20,4 +20,11 @@ define ['human_model'], (HumanModel) ->
       createdAt: ['date']
       _isInRecent: ['boolean', true, false]
 
+    derived:
+      # Checkin location, obtained from venue object.
+      location:
+        deps: ['venue']
+        fn: ->
+          @venue.location
+
   return Checkin

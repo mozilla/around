@@ -1,4 +1,4 @@
-define ['zepto', 'underscore', 'backbone', 'cs!views/checkins', 'tpl!templates/checkins/show.html.ejs', 'tpl!templates/timeline/show.html.ejs'], ($, _, Backbone, CheckinViews, CheckinShowTemplate, TimelineShowTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!views/checkins', 'tpl!templates/checkins/show.html.ejs', 'tpl!templates/timeline/show.html.ejs'], ($, _, Backbone, Geo, CheckinViews, CheckinShowTemplate, TimelineShowTemplate) ->
   'use strict'
 
   ShowView = Backbone.View.extend
@@ -23,6 +23,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!views/checkins', 'tpl!templates/c
       html = @template
         checkins: @checkins
         CheckinShowTemplate: CheckinShowTemplate
+        nearbyCheckins: @nearbyCheckins
 
       @$el.html(html)
 
@@ -33,6 +34,10 @@ define ['zepto', 'underscore', 'backbone', 'cs!views/checkins', 'tpl!templates/c
 
     loadCheckins: (checkins) ->
       @checkins = checkins
+
+      Geo.filterNearby(checkins).done (nearby) =>
+        @nearbyCheckins = nearby
+        @render()
 
       @render()
 

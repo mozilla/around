@@ -52,7 +52,43 @@ define ['zepto', 'localforage'], ($, localForage) ->
         d.resolve(geoCache, geoCache.coords, geoCache.coords.accuracy)
 
     d.promise()
+
+  # Filters a collection of objects based on their proximity to a location (by
+  # default, the current location of the user).
+  # TODO: Allow a position object to be supplied instead of relying on the
+  # user's current location.
+  #
+  # This method requires _every object in the collection to respond to the
+  # `location` property. i.e. `item.location.lat` and `item.location.lng`. If
+  # `lat` or `lng` isn't available `latitude` and `longitude` will also be
+  # tried. If neither property is found, the object will be excluded.
+  #
+  # Returns a promise object, as this method requires geolocation and may take
+  # some time. If geolocation fails, the promise fails.
+  filterNearby = (collection, position = null) ->
+    d = $.Deferred()
+
+    @getCurrentPosition().done (position) ->
+      bounds = L.latLngBounds([
+        [position.coords.latitude - 0.0001, position.coords.longitude - 0.0001],
+        [position.coords.latitude + 0.0001, position.coords.longitude - 0.0001],
+        [position.coords.latitude - 0.0001, position.coords.longitude + 0.0001],
+        [position.coords.latitude + 0.0001, position.coords.longitude + 0.0001]        
+      ]).pad 150
+
+      d.resolve _.filter(collection, (item) ->
+        return false unless item.location and (item.location.lat or item.location.latitude) and (item.location.lng or item.location.longitude)
+
+        bounds.contains L.latLng(
+          item.location.lat or item.location.latitude,
+          item.location.lng or item.location.longitude
+        )
+      )
+    .fail d.reject
+
+    d.promise()
   
   return {
+    filterNearby: filterNearby
     getCurrentPosition: getCurrentPosition
   }

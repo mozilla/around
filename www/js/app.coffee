@@ -22,7 +22,6 @@ define ['zepto', 'jed', 'localforage', 'deferred', 'cs!globals', 'cs!routes', 'c
     # Preload all of our main collections.
     # TODO: Putting this in the early deferred chain causes bugs. Find out why.
     $.when(Checkins.fetch(), Tips.fetch(), Users.fetch(), Venues.fetch()).done ->
-      Tips.getForVenue('41059b00f964a520850b1fe3')
       # Load the router; we're off to the races!
       router = new Routes()
       window.router = router

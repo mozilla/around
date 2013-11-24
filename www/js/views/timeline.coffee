@@ -8,12 +8,20 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!views/checkins', 'tpl!t
     template: TimelineShowTemplate
 
     checkins: null
+    mapURL: null
+    nearbyCheckins: null
 
     events:
       'click .check-in': 'showCheckinModal'
 
     initialize: ->
       _.bindAll this
+
+      @user = window.GLOBALS.Users.getSelf()
+
+      Geo.getCurrentPosition().done (position, latLng) =>
+        @mapURL = Geo.staticMap([latLng.lat, latLng.lng], [[latLng.lat, latLng.lng, @user.profilePhoto()]], 13, [$(window).width(), 100])
+        @render()
 
       window.GLOBALS.Checkins.recent().done @loadCheckins
 
@@ -23,7 +31,9 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!views/checkins', 'tpl!t
       html = @template
         checkins: @checkins
         CheckinShowTemplate: CheckinShowTemplate
+        mapURL: @mapURL
         nearbyCheckins: @nearbyCheckins
+        user: @user
 
       @$el.html(html)
 

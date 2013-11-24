@@ -67,6 +67,7 @@ define ['zepto', 'cs!geo', 'human_model', 'cs!api', 'cs!models/checkin'], ($, Ge
       # contact: null
       bio: ['string']
       # tips: null
+      checkins: ['object']
 
       access_token: ['string', true]
 

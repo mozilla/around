@@ -87,8 +87,27 @@ define ['zepto', 'localforage'], ($, localForage) ->
     .fail d.reject
 
     d.promise()
+
+  staticMap = (coords = null, pins = [], zoomLevel = 14, size = [$(window).width(), 125]) ->
+    return "" unless coords
+
+    pinString = ""
+    for pin in pins
+      if pin[2] and pin[2].match 'https?:\/\/'
+        marker = "url-#{encodeURIComponent(pin[2])}"
+      else if pin[2]
+        marker = pins[2]
+      else
+        marker = "pin-m+0095dd"
+
+      # TODO: Remove this override in the future.
+      marker = "pin-m+0095dd"
+      pinString += "#{marker}(#{pin[1]},#{pin[0]})/"
+
+    "#{window.GLOBALS.MAP_URL}#{pinString}#{coords[1]},#{coords[0]},#{zoomLevel}/#{size[0]}x#{size[1]}.png"
   
   return {
     filterNearby: filterNearby
     getCurrentPosition: getCurrentPosition
+    staticMap: staticMap
   }

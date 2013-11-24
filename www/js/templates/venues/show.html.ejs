@@ -1,5 +1,5 @@
 <% if (venue) { %>
-  <div class="map" style="background: url('<%= window.GLOBALS.MAP_URL %>pin-m+0095dd(<%= venue.location.lng %>,<%= venue.location.lat %>)/<%= venue.location.lng %>,<%= venue.location.lat %>,16/<%= $(window).width() %>x125.png')"></div>
+  <div class="map venue" style="background-image: url('<%= mapURL %>')"></div>
 
   <div class="venue-summary summary">
     <div class="center">

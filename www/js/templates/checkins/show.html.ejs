@@ -1,7 +1,11 @@
 <div class="checkin">
-  <img src="<%= checkin.user.photo.prefix %>100x100<%= checkin.user.photo.suffix %>" alt="<%= checkin.user.firstName %>" class="profile-photo">
-  <h3 class="user"><%= checkin.user.firstName %></h3>
-  <h2 class="venue"><%= checkin.venue.name %></h2>
+  <a href="#venues/<%= checkin.venue.id %>" class="arrow">→</a>
+
+  <a href="#users/<%= checkin.user.id %>">
+    <img src="<%= checkin.user.photo.prefix %>100x100<%= checkin.user.photo.suffix %>" alt="<%= checkin.user.firstName %>" class="profile-photo">
+    <h3 class="user"><%= checkin.user.firstName %></h3>
+  </a>
+  <h2 class="venue"><a href="#venues/<%= checkin.venue.id %>"><%= checkin.venue.name %></a></h2>
 
   <h4><%= window.moment.unix(checkin.createdAt).fromNow() %></h4>
 </div>

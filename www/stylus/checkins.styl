@@ -42,6 +42,7 @@
     margin 5px auto
     max-width 90%
     padding 5px
+    position relative
 
     &:after
         clear both
@@ -57,3 +58,11 @@
         overflow hidden
         text-overflow ellipsis
         white-space nowrap
+
+    .arrow
+        position absolute
+        right 10px
+        top: 50%
+        transform translate(0%, -50%)
+        -moz-transform translate(0%, -50%)
+        -webkit-transform translate(0%, -50%)

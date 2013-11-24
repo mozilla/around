@@ -12,6 +12,7 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!models/user', 'tpl!templ
     events:
       'click #back': 'goBack'
       'click #full-modal .accept': 'destroyFullModal'
+      'longTap #back': 'goToTimeline'
 
     # Initialize the app. First thing we do is check to see if there's a "self"
     # user already present (there should only ever be one). If there is, we'll
@@ -48,6 +49,13 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!models/user', 'tpl!templ
     # all state and thus just go back in history. Cheeky!
     goBack: ->
       window.history.back()
+
+    # A long tap on the back button will return the user home, even if they're
+    # deeply nested inside the app.
+    goToTimeline: ->
+      window.router.navigate '',
+        replace: true
+        trigger: true
 
     # Check to see if there's a User with "self" status. This means we have
     # authorization and are signed in. If not, we'll show an intro/login

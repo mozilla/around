@@ -10,7 +10,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!views/checkins', 'tpl!templates/c
     checkins: null
 
     events:
-      'click #check-in': 'showCheckinModal'
+      'click .check-in': 'showCheckinModal'
 
     initialize: ->
       _.bindAll this

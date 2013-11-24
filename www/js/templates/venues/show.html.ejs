@@ -2,24 +2,28 @@
   <div class="map" style="background: url('<%= window.GLOBALS.MAP_URL %>pin-m+0095dd(<%= venue.location.lng %>,<%= venue.location.lat %>)/<%= venue.location.lng %>,<%= venue.location.lat %>,16/<%= $(window).width() %>x125.png')"></div>
 
   <div class="venue-summary summary">
-    <h2><%= venue.name %></h2>
-    <% if (venue.categories.length || venue.location.city) { %>
-      <h3 class="subheader">
-        <% if (venue.categories.length) { %>
-          <%= venue.categories[0].name %>
-        <% } %>
-        <% if (venue.categories.length || venue.location.city) { %>
-          <small><%= l('in') %>
-        <% } %>
-        <% if (venue.location.city) { %>
-          <%= venue.location.city %>
-
+    <div class="center">
+      <h1><%= venue.name %></h1>
+      <% if (venue.categories.length || venue.location.city) { %>
+        <h3 class="subheader">
           <% if (venue.categories.length) { %>
-            </small>
+            <%= venue.categories[0].name %>
           <% } %>
-        <% } %>
-      </h3>
-    <% } %>
+          <% if (venue.categories.length || venue.location.city) { %>
+            <small><%= l('in') %>
+          <% } %>
+          <% if (venue.location.city) { %>
+            <%= venue.location.city %>
+
+            <% if (venue.categories.length) { %>
+              </small>
+            <% } %>
+          <% } %>
+        </h3>
+      <% } %>
+
+      <button class="check-in"><%= l('Check In') %></button>
+    </div>
 
     <!--
       LOCATION DATA:
@@ -30,6 +34,16 @@
 
     <p><%= venue.description %></p>
   </div>
+
+  <% if (tips) { %>
+    <h1><%= l('Tips') %></h1>
+
+    <% tips.forEach(function(tip) { %>
+      <ul class="venue tips">
+        <li class="tip"><%= tip.text %></li>
+      </ul>
+    <% }) %>
+  <% } %>
 <% } else { %>
   <h2><%= l('Error') %></h2>
 

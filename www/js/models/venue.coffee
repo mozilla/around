@@ -45,7 +45,7 @@ define ["human_model"], (HumanModel) ->
       # specials: {}
       # hereNow: {}
       # mayor: {} # User object... maybe just point to their ID?
-      # tips: {}
+      # tips: ['object']
       # beenHere: ["boolean"]
       shortUrl: ["string"]
       canonicalUrl: ["string"]
@@ -54,6 +54,9 @@ define ["human_model"], (HumanModel) ->
       # like: null
       # dislike: null
       # page: null
+
+    tips: () ->
+      window.GLOBALS.Tips.getForVenue(@id)
 
     session:
       # Used for search results in explore, etc., but rarely saved/used when

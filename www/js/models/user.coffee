@@ -85,14 +85,14 @@ define ['zepto', 'cs!geo', 'human_model', 'cs!api', 'cs!models/checkin'], ($, Ge
 
       # Try to get the user's exact location to send to Foursquare. Regardless
       # of location data, we will check-in the user.
-      $.when(Geo.getCurrentPosition).always (position, latLng, accuracy) ->
+      Geo.getCurrentPosition().done (position, latLng, accuracy) ->
         postData = {venueId: venue}
 
         # If location has a code and no coords object, the geolocation request
         # failed and we'll post to the Foursquare API without it.
         # TODO: Consider abstracting geo requests and storing recent ones in
         # a global with the timestamp so we can re-use recent requests.
-        unless position.code and !position.coords
+        if !position.code and position.coords
           _.extend postData, {
             ll: "#{latLng.lat},#{latLng.lng}"
             llAcc: accuracy

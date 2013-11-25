@@ -1,0 +1,11 @@
+<div <% if (isFullModal) { %>id="full-modal"<% } %> class="modal">
+  <div class="content">
+    <%= fixedContent %>
+
+    <%= templateHTML %>
+  </div>
+
+  <% if (isFullModal) { %>
+    <div class="accept"><%= l('Dismiss') %></div>
+  <% } %>
+</div>

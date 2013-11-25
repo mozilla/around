@@ -17,6 +17,8 @@ define ['human_model'], (HumanModel) ->
       user: ['object']
       venue: ['object']
 
+      shout: ['string']
+
       createdAt: ['date']
       _isInRecent: ['boolean', true, false]
 

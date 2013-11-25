@@ -27,6 +27,8 @@ define ['zepto'], ($) ->
 
     _.extend data, args.data if args.data
 
+    console.debug "#{args.requestMethod || 'GET'} /#{url}", data
+
     # Get information about this user.
     $.ajax
       type: args.requestMethod || "GET"

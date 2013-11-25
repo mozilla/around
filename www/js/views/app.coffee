@@ -11,7 +11,7 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!models/user', 'tpl!templ
 
     events:
       'click #back': 'goBack'
-      'click #full-modal .accept': 'destroyFullModal'
+      'click .modal .accept': 'destroyFullModal'
       'longTap #back': 'goToTimeline'
 
     # Initialize the app. First thing we do is check to see if there's a "self"

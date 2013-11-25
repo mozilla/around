@@ -7,4 +7,8 @@
   <h2 class="venue"><%= checkin.venue.name %></h2>
 
   <h4><%= window.moment.unix(checkin.createdAt).fromNow() %></h4>
+  
+  <% if (checkin.shout) { %>
+    <p class="shout"><%= checkin.shout %></p>
+  <% } %>
 </div>

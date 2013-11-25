@@ -1,0 +1,9 @@
+<div>
+  <h2><%= venue.name %></h2>
+
+  <label for="checkin-comment" class="hide"><%= l('Comment on your check-in') %></label>
+  <textarea id="checkin-comment" placeholder="<%= l('What are you up to?') %>" maxlength="140"></textarea>
+</div>
+
+<button class="cancel"><%= l('Cancel') %></button>
+<button class="accept" data-venue="<%= venue.id %>"><%= l('Check in') %></button>

@@ -1,13 +1,38 @@
-define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/checkin', 'cs!models/venue', 'tpl!templates/checkins/create-from-venues.html.ejs', 'tpl!templates/checkins/insight.html.ejs', 'tpl!templates/checkins/show.html.ejs', 'tpl!templates/full-modal.html.ejs'], ($, _, Backbone, Geo, Checkin, Venue, CreateFromVenuesTemplate, InsightTemplate, ShowTemplate, FullModalTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/checkin', 'cs!models/venue', 'cs!views/modal', 'tpl!templates/checkins/confirm.html.ejs', 'tpl!templates/checkins/create-from-venues.html.ejs', 'tpl!templates/checkins/insight.html.ejs', 'tpl!templates/checkins/show.html.ejs'], ($, _, Backbone, Geo, Checkin, Venue, ModalView, ConfirmTemplate, CreateFromVenuesTemplate, InsightTemplate, ShowTemplate) ->
   'use strict'
+
+  # Confirmation view/modal; displayed whenever a user taps on a "check in"
+  # button to confirm their intent to checkin to this venue.
+  ConfirmView = ModalView.extend
+    _el: '#confirm-checkin'
+    model: Venue
+    template: ConfirmTemplate
+
+    events:
+      "click .accept": "checkInToVenue"
+      "click .cancel": "dismiss"
+
+    checkInToVenue: ->
+      window.app.destroyFullModal()
+
+      new CreateView
+        shout: $('#checkin-comment').val()
+        venueID: @model.id
+
+      @dismiss()
+
+    _templateData: ->
+      {
+        venue: @model
+      }
 
   # View to create a check-in for a user. Pass a user and a venue object in
   # and we create a new check-in.
   CreateView = Backbone.View.extend
-    initialize: (venue, user = null) ->
+    initialize: ->
       user = window.GLOBALS.Users.getSelf() unless user
 
-      $.when(user.checkIn(venue)).done (checkin) =>
+      $.when(user.checkIn(@options.venueID, @options.shout)).done (checkin) =>
         # Navigate to the venue page first, then load our insight modal.
         # TODO: This shouldn't be part of state; load it in as a special
         # modal view instead?
@@ -15,39 +40,27 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/checkin', 'cs!mo
           replace: true
           trigger: true
 
-        $('#modal').show()
         new InsightModalView(
-          _el: '@checkin-insight'
+          _el: '#checkin-insight'
           model: checkin
         )
 
-  InsightModalView = Backbone.View.extend
+  InsightModalView = ModalView.extend
     model: Checkin
     template: InsightTemplate
 
-    initialize: ->
-      $('body').append FullModalTemplate {
-        element: @options._el
-        fixedContent: ''
-        templateHTML: @template
-          checkin: @model
-      }
-
-      @setElement @options._el
-
-      @render()
-
-    render: ->
-      html = @template
+    _templateData: ->
+      {
         checkin: @model
-
-      $(@$el).html(html)
+      }
 
   # View to create a check-in from a list of venues. This is the view that
   # appears when the user taps the "check in" button at the bottom of the
   # screen.
-  ModalFromVenuesView = Backbone.View.extend
+  ModalFromVenuesView = ModalView.extend
+    fixedContent: '<div id="map"></div>'
     headerLocation: null
+    isFullModal: true
     map: null
     position: null
     section: null
@@ -59,27 +72,14 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/checkin', 'cs!mo
 
     events:
       "change select": "changeSectionSearch"
+      "click .venue": "showCheckinOptions"
       "longTap .venue": "checkInToVenue"
 
     # Get the relevant local venues for this user while we render the template.
-    initialize: ->
-      _.bindAll this
-
-      $('body').append FullModalTemplate {
-        element: @options._el
-        fixedContent: '<div id="map"></div>'
-        templateHTML: "<div id=\"#{@options._el.replace '#', ''}\">#{@template(@_templateData())}</div>"
-      }
-
-      @setElement @options._el
-
+    _initialize: ->
       Geo.getCurrentPosition().done(@_geoSuccess).fail(@_geoError)
 
-    render: ->
-      html = @template(@_templateData())
-
-      @$el.html(html)
-
+    _render: ->
       if @position and @venues.length
         # Create bounds for the map to focus on.
         bounds = new L.Bounds()
@@ -106,9 +106,9 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/checkin', 'cs!mo
     checkInToVenue: (event) ->
       window.app.destroyFullModal()
 
-      window.router.navigate "checkins/create/#{$(event.currentTarget).data('venue')}",
-        replace: false
-        trigger: true
+      new CreateView(
+        venueID: $(event.currentTarget).data('venue')
+      )
 
     getVenues: ->
       return unless @position
@@ -132,6 +132,12 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/checkin', 'cs!mo
           @getVenues()
       .fail ->
         window.alert "Error getting venues!"
+
+    showCheckinOptions: (event) ->
+      window.GLOBALS.Venues.get($(event.currentTarget).data('venue')).done (venue) ->
+        new ConfirmView({
+          model: venue
+        })
 
     showMap: ->
       @map = L.mapbox.map('map', window.GLOBALS.MAP_ID, {
@@ -175,6 +181,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/checkin', 'cs!mo
     template: ShowTemplate
 
   return {
+    ConfirmModal: ConfirmView
     Create: CreateView
     InsightModal: InsightModalView
     ModalFromVenues: ModalFromVenuesView

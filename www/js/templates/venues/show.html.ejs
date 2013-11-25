@@ -40,7 +40,11 @@
 
     <% tips.forEach(function(tip) { %>
       <ul class="venue tips">
-        <li class="tip"><%= tip.text %></li>
+        <li class="tip">
+          <p class="text"><%= tip.text %></p>
+
+          <p class="author"><cite><a href="#/users/<%= tip.user.id %>"><%= tip.user.firstName %></a></cite></p>
+        </li>
       </ul>
     <% }) %>
   <% } %>

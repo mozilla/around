@@ -50,7 +50,7 @@ define ['zepto', 'cs!geo', 'human_model', 'cs!api', 'cs!models/checkin'], ($, Ge
         type: "string"
       firstName: ['string']
       lastName: ['string']
-      # photo: ['string']
+      photo: ['object']
       relationship:
         allowNull: true
         default: CONSTANTS.RELATIONSHIP.NONE
@@ -112,6 +112,7 @@ define ['zepto', 'cs!geo', 'human_model', 'cs!api', 'cs!models/checkin'], ($, Ge
       d.promise()
 
     profilePhoto: (size = 100) ->
+      return "" unless @photo
       "#{@photo.prefix}#{size}x#{size}#{@photo.suffix}"
 
   return _.extend User, CONSTANTS

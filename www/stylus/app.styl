@@ -50,6 +50,9 @@ a
     color inherit
     text-decoration none
 
+.hide
+    display none
+
 footer
     bottom 5px
     left 50%
@@ -91,7 +94,7 @@ h1
         font-size 24px
 
 // Modal styles from Brick Style Guide
-#modal, #full-modal
+.modal, #full-modal
     background rgba(0, 0, 0, 0.5)
     height 100%
     left 0
@@ -121,22 +124,30 @@ h1
         h2
             border-bottom 1px solid #979797
             color rgb(75, 87, 92)
-            // font-size 24px
-            // line-height 1.6em
+            font-size 24px
+            line-height 1.6em
             margin 0 auto 1em
 
         .body
             font-size 32px
             line-height 42px
 
-        .cancel
-            font-size 30px
-            line-height 36px
+        .accept, .cancel
+            display inline-block
+            font-size 18px
+            line-height 20px
+            margin-bottom 5px
 
         .accept
-            font-size 30px
             font-weight bold
-            line-height 42px
+
+        .cancel
+            background #efefef
+            border 1px solid #cdcdcd
+            color #313131
+
+        .cancel + .accept
+            margin-left 1em
 
         hr
             background #443f3f

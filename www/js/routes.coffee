@@ -8,7 +8,6 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
       "access_token=:token": "userCreate"
       # Check-in views
       "checkins/:id": "checkinShow"
-      "checkins/create/:id": "checkinCreate"
       # User views
       "login": "userLogin"
       # "users": "userList"
@@ -36,12 +35,6 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
     # Main view; shows the timeline view.
     index: ->
       appView.currentView = new TimelineViews.Show()
-
-    # Create a new check-in at a venue based on its venue ID.
-    checkinCreate: (id) ->
-      $('body').removeClass 'check-in'
-
-      @checkinView = new CheckinViews.Create(id)
 
     # Show information about a check-in including points, comments, etc.
     checkinShow: ->

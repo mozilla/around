@@ -81,7 +81,7 @@ define ['zepto', 'cs!geo', 'human_model', 'cs!api', 'cs!models/checkin'], ($, Ge
     # otherMethods:
     # Check this user into a venue. Creates a new check-in object added to this
     # user account.
-    checkIn: (venue) ->
+    checkIn: (venue, shout = null) ->
       d = $.Deferred()
 
       # Try to get the user's exact location to send to Foursquare. Regardless
@@ -97,6 +97,11 @@ define ['zepto', 'cs!geo', 'human_model', 'cs!api', 'cs!models/checkin'], ($, Ge
           _.extend postData, {
             ll: "#{latLng.lat},#{latLng.lng}"
             llAcc: accuracy
+          }
+
+        if shout and shout.length
+          _.extend postData, {
+            shout: shout
           }
 
         API.request 'checkins/add',

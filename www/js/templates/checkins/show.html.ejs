@@ -8,4 +8,8 @@
   <h2 class="venue"><a href="#venues/<%= checkin.venue.id %>"><%= checkin.venue.name %></a></h2>
 
   <h4><%= window.moment.unix(checkin.createdAt).fromNow() %></h4>
+  
+  <% if (checkin.shout) { %>
+    <p class="shout"><%= checkin.shout %></p>
+  <% } %>
 </div>

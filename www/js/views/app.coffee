@@ -82,5 +82,5 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!models/user', 'tpl!templ
     # Set the minimum height of the #content section to be the height of the
     # device.
     _resizeContent: ->
-      $('#content').css 'min-height', $(window).height() - $('x-appbar').height()
+      $('#content').css 'min-height', ($(window).height() - $('x-appbar').height())
       @_resizing = false

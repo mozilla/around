@@ -43,14 +43,12 @@ define ['zepto', 'underscore', 'backbone', 'cs!models/venue', 'tpl!templates/ven
         @render()
 
     render: ->
-      # console.log @tips
       html = @template
         tips: @tips
         venue: @model
       $(@$el).html(html)
 
     checkIn: ->
-      console.log @model
       window.router.navigate "checkins/create/#{@model.id}",
         replace: false
         trigger: true

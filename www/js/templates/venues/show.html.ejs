@@ -4,6 +4,7 @@
   <div class="venue-summary summary">
     <div class="center">
       <h1><%= venue.name %></h1>
+
       <% if (venue.categories.length || venue.location.city) { %>
         <h3 class="subheader">
           <% if (venue.categories.length) { %>
@@ -47,6 +48,17 @@
         </li>
       </ul>
     <% }) %>
+  <% } %>
+
+  <% if (venue.photos) { %>
+    <h1><%= l('Photos') %></h1>
+
+    <ul class="venue photos">
+      <% venue.photosInGroup("venue").forEach(function(photo) { %>
+        <!-- TODO: Obviously, add a modal photo viewer -->
+        <li><a class="photo" style="background-image: url(<%= photo.prefix %><%= photo.width %>x<%= photo.height %><%= photo.suffix %>);" href="<%= photo.prefix %><%= photo.width %>x<%= photo.height %><%= photo.suffix %>"></a></li>
+      <% }) %>
+    </ul>
   <% } %>
 <% } else { %>
   <h2><%= l('Error') %></h2>

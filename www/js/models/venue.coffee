@@ -34,7 +34,6 @@ define ["human_model"], (HumanModel) ->
         lng: null
       }]
       # contact: {}
-      # location: {}
       categories: ["array"]
       verified: ["boolean", true, false]
       # stats: {}
@@ -43,19 +42,27 @@ define ["human_model"], (HumanModel) ->
       # popular: null
       # price: {}
       # specials: {}
-      # hereNow: {}
-      # mayor: {} # User object... maybe just point to their ID?
+      hereNow: ["object"]
+      mayor: ["object"] # User object... maybe just point to their ID?
       # tips: ['object']
       # beenHere: ["boolean"]
       shortUrl: ["string"]
       canonicalUrl: ["string"]
-      # photos: {}
-      # likes: {}
-      # like: null
-      # dislike: null
+      photos: ["object"]
+      likes: ["object"]
+      like: ["boolean"]
+      dislike: ["boolean"]
       # page: null
 
-    tips: () ->
+    photosInGroup: (type = "venue") ->
+      return [] unless @photos and @photos.count
+
+      photoGroup = _.filter @photos.groups, (group) ->
+        group.type is type
+
+      photoGroup[0].items
+
+    tips: ->
       window.GLOBALS.Tips.getForVenue(@id)
 
     session:

@@ -1,27 +1,23 @@
 <% if (user) { %>
-  <img src="<%= user.profilePhoto() %>" alt="<%= l('Profile photo for ' + user.name()) %>" class="profile-photo">
+  <img src="<%= user.profilePhoto() %>" alt="<%= l('Profile photo for ') + user.name %>" class="profile-photo">
 
   <div class="profile-summary summary">
-    <h2><%= user.name() %></h2>
+    <h2><%= user.name %></h2>
 
-    <!--
-    <h3 class="subheader"><%= user.get('checkins').count %> <small><%= l('Check-ins') %></small></h3>
-    -->
-
-    <% if (user.get('checkins').items.length) { %>
+    <% if (user.checkins && user.checkins.items.length) { %>
       <h4 class="subheader">
         <!--
-          If the user checked in less than thirty minutes ago, we'll say
+          If the user checked in less than a few hours ago, we'll say
           they're still there.
         -->
-        <%= window.timestamp() - 1800 < user.get('checkins').items[0].createdAt ? l('Currently at:') : l('Last at:') %>
+        <%= user.checkins.items[0].createdAt + window.GLOBALS.RECENT_CHECKIN_TIME > window.timestamp() ? l('Currently at:') : l('Last at:') %>
 
-        <a href="#venues/<%= user.get('checkins').items[0].venue.id %>"><%= user.get('checkins').items[0].venue.name %></a>
+        <a href="#venues/<%= user.checkins.items[0].venue.id %>"><%= user.checkins.items[0].venue.name %></a>
       </h4>
     <% } %>
 
     <!--
-    <h4 class="subheader"><%= l('From') %> <%= user.get('homeCity') %></h4>
+    <h4 class="subheader"><%= l('From') %> <%= user.homeCity %></h4>
     -->
 
     <p><%= user.get('bio') %></p>

@@ -17,7 +17,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/checkin', 'cs!mo
 
         $('#modal').show()
         new InsightModalView(
-          _el: '@checkin-insight'
+          _el: '#checkin-insight'
           model: checkin
         )
 

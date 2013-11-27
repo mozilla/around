@@ -2,3 +2,57 @@
     background no-repeat center top
     height 125px
     width 100%
+
+.venue-summary
+    &:after
+        clear both
+        content ""
+        display block
+
+    .subheader, .check-in
+        display inline-block
+        vertical-align middle
+
+    .subheader
+        margin 0 5px
+
+    .subheader + .check-in
+        margin-right 5px
+
+.tips.venue
+    .tip
+        border 1px solid gray
+        clear both
+        margin 5px auto
+        max-width 90%
+        padding 5px
+
+        &:after
+            clear both
+            content ""
+            display block
+
+        .text
+            font-size .9em
+            margin 0 0 .75em
+
+        .author
+            float right
+
+            &:before
+                content "—"
+
+.photos.venue
+    display block
+    margin 0 auto
+    text-align center
+
+    li
+        display inline
+
+    .photo
+        background #fff no-repeat center center/200px auto
+        border 1px solid #cfcfcf
+        display inline-block
+        height 100px
+        width 30%

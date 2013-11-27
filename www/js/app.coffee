@@ -1,4 +1,4 @@
-define ['zepto', 'jed', 'localforage', 'deferred', 'cs!globals', 'cs!routes', 'cs!collections/checkins', 'cs!collections/users', 'cs!collections/venues'], ($, Jed, localForage, Deferred, GLOBALS, Routes, CheckinCollection, UserCollection, VenueCollection) ->
+define ['zepto', 'jed', 'localforage', 'deferred', 'cs!globals', 'cs!routes', 'cs!collections/checkins', 'cs!collections/tips', 'cs!collections/users', 'cs!collections/venues'], ($, Jed, localForage, Deferred, GLOBALS, Routes, CheckinCollection, TipCollection, UserCollection, VenueCollection) ->
   'use strict'
 
   # Set some browser/device classes so we can add specific bits of "feel" to
@@ -10,6 +10,7 @@ define ['zepto', 'jed', 'localforage', 'deferred', 'cs!globals', 'cs!routes', 'c
 
   # Initialize our global collections, where we fetch/store models.
   window.GLOBALS.Checkins = Checkins = new CheckinCollection()
+  window.GLOBALS.Tips = Tips = new TipCollection()
   window.GLOBALS.Users = Users = new UserCollection()
   window.GLOBALS.Venues = Venues = new VenueCollection()
 
@@ -20,7 +21,7 @@ define ['zepto', 'jed', 'localforage', 'deferred', 'cs!globals', 'cs!routes', 'c
     console.debug "LOADING APP!"
     # Preload all of our main collections.
     # TODO: Putting this in the early deferred chain causes bugs. Find out why.
-    $.when(Checkins.fetch(), Users.fetch(), Venues.fetch()).done ->
+    $.when(Checkins.fetch(), Tips.fetch(), Users.fetch(), Venues.fetch()).done ->
       # Load the router; we're off to the races!
       router = new Routes()
       window.router = router

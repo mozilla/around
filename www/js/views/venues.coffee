@@ -26,17 +26,32 @@ define ['zepto', 'underscore', 'backbone', 'cs!models/venue', 'tpl!templates/ven
     model: Venue
     template: ShowTemplate
 
+    tips: []
+
+    events:
+      'click .check-in': 'checkIn'
+
     initialize: ->
       window.GLOBALS.Venues.get(@id).done (venue) =>
         @model = venue
         @render()
+
+        venue.tips().done (tips) =>
+          @tips = _.first(tips, 5)
+          @render()
       .fail =>
         @render()
 
     render: ->
       html = @template
+        tips: @tips
         venue: @model
       $(@$el).html(html)
+
+    checkIn: ->
+      window.router.navigate "checkins/create/#{@model.id}",
+        replace: false
+        trigger: true
 
   return {
     List: ListView

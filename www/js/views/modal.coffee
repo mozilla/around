@@ -1,5 +1,11 @@
-# The main app view, loaded when the app is started. Not much happens here,
-# it just loads up other views after it loads app.html.ejs into the <body>.
+# A generic modal view, with optional full-screen modal (see the "check in"
+# view launched from the timeline for an example). Meant to be extended by
+# another view which means to be the content INSIDE the modal.
+#
+# You can use the _initalize() and _render() methods to take the place of the
+# usual Backbone view methods; they will be called after the base view's
+# methods are called. You can extend the view with `isFullModal: true` in order
+# to get a full-screen modal with a "Dismiss" button at the bottom.
 define ['zepto', 'underscore', 'backbone', 'tpl!templates/modal.html.ejs'], ($, _, Backbone, ModalTemplate) ->
   'use strict'
 

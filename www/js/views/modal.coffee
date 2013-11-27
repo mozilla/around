@@ -21,6 +21,9 @@ define ['zepto', 'underscore', 'backbone', 'tpl!templates/modal.html.ejs'], ($, 
     fixedContent: ''
     isFullModal: false
 
+    events:
+      "click .cancel": "dismiss"
+
     # Load the fixed content and template HTML into the modal, then add it to
     # the body of the page.
     initialize: ->

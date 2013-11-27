@@ -9,6 +9,7 @@ define ['zepto', 'localforage', 'moment'], ($, localForage, moment, UserCollecti
     AUTH_URL: ""
     CLIENT_ID: "Y50ARQDQNJGI2JU3SPTI1MVEM3OZJ1H120H3UXCQVMAI05OJ"
     DATABASE_NAME: "around"
+    DEFAULT_MAP_MARKER: "pin-m+0095dd"
     HAS:
       nativeScroll: (->
         "WebkitOverflowScrolling" in window.document.createElement("div").style

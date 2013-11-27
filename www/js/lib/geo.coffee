@@ -98,10 +98,10 @@ define ['zepto', 'localforage'], ($, localForage) ->
       else if pin[2]
         marker = pins[2]
       else
-        marker = "pin-m+0095dd"
+        marker = window.GLOBALS.DEFAULT_MAP_MARKER
 
       # TODO: Remove this override in the future.
-      marker = "pin-m+0095dd"
+      marker = window.GLOBALS.DEFAULT_MAP_MARKER
       pinString += "#{marker}(#{pin[1]},#{pin[0]})/"
 
     "#{window.GLOBALS.MAP_URL}#{pinString}#{coords[1]},#{coords[0]},#{zoomLevel}/#{size[0]}x#{size[1]}.png"

@@ -2,7 +2,7 @@ build: update_locale_json
 	- rm -rf www-built
 	- rm -rf www/css
 	mkdir -p www/css
-	sass www/scss/app.scss www/css/app.css
+	stylus www/stylus/app.styl --out www/css
 	node ./node_modules/requirejs/bin/r.js -o build-css.js
 	node node_modules/requirejs/bin/r.js -o build-js.js
 	mkdir -p www-built/js/vendor/

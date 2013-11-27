@@ -12,7 +12,8 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!models/user', 'tpl!templ
     events:
       'click #back': 'goBack'
       'click #full-modal .accept': 'destroyFullModal'
-      'click .modal': 'destroyModal'
+      'click #full-modal-bg': 'destroyFullModal'
+      'click .modal.standard': 'destroyModal'
       'longTap #back': 'goToTimeline'
 
     # Initialize the app. First thing we do is check to see if there's a "self"
@@ -44,14 +45,11 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!models/user', 'tpl!templ
 
     destroyFullModal: ->
       @trigger 'destroy:modal'
-      $('#full-modal').remove()
+      $('#full-modal,#full-modal-bg').remove()
 
     # If the "background" of a modal is tapped, we remove that modal.
     destroyModal: (event) ->
-      if event.explicitOriginalTarget.id is 'full-modal'
-        @destroyFullModal()
-      else if event.explicitOriginalTarget.className is 'modal'
-        $(event.explicitOriginalTarget).remove()
+      $('.modal.standard').remove()
 
     # Go back one step in the app. For now, we simply use our router to control
     # all state and thus just go back in history. Cheeky!

@@ -94,15 +94,13 @@ h1
         font-size 24px
 
 // Modal styles from Brick Style Guide
-.modal, #full-modal
-    background rgba(0, 0, 0, 0.5)
+.modal, #full-modal, #full-modal-bg
     height 100%
     left 0
     overflow-y hidden
     position fixed
     top 0
     width 100%
-    z-index 11000
 
     .content
         background #fff
@@ -119,7 +117,7 @@ h1
         -moz-transform translate(-50%, -50%)
         -webkit-transform translate(-50%, -50%)
         width 90%
-        z-index 11000
+        z-index 12000
 
         h2
             border-bottom 1px solid #979797
@@ -152,6 +150,10 @@ h1
         hr
             background #443f3f
 
+.modal, #full-modal-bg
+    background rgba(0, 0, 0, 0.5)
+    z-index 11000
+
 #full-modal
     .content
         height 95%
@@ -182,7 +184,7 @@ h1
         -moz-transform translate(-50%, 0%)
         -webkit-transform translate(-50%, 0%)
         width 95%
-        z-index 11001
+        z-index 12001
 
         &:active
             background #dedede

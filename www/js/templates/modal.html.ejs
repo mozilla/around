@@ -1,4 +1,8 @@
-<div <% if (isFullModal) { %>id="full-modal"<% } %> class="modal">
+<% if (isFullModal) { %>
+  <div id="full-modal-bg"></div>
+<% } %>
+
+<div <% if (isFullModal) { %>id="full-modal"<% } %> class="modal <% if (!isFullModal) { %>standard<% } %>">
   <div class="content">
     <%= fixedContent %>
 

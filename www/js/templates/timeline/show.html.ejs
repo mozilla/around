@@ -3,13 +3,13 @@
   <h1><%= l("What's Happening") %></h1>
 
   <x-tabbar>
-    <x-tabbar-tab target-selector="#timeline .nearby"><%= l('Near me') %></x-tabbar-tab>
-    <x-tabbar-tab target-selector="#timeline .worldwide"><%= l('Worldwide') %></x-tabbar-tab>
+    <x-tabbar-tab data-target-selector="#timeline .nearby" class="active"><%= l('Near me') %></x-tabbar-tab>
+    <x-tabbar-tab data-target-selector="#timeline .worldwide"><%= l('Worldwide') %></x-tabbar-tab>
   </x-tabbar>
 
   <x-slidebox orientation="x">
     <x-slides>
-      <x-slide class="nearby">
+      <x-slide class="nearby active">
         <% for (var i in nearbyCheckins) { %>
           <%= CheckinShowTemplate({checkin: nearbyCheckins[i]}) %>
         <% } %>

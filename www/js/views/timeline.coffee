@@ -13,6 +13,8 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!views/checkins', 'tpl!t
 
     events:
       'click .check-in': 'showCheckinModal'
+      # HACK: This should work in brick, but currently doesn't.
+      'click x-tabbar-tab': 'toggleTabs'
 
     initialize: ->
       _.bindAll this
@@ -60,6 +62,11 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!views/checkins', 'tpl!t
         _el: '#venues'
 
       window.app.on 'destroy:modal', @destroyCheckinModal
+
+    toggleTabs: (event) ->
+      @$('x-tabbar-tab,x-slide').removeClass('active')
+      $(event.target).addClass('active')
+      $($(event.target).data('target-selector')).addClass('active')
 
   return {
     Show: ShowView

@@ -1,4 +1,4 @@
-define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/venue', 'tpl!templates/venues/list.html.ejs', 'tpl!templates/venues/show.html.ejs'], ($, _, Backbone, Geo, Venue, ListTemplate, ShowTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/venue', 'cs!views/checkins', 'tpl!templates/venues/list.html.ejs', 'tpl!templates/venues/show.html.ejs'], ($, _, Backbone, Geo, Venue, CheckinViews, ListTemplate, ShowTemplate) ->
   'use strict'
 
   # List of venue views, most often used when searching for a venue, using
@@ -55,9 +55,9 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/venue', 'tpl!tem
       $(@$el).html(html)
 
     checkIn: ->
-      window.router.navigate "checkins/create/#{@model.id}",
-        replace: false
-        trigger: true
+      new CheckinViews.ConfirmModal({
+        model: @model
+      })
 
   return {
     List: ListView

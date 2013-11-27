@@ -61,7 +61,7 @@
     </ul>
   <% } %>
 
-  <p class="attribution"><a href="https://foursquare.com/v/<%= venue.id %>?ref=<%= window.GLOBALS.CLIENT_ID %>">See this venue on Foursquare's website.</a></p>
+  <p class="attribution"><a href="https://foursquare.com/v/<%= venue.id %>?ref=<%= window.GLOBALS.CLIENT_ID %>" target="_blank"><%= l("See this venue on Foursquare's website.") %></a></p>
 <% } else { %>
   <h2><%= l('Error') %></h2>
 

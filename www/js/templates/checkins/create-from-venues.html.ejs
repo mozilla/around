@@ -1,12 +1,16 @@
-<% if (sections) { %>
-  <div id="sections">
-    <select>
-      <% for (var s in sections) { %>
-        <option value="<%= sections[s] %>" <%= sectionEnabled === sections[s] ? 'selected' : '' %>><%= s %></option>
-      <% } %>
-    </select>
-  </div>
-<% } %>
+<div class="attribution-container">
+  <p><%= ('Data from ') %><a href="https://foursquare.com/" target="_blank">Foursquare</a></p>
+
+  <% if (sections) { %>
+    <div id="sections">
+      <select>
+        <% for (var s in sections) { %>
+          <option value="<%= sections[s] %>" <%= sectionEnabled === sections[s] ? 'selected' : '' %>><%= s %></option>
+        <% } %>
+      </select>
+    </div>
+  <% } %>
+</div>
 
 <% if (headerLocation) { %>
   <h2>near <%= headerLocation %></h2>

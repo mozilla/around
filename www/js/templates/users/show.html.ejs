@@ -10,7 +10,7 @@
           If the user checked in less than a few hours ago, we'll say
           they're still there.
         -->
-        <%= window.timestamp() - (window.GLOBALS.HOUR * 2) < user.checkins.items[0].createdAt ? l('Currently at:') : l('Last at:') %>
+        <%= user.checkins.items[0].createdAt + window.GLOBALS.RECENT_CHECKIN_TIME > window.timestamp() ? l('Currently at:') : l('Last at:') %>
 
         <a href="#venues/<%= user.checkins.items[0].venue.id %>"><%= user.checkins.items[0].venue.name %></a>
       </h4>

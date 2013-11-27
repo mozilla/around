@@ -10,8 +10,9 @@
 @import "helper"
 
 @import "checkins"
-@import "timeline"
+@import "maps"
 @import "spinner"
+@import "timeline"
 @import "users"
 @import "venues"
 
@@ -45,6 +46,10 @@ html[dir="rtl"]
     #back
         visibility hidden
 
+a
+    color inherit
+    text-decoration none
+
 footer
     bottom 5px
     left 50%
@@ -68,6 +73,16 @@ h1
 .check-in
     color #fff
     font-size 18px
+
+.arrow
+    background #efefef
+    border 1px solid #979797
+    border-radius 18px
+    color #030303
+    display inline-block
+    font-size 16px
+    padding .25em
+    text-decoration none
 
 // Generic summary styles (used when a showView is the main content of the
 // page.)

@@ -1,4 +1,4 @@
-define ['zepto', 'underscore', 'backbone', 'cs!models/venue', 'tpl!templates/venues/list.html.ejs', 'tpl!templates/venues/show.html.ejs'], ($, _, Backbone, Venue, ListTemplate, ShowTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/venue', 'tpl!templates/venues/list.html.ejs', 'tpl!templates/venues/show.html.ejs'], ($, _, Backbone, Geo, Venue, ListTemplate, ShowTemplate) ->
   'use strict'
 
   # List of venue views, most often used when searching for a venue, using
@@ -31,9 +31,14 @@ define ['zepto', 'underscore', 'backbone', 'cs!models/venue', 'tpl!templates/ven
     events:
       'click .check-in': 'checkIn'
 
+    mapURL: null
+
     initialize: ->
       window.GLOBALS.Venues.get(@id).done (venue) =>
         @model = venue
+
+        @mapURL = Geo.staticMap([venue.location.lat, venue.location.lng], [[venue.location.lat, venue.location.lng]], 16, [$(window).width(), 125])
+
         @render()
 
         venue.tips().done (tips) =>
@@ -44,6 +49,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!models/venue', 'tpl!templates/ven
 
     render: ->
       html = @template
+        mapURL: @mapURL
         tips: @tips
         venue: @model
       $(@$el).html(html)

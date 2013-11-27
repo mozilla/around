@@ -37,11 +37,19 @@
         text-align center
 
 .checkin
-    border 1px solid gray
+    background #efefef
+    border-bottom 1px solid #cdcdcd
     clear both
-    margin 5px auto
+    margin 0 auto
     max-width 90%
     padding 5px
+    position relative
+
+    &:nth-child(2)
+        background #fefefe
+
+        .arrow
+            background #efefef
 
     &:after
         clear both
@@ -53,7 +61,23 @@
         margin 0 5px 0 0
         width 50px
 
+    .user
+        font-size .9em
+
     .venue
+        margin .25em 30px .25em 0
         overflow hidden
         text-overflow ellipsis
         white-space nowrap
+
+    h4
+        font-size .8em
+
+    .arrow
+        background #efefef
+        position absolute
+        right 10px
+        top: 50%
+        transform translate(0%, -50%)
+        -moz-transform translate(0%, -50%)
+        -webkit-transform translate(0%, -50%)

@@ -1,4 +1,4 @@
-define ['zepto', 'underscore', 'backbone', 'cs!views/checkins', 'tpl!templates/checkins/show.html.ejs', 'tpl!templates/timeline/show.html.ejs'], ($, _, Backbone, CheckinViews, CheckinShowTemplate, TimelineShowTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!views/checkins', 'tpl!templates/checkins/show.html.ejs', 'tpl!templates/timeline/show.html.ejs'], ($, _, Backbone, Geo, CheckinViews, CheckinShowTemplate, TimelineShowTemplate) ->
   'use strict'
 
   ShowView = Backbone.View.extend
@@ -8,12 +8,20 @@ define ['zepto', 'underscore', 'backbone', 'cs!views/checkins', 'tpl!templates/c
     template: TimelineShowTemplate
 
     checkins: null
+    mapURL: null
+    nearbyCheckins: null
 
     events:
       'click .check-in': 'showCheckinModal'
 
     initialize: ->
       _.bindAll this
+
+      @user = window.GLOBALS.Users.getSelf()
+
+      Geo.getCurrentPosition().done (position, latLng) =>
+        @mapURL = Geo.staticMap([latLng.lat, latLng.lng], [[latLng.lat, latLng.lng, @user.profilePhoto()]], 13, [$(window).width(), 100])
+        @render()
 
       window.GLOBALS.Checkins.recent().done @loadCheckins
 
@@ -23,6 +31,9 @@ define ['zepto', 'underscore', 'backbone', 'cs!views/checkins', 'tpl!templates/c
       html = @template
         checkins: @checkins
         CheckinShowTemplate: CheckinShowTemplate
+        mapURL: @mapURL
+        nearbyCheckins: @nearbyCheckins
+        user: @user
 
       @$el.html(html)
 
@@ -33,6 +44,10 @@ define ['zepto', 'underscore', 'backbone', 'cs!views/checkins', 'tpl!templates/c
 
     loadCheckins: (checkins) ->
       @checkins = checkins
+
+      Geo.filterNearby(checkins).done (nearby) =>
+        @nearbyCheckins = nearby
+        @render()
 
       @render()
 

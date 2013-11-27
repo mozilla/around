@@ -52,7 +52,62 @@ define ['zepto', 'localforage'], ($, localForage) ->
         d.resolve(geoCache, geoCache.coords, geoCache.coords.accuracy)
 
     d.promise()
+
+  # Filters a collection of objects based on their proximity to a location (by
+  # default, the current location of the user).
+  # TODO: Allow a position object to be supplied instead of relying on the
+  # user's current location.
+  #
+  # This method requires _every object in the collection to respond to the
+  # `location` property. i.e. `item.location.lat` and `item.location.lng`. If
+  # `lat` or `lng` isn't available `latitude` and `longitude` will also be
+  # tried. If neither property is found, the object will be excluded.
+  #
+  # Returns a promise object, as this method requires geolocation and may take
+  # some time. If geolocation fails, the promise fails.
+  filterNearby = (collection, position = null) ->
+    d = $.Deferred()
+
+    @getCurrentPosition().done (position) ->
+      bounds = L.latLngBounds([
+        [position.coords.latitude - 0.0001, position.coords.longitude - 0.0001],
+        [position.coords.latitude + 0.0001, position.coords.longitude - 0.0001],
+        [position.coords.latitude - 0.0001, position.coords.longitude + 0.0001],
+        [position.coords.latitude + 0.0001, position.coords.longitude + 0.0001]        
+      ]).pad 150
+
+      d.resolve _.filter(collection, (item) ->
+        return false unless item.location and (item.location.lat or item.location.latitude) and (item.location.lng or item.location.longitude)
+
+        bounds.contains L.latLng(
+          item.location.lat or item.location.latitude,
+          item.location.lng or item.location.longitude
+        )
+      )
+    .fail d.reject
+
+    d.promise()
+
+  staticMap = (coords = null, pins = [], zoomLevel = 14, size = [$(window).width(), 125]) ->
+    return "" unless coords
+
+    pinString = ""
+    for pin in pins
+      if pin[2] and pin[2].match 'https?:\/\/'
+        marker = "url-#{encodeURIComponent(pin[2])}"
+      else if pin[2]
+        marker = pins[2]
+      else
+        marker = window.GLOBALS.DEFAULT_MAP_MARKER
+
+      # TODO: Remove this override in the future.
+      marker = window.GLOBALS.DEFAULT_MAP_MARKER
+      pinString += "#{marker}(#{pin[1]},#{pin[0]})/"
+
+    "#{window.GLOBALS.MAP_URL}#{pinString}#{coords[1]},#{coords[0]},#{zoomLevel}/#{size[0]}x#{size[1]}.png"
   
   return {
+    filterNearby: filterNearby
     getCurrentPosition: getCurrentPosition
+    staticMap: staticMap
   }

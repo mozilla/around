@@ -8,11 +8,13 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!views/checkins', 'tpl!t
     template: TimelineShowTemplate
 
     checkins: null
+    loadingCheckins: true
     mapURL: null
     nearbyCheckins: null
 
     events:
-      'click .check-in': 'showCheckinModal'
+      'click #timeline .check-in': 'showCheckinModal'
+      'click #timeline a.refresh': 'refreshFriendsCheckins'
       # HACK: This should work in brick, but currently doesn't.
       'click x-tabbar-tab': 'toggleTabs'
 
@@ -33,6 +35,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!views/checkins', 'tpl!t
       html = @template
         checkins: @checkins
         CheckinShowTemplate: CheckinShowTemplate
+        loadingCheckins: @loadingCheckins
         mapURL: @mapURL
         nearbyCheckins: @nearbyCheckins
         user: @user
@@ -49,9 +52,16 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!views/checkins', 'tpl!t
 
       Geo.filterNearby(checkins).done (nearby) =>
         @nearbyCheckins = nearby
+        @loadingCheckins = false
         @render()
 
       @render()
+
+    refreshFriendsCheckins: ->
+      @loadingCheckins = true
+      @render()
+
+      window.GLOBALS.Checkins.recent(true).done @loadCheckins
 
     showCheckinModal: ->
       # HACK: No idea why, but this listener gets repeated or some such

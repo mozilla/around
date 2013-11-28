@@ -18,11 +18,6 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
     initialize: ->
       _.bindAll this
 
-      @on "all", @_historyCleanup
-      @on "all", @_modifyTitle
-
-      @_historyCleanup()
-
       # Redirect to the /# URL for history purposes if it's not set.
       window.location.hash = '#' if window.location.hash is ''
 
@@ -31,6 +26,11 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
       window.app = appView
 
       return this
+
+    # Run after each routing action is complete.
+    after: (route) ->
+      @_historyCleanup(route)
+      @_modifyTitle()
 
     # Main view; shows the timeline view.
     index: ->
@@ -70,8 +70,8 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
         id: id
 
     # Do some slightly-messy DOM cleanup on history state change.
-    _historyCleanup: (route, id) ->
-      if route is 'route:index'
+    _historyCleanup: (route) ->
+      if route is 'route:index' or route is ''
         $('body').addClass 'hide-back-button'
       else
         $('body').removeClass 'hide-back-button'

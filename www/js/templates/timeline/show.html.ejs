@@ -1,6 +1,13 @@
 <div id="timeline">
   <div class="map" <% if (mapURL) { %>style="background-image: url('<%= mapURL %>')"<% } %>></div>
-  <h1><%= l("What's Happening") %></h1>
+  <h1>
+    <%= l("What's Happening") %>
+    <% if (loadingCheckins) { %>
+      <span class="circle-small"></span>
+    <% } else { %>
+      <a class="refresh"><i class="fa fa-refresh"><span class="hide"><%= l('Refresh') %></span></i></a>
+    <% } %>
+  </h1>
 
   <x-tabbar>
     <x-tabbar-tab data-target-selector="#timeline .nearby" class="active"><%= l('Near me') %></x-tabbar-tab>

@@ -13,6 +13,8 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
       # "users": "userList"
       "users/:id": "userShow"
       "venues/:id": "venueShow"
+      "nearby": "index"
+      "worldwide": "index"
       "": "index"
 
     initialize: ->
@@ -34,7 +36,12 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
 
     # Main view; shows the timeline view.
     index: ->
-      appView.currentView = new TimelineViews.Show()
+      if window.location.hash == '#worldwide'
+        startingScope = 'worldwide'
+      else
+        startingScope = 'nearby'
+      appView.currentView = new TimelineViews.Show
+        scope: startingScope
 
     # Show information about a check-in including points, comments, etc.
     checkinShow: ->

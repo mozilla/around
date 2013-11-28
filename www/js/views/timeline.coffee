@@ -38,6 +38,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!views/checkins', 'tpl!t
         loadingCheckins: @loadingCheckins
         mapURL: @mapURL
         nearbyCheckins: @nearbyCheckins
+        scope: @options.scope
         user: @user
 
       @$el.html(html)
@@ -77,6 +78,11 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!views/checkins', 'tpl!t
       @$('x-tabbar-tab,x-slide').removeClass('active')
       $(event.target).addClass('active')
       $($(event.target).data('target-selector')).addClass('active')
+
+      @options.scope = $(event.target).data('scope')
+      window.router.navigate $(event.target).data('scope'),
+        replace: true
+        trigger: false 
 
   return {
     Show: ShowView

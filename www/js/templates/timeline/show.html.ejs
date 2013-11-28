@@ -10,18 +10,18 @@
   </h1>
 
   <x-tabbar>
-    <x-tabbar-tab data-target-selector="#timeline .nearby" class="active"><%= l('Near me') %></x-tabbar-tab>
-    <x-tabbar-tab data-target-selector="#timeline .worldwide"><%= l('Worldwide') %></x-tabbar-tab>
+    <x-tabbar-tab data-scope="nearby" data-target-selector="#timeline .nearby" <% if (scope === 'nearby') {%>class="active"<% } %>><%= l('Near me') %></x-tabbar-tab>
+    <x-tabbar-tab data-scope="worldwide" data-target-selector="#timeline .worldwide" <% if (scope === 'worldwide') {%>class="active"<% } %>><%= l('Worldwide') %></x-tabbar-tab>
   </x-tabbar>
 
   <x-slidebox orientation="x">
     <x-slides>
-      <x-slide class="nearby active">
+      <x-slide class="nearby <% if (scope === 'nearby') {%>active<% } %>">
         <% for (var i in nearbyCheckins) { %>
           <%= CheckinShowTemplate({checkin: nearbyCheckins[i]}) %>
         <% } %>
       </x-slide>
-      <x-slide class="worldwide">
+      <x-slide class="worldwide <% if (scope === 'worldwide') {%>active<% } %>">
         <% for (var i in checkins) { %>
           <%= CheckinShowTemplate({checkin: checkins[i]}) %>
         <% } %>

@@ -88,6 +88,8 @@ define ['zepto', 'underscore', 'backbone', 'cs!api', 'cs!geo', 'cs!models/checki
       unless $('.modal .area-container').length
         $('#modal-content').before HeaderTemplate(@_templateData())
 
+      # These event handlers are added here as they are outside the usually
+      # re-rendered part of the view's template.
       $('.modal .area-container select').on 'change', @changeSectionSearch
       $('.modal .area-container .venue-search').on 'reset', @resetSearch
       $('.modal .area-container #venue-search').on 'blur', @blurSearch

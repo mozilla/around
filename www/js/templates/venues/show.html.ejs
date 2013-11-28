@@ -1,7 +1,7 @@
 <% if (venue) { %>
   <div class="map venue" style="background-image: url('<%= mapURL %>')"></div>
 
-  <div class="venue-summary summary">
+  <div class="venue-summary summary" id="venue-<%= venue.id %>">
     <div class="center">
       <h1><%= venue.name %></h1>
 

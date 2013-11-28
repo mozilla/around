@@ -1,25 +1,7 @@
-<div class="attribution-container">
-  <p><%= ('Data from ') %><a href="https://foursquare.com/" target="_blank">Foursquare</a></p>
-
-  <% if (sections) { %>
-    <div id="sections">
-      <select>
-        <% for (var s in sections) { %>
-          <option value="<%= sections[s] %>" <%= sectionEnabled === sections[s] ? 'selected' : '' %>><%= s %></option>
-        <% } %>
-      </select>
-    </div>
-  <% } %>
-</div>
-
-<% if (headerLocation) { %>
-  <h2>near <%= headerLocation %></h2>
-<% } %>
-
-<% if (position && venues.length) { %>
+<% if (position && venues && venues.length) { %>
   <ul>
     <% for (i in venues) { %>
-      <li class="venue" data-venue="<%= venues[i].id %>" <% if (venues[i].photos.count) { %>style="background-image: url('<%= venues[i].photos.groups[0].items[0].prefix %><%= venues[i].photos.groups[0].items[0].width %>x<%= venues[i].photos.groups[0].items[0].height %><%= venues[i].photos.groups[0].items[0].suffix %>')"<% } %>>
+      <li class="venue" data-venue="<%= venues[i].id %>" <% if (venues[i].photos && venues[i].photos.count) { %>style="background-image: url('<%= venues[i].photos.groups[0].items[0].prefix %><%= venues[i].photos.groups[0].items[0].width %>x<%= venues[i].photos.groups[0].items[0].height %><%= venues[i].photos.groups[0].items[0].suffix %>')"<% } %>>
         <h3><%= venues[i].name %></h3>
 
         <% if (venues[i].hereNow.count) { %>
@@ -35,8 +17,10 @@
       </li>
     <% } %>
   </ul>
+<% } else if (position && venues === null) { %>
+  <p id="loading-text"><%= l('No venues found.') %></p>
 <% } else if (position) { %>
-  <p id="loading-text"><span class="circle-small"></span><%= l('Finding places near you.') %></p>
+  <p id="loading-text"><%= l('Finding places near you.') %><span class="circle-small"></span></p>
 <% } else { %>
-  <p id="loading-text"><span class="circle-small"></span><%= l('Getting your location.') %></p>
+  <p id="loading-text"><%= l('Getting your location.') %><span class="circle-small"></span></p>
 <% } %>

@@ -29,7 +29,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/venue', 'cs!view
     tips: []
 
     events:
-      'click .check-in': 'checkIn'
+      'click .venue-summary .check-in': 'checkIn'
 
     mapURL: null
 
@@ -42,6 +42,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/venue', 'cs!view
         @render()
 
         venue.tips().done (tips) =>
+          return unless $("#venue-#{@model.id}").length
           @tips = _.first(tips, 5)
           @render()
       .fail =>
@@ -55,6 +56,8 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/venue', 'cs!view
       $(@$el).html(html)
 
     checkIn: ->
+      # HACK: Resolve this in the modal code.
+      return if $('.modal').length
       new CheckinViews.ConfirmModal({
         model: @model
       })

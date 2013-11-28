@@ -7,6 +7,7 @@ define ['zepto', 'localforage', 'moment'], ($, localForage, moment, UserCollecti
     API_DATE: "20130901" # https://developer.foursquare.com/overview/versioning
     API_URL: "https://api.foursquare.com/v2/"
     AUTH_URL: ""
+    CHARACTERS_FOR_AUTOCOMPLETE: 2
     CLIENT_ID: "Y50ARQDQNJGI2JU3SPTI1MVEM3OZJ1H120H3UXCQVMAI05OJ"
     DATABASE_NAME: "around"
     DEFAULT_MAP_MARKER: "pin-m+0095dd"

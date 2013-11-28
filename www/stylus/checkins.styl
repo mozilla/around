@@ -7,24 +7,92 @@
         position relative
         width 100%
         z-index 12000
+        transition height linear 100ms
 
-    .attribution-container
+        &.hide-on-mobile
+            @media screen and (max-height: 480px)
+                height 0
+
+    .area-container
         background #00405d
         color #eaeaea
-        height 1.2em
 
-        p
+        #sections, .venue-search
+            background transparent// no-repeat right #efefef
+            // border 1px solid #ccc
+            height 30px
+            overflow hidden
+            position relative
+            width auto
+
+            select, input
+                background transparent
+                border 0
+                border-radius 0
+                color #fefefe
+                font-size 16px
+                height 30px
+                line-height 1
+                outline none
+                padding 3px 0 0 3px
+                -webkit-appearance none
+                -moz-outline-style none
+                width 120%
+                &:active, &:focus
+                    outline 0
+                    -moz-outline-style none
+                &::-webkit-input-placeholder
+                    color #fefefe
+                    opacity 1
+                    text-shadow 0
+                &::-moz-placeholder
+                    color #fefefe
+                    opacity 1
+                    text-shadow 0
+                &::-ms-input-placeholder
+                    color #fefefe
+                    opacity 1
+                    text-shadow 0
+            input
+                height 25px
+                padding-bottom 0
+                padding-right 20px
+                width 70%
+                &:active, &:focus
+                    border-bottom 1px solid
+
+            button
+                background none
+                border 0
+                font-size 20px
+                left 70%
+                margin-left 5px
+                padding 0
+                position absolute
+                top 4px
+                z-index 14000
+
+                &[type="reset"]
+                    visibility hidden
+
+                    &.visible
+                        visibility visible
+
+                &[type="submit"]
+                    margin-left 30px
+
+        .data-attribution
             float right
-            font-size .8em
-            margin .275em .275em 0 0
+            font-size .6em
+            margin 2.5% 5px 0 0
 
         &:after
             clear both
             content ""
             display block
 
-    h2
-        font-size 18px
+        h4
+            padding 0 0 3px 6px
 
     .venue
         background no-repeat 100% 50% / 150px auto

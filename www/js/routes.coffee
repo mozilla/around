@@ -50,11 +50,12 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
     # User creation route; we get the user's login token here and save
     # it to our datastore.
     userCreate: (token) ->
-      self = this
       # Create our "self" user and save it to our datastore. After that, we'll
       # navigate back to the index view to load up our app with a user setup.
-      $.when(UserViews.CreateSelf token).done ->
-        self.navigate '', {replace: true, trigger: true}
+      $.when(UserViews.CreateSelf token).done =>
+        @navigate '',
+          replace: true
+          trigger: true
 
     userLogin: ->
       appView.currentView = new UserViews.Login

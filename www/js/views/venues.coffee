@@ -1,4 +1,4 @@
-define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/venue', 'cs!views/checkins', 'tpl!templates/venues/explore.html.ejs', 'tpl!templates/venues/list.html.ejs', 'tpl!templates/venues/show.html.ejs'], ($, _, Backbone, Geo, Venue, CheckinViews, ExploreTemplate, ListTemplate, ShowTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'cs!geo', 'localforage', 'cs!models/venue', 'cs!views/checkins', 'tpl!templates/venues/explore.html.ejs', 'tpl!templates/venues/list.html.ejs', 'tpl!templates/venues/show.html.ejs'], ($, _, Backbone, Geo, localForage, Venue, CheckinViews, ExploreTemplate, ListTemplate, ShowTemplate) ->
   'use strict'
 
   # List of venue views, most often used when searching for a venue, using
@@ -47,6 +47,8 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/venue', 'cs!view
       $('#content').html '<div id="map" class="map"></div><div id="explore"></div>'
       @setElement '#explore'
 
+      @section = @options.section
+
       @render()
 
       # Get the relevant local venues for this user while we render the template.
@@ -88,6 +90,11 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/venue', 'cs!view
 
     changeSectionSearch: (event) ->
       @section = $(event.target).children('option')[event.target.selectedIndex].value
+
+      window.router.navigate "explore/#{@section}",
+        replace: true
+        trigger: false
+
       @venues = []
       @getVenues()
       @render()
@@ -95,25 +102,41 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/venue', 'cs!view
     getVenues: ->
       return unless @position
 
-      window.GLOBALS.Venues.near({
-        ll: "#{@position.coords.latitude},#{@position.coords.longitude}"
-        accuracy: @position.coords.accuracy
-      }, @section).done (apiResponse) =>
-        @venues = []
-        response = apiResponse.response
-        _(response.groups[0].items).each (item) =>
-          @venues.push item.venue
+      section = @section
 
-        @headerLocation = response.headerFullLocation
+      localForage.getItem "explore-#{section}", (data) =>
+        if data and data.timestamp + (window.GLOBALS.MINUTE * 2) > window.timestamp()
+          @headerLocation = data.headerLocation
+          @venues = data.venues
 
-        if @venues.length
-          @render()
-        else
-          console.info "Nothing available for #{@section}; searching for everything instead."
-          @section = null
-          @getVenues()
-      .fail ->
-        window.alert "Error getting venues!"
+          return @render()
+
+        window.GLOBALS.Venues.near({
+          ll: "#{@position.coords.latitude},#{@position.coords.longitude}"
+          accuracy: @position.coords.accuracy
+        }, section).done (apiResponse) =>
+          @venues = []
+          response = apiResponse.response
+          _(response.groups[0].items).each (item) =>
+            @venues.push item.venue
+
+          @headerLocation = response.headerFullLocation
+
+          if @venues.length
+            # Store these venues for a brief period of time for fast reloading of
+            # data between views.
+            localForage.setItem "explore-#{section}",
+              headerLocation: @headerLocation
+              timestamp: window.timestamp()
+              venues: @venues
+
+            @render()
+          else
+            console.info "Nothing available for #{@section}; searching for everything instead."
+            @section = null
+            @getVenues()
+        .fail ->
+          window.alert "Error getting venues!"
 
     showMap: ->
       @map = L.mapbox.map('map', window.GLOBALS.MAP_ID, {

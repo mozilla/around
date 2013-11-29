@@ -8,6 +8,8 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
       "access_token=:token": "userCreate"
       # Check-in views
       "checkins/:id": "checkinShow"
+      # Explore view; see what's around without checking in.
+      "explore": "explore"
       # User views
       "login": "userLogin"
       # "users": "userList"
@@ -46,6 +48,11 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
     # Show information about a check-in including points, comments, etc.
     checkinShow: ->
       return
+
+    # The famous "Explore" view, where users can see what's in the area; from
+    # popular venues to coffee to trending.
+    explore: ->
+      appView.currentView = new VenueViews.Explore()
 
     # User creation route; we get the user's login token here and save
     # it to our datastore.

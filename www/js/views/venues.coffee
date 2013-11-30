@@ -181,6 +181,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'localforage', 'cs!models/v
     model: Venue
     template: ShowTemplate
 
+    isLocal: true
     tips: []
 
     events:
@@ -196,6 +197,13 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'localforage', 'cs!models/v
 
         @render()
 
+        Geo.isNearby(venue.location.lat, venue.location.lng).done (isLocal) =>
+          @isLocal = isLocal
+
+          # Don't bother re-rendered this view if the value hasn't changed from
+          # its default.
+          @render() unless @isLocal
+
         venue.tips().done (tips) =>
           return unless $("#venue-#{@model.id}").length
           @tips = _.first(tips, 5)
@@ -205,6 +213,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'localforage', 'cs!models/v
 
     render: ->
       html = @template
+        isLocal: @isLocal
         mapURL: @mapURL
         tips: @tips
         venue: @model

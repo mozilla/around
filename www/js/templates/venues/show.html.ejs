@@ -10,14 +10,16 @@
           <% if (venue.categories.length) { %>
             <%= venue.categories[0].name %>
           <% } %>
-          <% if (venue.categories.length || venue.location.city) { %>
-            <small><%= l('in') %>
-          <% } %>
-          <% if (venue.location.city) { %>
-            <%= venue.location.city %>
+          <% if (!isLocal) { %>
+            <% if (venue.categories.length || venue.location.city) { %>
+              <small><%= l('in') %>
+            <% } %>
+            <% if (venue.location.city) { %>
+              <%= venue.location.city %>
 
-            <% if (venue.categories.length) { %>
-              </small>
+              <% if (venue.categories.length) { %>
+                </small>
+              <% } %>
             <% } %>
           <% } %>
         </h3>

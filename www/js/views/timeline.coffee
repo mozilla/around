@@ -2,10 +2,12 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!views/checkins', 'tpl!t
   'use strict'
 
   ShowView = Backbone.View.extend
-    el: "#content"
-    $el: $("#content")
+    el: "#timeline"
+    $el: $("#timeline")
     modal: false
     template: TimelineShowTemplate
+
+    fixedContent: '<div id="timeline"></div>'
 
     checkins: null
     loadingCheckins: true
@@ -20,6 +22,9 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!views/checkins', 'tpl!t
 
     initialize: ->
       _.bindAll this
+
+      $('#content').html @fixedContent
+      @setElement '#timeline'
 
       @user = window.GLOBALS.Users.getSelf()
 

@@ -58,7 +58,6 @@ define ['zepto', 'underscore', 'backbone', 'cs!api', 'cs!geo', 'cs!models/checki
   # appears when the user taps the "check in" button at the bottom of the
   # screen.
   ModalFromVenuesView = ModalView.extend
-    explore: false
     fixedContent: '<div id="map"></div>'
     headerLocation: null
     isFullModal: true
@@ -90,7 +89,6 @@ define ['zepto', 'underscore', 'backbone', 'cs!api', 'cs!geo', 'cs!models/checki
 
       # These event handlers are added here as they are outside the usually
       # re-rendered part of the view's template.
-      $('.modal .area-container select').on 'change', @changeSectionSearch
       $('.modal .area-container .venue-search').on 'reset', @resetSearch
       $('.modal .area-container #venue-search').on 'blur', @blurSearch
       $('.modal .area-container #venue-search').on 'focus', @focusSearch
@@ -264,7 +262,6 @@ define ['zepto', 'underscore', 'backbone', 'cs!api', 'cs!geo', 'cs!models/checki
 
     _templateData: ->
       {
-        explore: @explore
         headerLocation: @headerLocation
         sectionEnabled: @section
         sections: Venue.SECTIONS

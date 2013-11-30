@@ -27,6 +27,11 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'localforage', 'cs!models/v
     $el: $('#explore')
     template: ExploreTemplate
 
+    fixedContent: '
+      <div id="map" class="map"></div>
+      <div id="explore"></div>
+    '
+
     headerLocation: null
     isFullModal: true
     map: null
@@ -44,7 +49,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'localforage', 'cs!models/v
     initialize: ->
       _.bindAll this
 
-      $('#content').html '<div id="map" class="map"></div><div id="explore"></div>'
+      $('#content').html @fixedContent
       @setElement '#explore'
 
       @section = @options.section
@@ -91,7 +96,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'localforage', 'cs!models/v
     changeSectionSearch: (event) ->
       @section = $(event.target).children('option')[event.target.selectedIndex].value
 
-      window.router.navigate "explore/#{@section}",
+      window.router.navigate "explore#{if @section then '/' else ''}#{@section}",
         replace: true
         trigger: false
 

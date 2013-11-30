@@ -1,27 +1,15 @@
 <div class="area-container">
   <p class="data-attribution"><%= ('Data from ') %><a href="https://foursquare.com/" target="_blank">Foursquare</a></p>
 
-  <% if (explore && sections) { %>
-    <div id="sections">
-      <select>
-        <% for (var s in sections) { %>
-          <option value="<%= sections[s] %>" <%= sectionEnabled === sections[s] ? 'selected' : '' %>><%= s %></option>
-        <% } %>
-      </select>
-    </div>
-
-    <% if (headerLocation) { %>
-      <h4>near <%= headerLocation %></h4>
-    <% } %>
+  <% if (headerLocation) { %>
+    <h4><%= headerLocation %></h4>
   <% } %>
 
-  <% if (!explore) { %>
-    <form class="venue-search" autocomplete="off">
-      <label class="hide" for="venue-search"><%= l('Search for a venue') %></label>
-      <input type="search" id="venue-search" value="<%= venueSearchValue %>" placeholder="<%= l('Search places') %>">
+  <form class="venue-search" autocomplete="off">
+    <label class="hide" for="venue-search"><%= l('Search for a venue') %></label>
+    <input type="search" id="venue-search" value="<%= venueSearchValue %>" placeholder="<%= l('Search places') %>">
 
-      <button type="reset"><i class="fa fa-times"></i></button>
-      <button type="submit"><i class="fa fa-search"></i></button>
-    </form>
-  <% } %>
+    <button type="reset"><i class="fa fa-times"></i></button>
+    <button type="submit"><i class="fa fa-search"></i></button>
+  </form>
 </div>

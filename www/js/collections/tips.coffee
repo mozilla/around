@@ -1,4 +1,4 @@
-define ['underscore', 'zepto', 'backbone', 'backbone_store', 'localforage', 'cs!api', 'cs!models/tip'], (_, $, Backbone, Store, localForage, API, Tip) ->
+define ['underscore', 'zepto', 'backbone', 'backbone_store', 'localforage', 'cs!lib/api', 'cs!models/tip'], (_, $, Backbone, Store, localForage, API, Tip) ->
   'use strict'
 
   TipCollection = Backbone.Collection.extend

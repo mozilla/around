@@ -1,4 +1,4 @@
-define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!geo', 'localforage', 'cs!api', 'cs!models/checkin'], (_, $, Backbone, Store, Geo, localForage, API, Checkin) ->
+define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/geo', 'localforage', 'cs!lib/api', 'cs!models/checkin'], (_, $, Backbone, Store, Geo, localForage, API, Checkin) ->
   'use strict'
 
   CheckinCollection = Backbone.Collection.extend

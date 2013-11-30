@@ -1,4 +1,4 @@
-define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!views/checkins', 'tpl!templates/checkins/show.html.ejs', 'tpl!templates/timeline/show.html.ejs'], ($, _, Backbone, Geo, CheckinViews, CheckinShowTemplate, TimelineShowTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'cs!lib/geo', 'cs!views/checkins', 'tpl!templates/checkins/show.html.ejs', 'tpl!templates/timeline/show.html.ejs'], ($, _, Backbone, Geo, CheckinViews, CheckinShowTemplate, TimelineShowTemplate) ->
   'use strict'
 
   ShowView = Backbone.View.extend

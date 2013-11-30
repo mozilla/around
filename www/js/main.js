@@ -8,7 +8,6 @@
 // Require.js shortcuts to our libraries.
 require.config({
     paths: {
-        'api': 'lib/api',
         'async_storage': 'vendor/async_storage',
         'backbone': 'vendor/backbone',
         'backbone_promises': 'vendor/backbone.promises',
@@ -19,7 +18,6 @@ require.config({
         'cs': 'vendor/cs',
         'deferred': 'vendor/deferred',
         'human_model': 'vendor/human-model',
-        'geo': 'lib/geo',
         'jed': 'vendor/jed',
         'localforage': 'vendor/localforage',
         'moment': 'vendor/moment',

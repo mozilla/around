@@ -1,6 +1,6 @@
 # Venue Model
 # ===========
-define ["zepto", "api", "human_model"], ($, API, HumanModel) ->
+define ["zepto", "cs!lib/api", "human_model"], ($, API, HumanModel) ->
   "use strict"
 
   # Venue constants

@@ -5,7 +5,7 @@
 # "active"/signed-in user of the app. Most of the user attributes are directly
 # mapped to the response from the Foursquare API
 # (https://developer.foursquare.com/docs/responses/user).
-define ['zepto', 'cs!geo', 'human_model', 'cs!api', 'cs!models/checkin'], ($, Geo, HumanModel, API, Checkin) ->
+define ['zepto', 'cs!lib/geo', 'human_model', 'cs!lib/api', 'cs!models/checkin'], ($, Geo, HumanModel, API, Checkin) ->
   'use strict'
 
   CONSTANTS =

@@ -3,16 +3,13 @@
 
   <% if (sections) { %>
     <div id="sections">
+      <span><%= l('Find:') %></span>
       <select>
         <% for (var s in sections) { %>
           <option value="<%= sections[s] %>" <%= sectionEnabled === sections[s] ? 'selected' : '' %>><%= s %></option>
         <% } %>
       </select>
     </div>
-
-    <% if (headerLocation) { %>
-      <h4>near <%= headerLocation %></h4>
-    <% } %>
   <% } %>
 </div>
 

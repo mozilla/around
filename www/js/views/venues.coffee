@@ -23,13 +23,13 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'localforage', 'cs!models/v
   # Explore view; see venues nearby without committing to a checkin.
   # Essentially: browse.
   ExploreView = Backbone.View.extend
-    el: '#explore'
-    $el: $('#explore')
+    el: '.explore'
+    $el: $('.explore')
     template: ExploreTemplate
 
     fixedContent: '
       <div id="map" class="map"></div>
-      <div id="explore"></div>
+      <div class="explore"></div>
     '
 
     headerLocation: null
@@ -44,13 +44,13 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'localforage', 'cs!models/v
     venueMarkers: []
 
     events:
-      "change #explore select": "changeSectionSearch"
+      "change .explore select": "changeSectionSearch"
 
     initialize: ->
       _.bindAll this
 
       $('#content').html @fixedContent
-      @setElement '#explore'
+      @setElement '.explore'
 
       @section = @options.section
 
@@ -67,6 +67,8 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'localforage', 'cs!models/v
         position: @position
         venues: @venues
       )
+
+      $('x-appbar header').text @headerLocation
 
       if @position and @venues and @venues.length
         # Create bounds for the map to focus on.

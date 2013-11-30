@@ -35,7 +35,7 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
     # Run after each routing action is complete.
     after: (route) ->
       @_historyCleanup(route)
-      @_modifyTitle()
+      @_modifyTitle(route)
 
     # Main view; shows the timeline view.
     index: ->
@@ -95,7 +95,12 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
 
     # Modify the title tag; for now simply a debugging tool to show route in
     # history.
-    _modifyTitle: ->
+    _modifyTitle: (route) ->
+      if route is 'explore' or route is 'explore/:section'
+        $('x-appbar').addClass('explore')
+      else
+        $('x-appbar').removeClass('explore')
+
       $('title').text "around: #{window.location.hash}"
 
   return AppRouter

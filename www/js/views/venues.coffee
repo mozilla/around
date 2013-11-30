@@ -181,11 +181,13 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'localforage', 'cs!models/v
     model: Venue
     template: ShowTemplate
 
+    hours: null
     isLocal: true
     tips: []
 
     events:
       'click .venue-summary .check-in': 'checkIn'
+      'click .photos.venue .photo': 'showPhoto'
 
     mapURL: null
 
@@ -213,6 +215,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'localforage', 'cs!models/v
 
     render: ->
       html = @template
+        hours: @hours
         isLocal: @isLocal
         mapURL: @mapURL
         tips: @tips
@@ -225,6 +228,18 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'localforage', 'cs!models/v
       new CheckinViews.ConfirmModal({
         model: @model
       })
+
+    # Opens the photo in a browser if on Firefox OS; otherwise just passes
+    # the event off and lets the user's browser open it in a new tab/window.
+    showPhoto: (event) ->
+      if window.MozActivity
+        event.preventDefault()
+
+        openURL = new MozActivity
+          name: "view"
+          data:
+            type: "url"
+            url: $(event.target).attr "href"
 
   return {
     Explore: ExploreView

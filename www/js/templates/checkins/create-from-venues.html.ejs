@@ -1,8 +1,10 @@
 <% if (position && venues && venues.length) { %>
   <ul>
     <% venues.forEach(function(venue) { %>
-      <%= VenueShowListItemTemplate({venue: venue}) %>
-    <% }) %>
+      <%= VenueShowListItemTemplate({
+        showLink: false,
+        venue: venue
+      }) %>    <% }) %>
   </ul>
 <% } else if (position && venues === null) { %>
   <p id="loading-text"><%= l('No venues found.') %></p>

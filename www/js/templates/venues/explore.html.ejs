@@ -16,7 +16,10 @@
 <% if (venues && venues.length) { %>
   <ul class="venues">
     <% venues.forEach(function(venue) { %>
-      <%= VenueShowListItemTemplate({venue: venue}) %>
+      <%= VenueShowListItemTemplate({
+        showLink: true,
+        venue: venue
+      }) %>
     <% }) %>
   </ul>
 <% } %>

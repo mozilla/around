@@ -1,5 +1,5 @@
 <li class="venue" data-venue="<%= venue.id %>">
-  <a href="#venues/<%= venue.id %>">
+  <% if (showLink) { %><a href="#venues/<%= venue.id %>"><% } %>
     <% if (venue.photos && venue.photos.count) { %>
       <div class="photo">
         <img src="<%= venue.photos.groups[0].items[0].prefix %><%= venue.photos.groups[0].items[0].width %>x<%= venue.photos.groups[0].items[0].height %><%= venue.photos.groups[0].items[0].suffix %>">
@@ -12,6 +12,10 @@
       <div class="icon">
         <i class="fa fa-question"></i>
       </div>
+    <% } %>
+
+    <% if (showLink) { %>
+      <span class="arrow">→</span>
     <% } %>
 
     <h3><%= venue.name %></h3>
@@ -32,5 +36,5 @@
         <% } %>
       </p>
     <% } %>
-  </a>
+  <% if (showLink) { %></a><% } %>
 </li>

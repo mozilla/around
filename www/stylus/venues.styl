@@ -28,6 +28,7 @@ li.venue
     color #001017
     display block
     min-height 60px
+    position relative
 
     &:nth-child(2n)
         background #fefefe
@@ -90,6 +91,16 @@ li.venue
         font-size 12px
         line-height 1.3em
         margin 0 0 0 5px
+
+    .arrow
+        background #efefef
+        display inline-block
+        position absolute
+        right 10px
+        top 50%
+        transform translate(0%, -50%)
+        -moz-transform translate(0%, -50%)
+        -webkit-transform translate(0%, -50%)
 
 .area-container
     background #00405d

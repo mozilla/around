@@ -6,7 +6,7 @@
       <h1><%= venue.name %></h1>
 
       <% if (venue.categories.length || venue.location.city) { %>
-        <h3 class="subheader">
+        <h3 class="category subheader">
           <% if (venue.categories.length) { %>
             <%= venue.categories[0].name %>
           <% } %>
@@ -23,6 +23,12 @@
             <% } %>
           <% } %>
         </h3>
+      <% } %>
+
+      <% if (hours) { %>
+        <h3 class="hours subheader"></h3>
+      <% } else if (venue.hours && venue.hours.length && !venue.hours.isOpen) { %>
+        <h3 class="hours subheader"><%= l('Closed right now') %></h3>
       <% } %>
 
       <button class="check-in"><%= l('Check In') %></button>
@@ -58,7 +64,7 @@
     <ul class="venue photos">
       <% venue.photosInGroup("venue").forEach(function(photo) { %>
         <!-- TODO: Obviously, add a modal photo viewer -->
-        <li><a class="photo" style="background-image: url(<%= photo.prefix %><%= photo.width %>x<%= photo.height %><%= photo.suffix %>);" href="<%= photo.prefix %><%= photo.width %>x<%= photo.height %><%= photo.suffix %>"></a></li>
+        <li><a class="photo" style="background-image: url(<%= photo.prefix %><%= photo.width %>x<%= photo.height %><%= photo.suffix %>);" href="<%= photo.prefix %><%= photo.width %>x<%= photo.height %><%= photo.suffix %>" target="_blank"></a></li>
       <% }) %>
     </ul>
   <% } %>

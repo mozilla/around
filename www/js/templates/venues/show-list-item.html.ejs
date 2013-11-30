@@ -14,9 +14,7 @@
       </div>
     <% } %>
 
-    <% if (showLink) { %>
-      <span class="arrow">→</span>
-    <% } %>
+    <span class="arrow" data-venue="<%= venue.id %>"><i class="fa fa-arrow-circle-o-right"></i></span>
 
     <h3><%= venue.name %></h3>
     <% if (venue.location.address) { %>

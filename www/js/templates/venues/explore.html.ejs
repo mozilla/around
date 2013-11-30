@@ -16,22 +16,7 @@
 <% if (venues && venues.length) { %>
   <ul class="venues">
     <% venues.forEach(function(venue) { %>
-      <a href="#venues/<%= venue.id %>">
-        <li class="venue" data-venue="<%= venue.id %>" <% if (venue.photos && venue.photos.count) { %>style="background-image: url('<%= venue.photos.groups[0].items[0].prefix %><%= venue.photos.groups[0].items[0].width %>x<%= venue.photos.groups[0].items[0].height %><%= venue.photos.groups[0].items[0].suffix %>')"<% } %>>
-          <h3><%= venue.name %></h3>
-
-          <% if (venue.hereNow.count) { %>
-            <p>
-              <%= venue.hereNow.count %>
-              <% if (venue.hereNow.count == 1) { %>
-                <%= l('person is here.') %>
-              <% } else { %>
-                <%= l('people are here.') %>
-              <% } %>
-            </p>
-          <% } %>
-        </li>
-      </a>
+      <%= VenueShowListItemTemplate({venue: venue}) %>
     <% }) %>
   </ul>
 <% } %>

@@ -1,21 +1,8 @@
 <% if (position && venues && venues.length) { %>
   <ul>
-    <% for (i in venues) { %>
-      <li class="venue" data-venue="<%= venues[i].id %>" <% if (venues[i].photos && venues[i].photos.count) { %>style="background-image: url('<%= venues[i].photos.groups[0].items[0].prefix %><%= venues[i].photos.groups[0].items[0].width %>x<%= venues[i].photos.groups[0].items[0].height %><%= venues[i].photos.groups[0].items[0].suffix %>')"<% } %>>
-        <h3><%= venues[i].name %></h3>
-
-        <% if (venues[i].hereNow.count) { %>
-          <p>
-            <%= venues[i].hereNow.count %>
-            <% if (venues[i].hereNow.count == 1) { %>
-              <%= l('person is here.') %>
-            <% } else { %>
-              <%= l('people are here.') %>
-            <% } %>
-          </p>
-        <% } %>
-      </li>
-    <% } %>
+    <% venues.forEach(function(venue) { %>
+      <%= VenueShowListItemTemplate({venue: venue}) %>
+    <% }) %>
   </ul>
 <% } else if (position && venues === null) { %>
   <p id="loading-text"><%= l('No venues found.') %></p>

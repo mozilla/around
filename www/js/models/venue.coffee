@@ -54,6 +54,16 @@ define ["human_model"], (HumanModel) ->
       dislike: ["boolean"]
       # page: null
 
+    derived:
+      # Text address of location; as precise as possible.
+      streetAddress:
+        deps: ['location']
+        fn: ->
+          return null unless @location.address
+
+          crossStreet = if @location.crossStreet then " (#{@location.crossStreet})" else ""
+          "#{@location.address}#{crossStreet}"
+
     photosInGroup: (type = "venue") ->
       return [] unless @photos and @photos.count
 

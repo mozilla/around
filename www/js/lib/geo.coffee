@@ -74,7 +74,7 @@ define ['zepto', 'localforage'], ($, localForage) ->
         [position.coords.latitude + 0.0001, position.coords.longitude - 0.0001],
         [position.coords.latitude - 0.0001, position.coords.longitude + 0.0001],
         [position.coords.latitude + 0.0001, position.coords.longitude + 0.0001]        
-      ]).pad 150
+      ]).pad 350
 
       d.resolve _.filter(collection, (item) ->
         return false unless item.location and (item.location.lat or item.location.latitude) and (item.location.lng or item.location.longitude)
@@ -99,7 +99,7 @@ define ['zepto', 'localforage'], ($, localForage) ->
         [position.coords.latitude + 0.0001, position.coords.longitude - 0.0001],
         [position.coords.latitude - 0.0001, position.coords.longitude + 0.0001],
         [position.coords.latitude + 0.0001, position.coords.longitude + 0.0001]        
-      ]).pad 150
+      ]).pad 350
 
       d.resolve bounds.contains(L.latLng(lat, lng))
 

@@ -68,7 +68,7 @@ define ['zepto', 'localforage'], ($, localForage) ->
   filterNearby = (collection, position = null) ->
     d = $.Deferred()
 
-    @getCurrentPosition().done (position) ->
+    getCurrentPosition().done (position) ->
       bounds = L.latLngBounds([
         [position.coords.latitude - 0.0001, position.coords.longitude - 0.0001],
         [position.coords.latitude + 0.0001, position.coords.longitude - 0.0001],
@@ -88,6 +88,24 @@ define ['zepto', 'localforage'], ($, localForage) ->
 
     d.promise()
 
+  # Determine whether or not a set of lat/lng coordinates are nearby. Simply
+  # returns `true` if a location is considered "local", `false` if not.
+  isNearby = (lat, lng) ->
+    d = $.Deferred()
+
+    getCurrentPosition().done (position) ->
+      bounds = L.latLngBounds([
+        [position.coords.latitude - 0.0001, position.coords.longitude - 0.0001],
+        [position.coords.latitude + 0.0001, position.coords.longitude - 0.0001],
+        [position.coords.latitude - 0.0001, position.coords.longitude + 0.0001],
+        [position.coords.latitude + 0.0001, position.coords.longitude + 0.0001]        
+      ]).pad 150
+
+      d.resolve bounds.contains(L.latLng(lat, lng))
+
+    d.promise()
+
+  # Output a static map image.
   staticMap = (coords = null, pins = [], zoomLevel = 14, size = [$(window).width(), 125]) ->
     return "" unless coords
 
@@ -109,5 +127,6 @@ define ['zepto', 'localforage'], ($, localForage) ->
   return {
     filterNearby: filterNearby
     getCurrentPosition: getCurrentPosition
+    isNearby: isNearby
     staticMap: staticMap
   }

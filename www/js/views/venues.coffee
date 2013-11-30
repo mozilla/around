@@ -1,4 +1,4 @@
-define ['zepto', 'underscore', 'backbone', 'cs!geo', 'localforage', 'cs!models/venue', 'cs!views/checkins', 'tpl!templates/venues/explore.html.ejs', 'tpl!templates/venues/list.html.ejs', 'tpl!templates/venues/show.html.ejs'], ($, _, Backbone, Geo, localForage, Venue, CheckinViews, ExploreTemplate, ListTemplate, ShowTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'cs!geo', 'localforage', 'cs!models/venue', 'cs!views/checkins', 'tpl!templates/venues/explore.html.ejs', 'tpl!templates/venues/list.html.ejs', 'tpl!templates/venues/show.html.ejs', 'tpl!templates/venues/show-list-item.html.ejs'], ($, _, Backbone, Geo, localForage, Venue, CheckinViews, ExploreTemplate, ListTemplate, ShowTemplate, ShowListItemTemplate) ->
   'use strict'
 
   # List of venue views, most often used when searching for a venue, using
@@ -65,6 +65,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'localforage', 'cs!models/v
         sectionEnabled: @section
         sections: Venue.SECTIONS
         position: @position
+        VenueShowListItemTemplate: ShowListItemTemplate
         venues: @venues
       )
 
@@ -180,10 +181,13 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'localforage', 'cs!models/v
     model: Venue
     template: ShowTemplate
 
+    hours: null
+    isLocal: true
     tips: []
 
     events:
       'click .venue-summary .check-in': 'checkIn'
+      'click .photos.venue .photo': 'showPhoto'
 
     mapURL: null
 
@@ -195,6 +199,13 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'localforage', 'cs!models/v
 
         @render()
 
+        Geo.isNearby(venue.location.lat, venue.location.lng).done (isLocal) =>
+          @isLocal = isLocal
+
+          # Don't bother re-rendered this view if the value hasn't changed from
+          # its default.
+          @render() unless @isLocal
+
         venue.tips().done (tips) =>
           return unless $("#venue-#{@model.id}").length
           @tips = _.first(tips, 5)
@@ -204,6 +215,8 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'localforage', 'cs!models/v
 
     render: ->
       html = @template
+        hours: @hours
+        isLocal: @isLocal
         mapURL: @mapURL
         tips: @tips
         venue: @model
@@ -215,6 +228,18 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'localforage', 'cs!models/v
       new CheckinViews.ConfirmModal({
         model: @model
       })
+
+    # Opens the photo in a browser if on Firefox OS; otherwise just passes
+    # the event off and lets the user's browser open it in a new tab/window.
+    showPhoto: (event) ->
+      if window.MozActivity
+        event.preventDefault()
+
+        openURL = new MozActivity
+          name: "view"
+          data:
+            type: "url"
+            url: $(event.target).attr "href"
 
   return {
     Explore: ExploreView

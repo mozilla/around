@@ -30,6 +30,33 @@ define ['zepto', 'localforage', 'moment'], ($, localForage, moment, UserCollecti
   # templates.
   window.moment = moment
 
+  # Display a distance in metres in the local distance unit (i.e. imperial or
+  # metric) as well as use metres, kilometres, etc. based on distance.
+  window.distance = distance = (length, imperial = false) ->
+    # TODO: Implement locale check or setting to use imperial units.
+    if imperial
+      # Metre to mile conversion.
+      length = length * 0.00062137
+
+      if length < 11
+        length = length.toFixed(1)
+      else
+        length = Math.round(length)
+
+      return "#{length} mile#{if length is 1 then '' else 's'}"
+
+    # If we aren't using imperial units, decide whether or not to show metres
+    # or kilometres.
+    if length > 200
+      length = length / 1000
+      # Show a decimal point unless the venue is 11km or more away.
+      if length < 11
+        length = length.toFixed(1)
+
+      return "#{length} km"
+    else
+      return "#{length} m"
+
   # Format a time in seconds to a pretty 5:22:75 style time. Cribbed from
   # the Gaia Music app.
   window.formatTime = formatTime = (secs) ->

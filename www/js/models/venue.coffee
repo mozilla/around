@@ -1,6 +1,6 @@
 # Venue Model
 # ===========
-define ["human_model"], (HumanModel) ->
+define ["zepto", "api", "human_model"], ($, API, HumanModel) ->
   "use strict"
 
   # Venue constants
@@ -24,6 +24,9 @@ define ["human_model"], (HumanModel) ->
   Venue = HumanModel.define
     type: "venue"
 
+    initialize: (data) ->
+      @_attributes = data.attributes if data.attributes
+
     props:
       id:
         setOnce: true
@@ -34,7 +37,9 @@ define ["human_model"], (HumanModel) ->
         lng: null
       }]
       # contact: {}
+      _attributes: ["object"]
       categories: ["array"]
+      price: ["object"]
       verified: ["boolean", true, false]
       # stats: {}
       # url: null
@@ -53,6 +58,60 @@ define ["human_model"], (HumanModel) ->
       like: ["boolean"]
       dislike: ["boolean"]
       # page: null
+
+    derived:
+      info:
+        deps: ['_attributes']
+        fn: ->
+          return [] unless @_attributes.groups
+
+          _.map @_attributes.groups, (group) ->
+            {
+              name: group.items[0].displayName
+              value: group.items[0].displayValue
+            }
+      # Text address of location; as precise as possible.
+      streetAddress:
+        deps: ['location']
+        fn: ->
+          return null unless @location.address
+
+          crossStreet = if @location.crossStreet then " (#{@location.crossStreet})" else ""
+          "#{@location.address}#{crossStreet}"
+
+    hours: ->
+      d = $.Deferred()
+
+      API.request("venues/#{@id}/hours").done (data) ->
+        hours = {}
+        popular = {}
+
+        if data.response.hours.length
+          data.response.hours.forEach (day) ->
+            hours[day.days[0]] = []
+            day.open.forEach (segment) ->
+              hours[day.days[0]].push {
+                closes: segment.end
+                opens: segment.start
+              }
+
+        if data.response.popular.timeframes.length
+          data.response.popular.timeframes.forEach (day) ->
+            popular[day.days[0]] = []
+            day.open.forEach (segment) ->
+              popular[day.days[0]].push {
+                closes: segment.end
+                opens: segment.start
+              }
+
+        d.resolve {
+          hours: hours
+          popular: popular
+        }
+      .fail ->
+        d.reject()
+
+      d.promise()
 
     photosInGroup: (type = "venue") ->
       return [] unless @photos and @photos.count

@@ -22,25 +22,81 @@ x-appbar
             margin-left 40px
 
 li.venue
-    background no-repeat 100% 50% / 150px auto
-    border-bottom 1px solid #8a8a8a
+    background #efefef
     border-bottom 1px solid #cdcdcd
+    clear both
     color #001017
     display block
-    min-height 100px
+    min-height 60px
+    position relative
+
+    &:nth-child(2n)
+        background #fefefe
+
+    a
+        display block
+        min-height 60px
+
+    .icon, .photo
+        border 1px solid #8a8a8a
+        display inline-block
+        float left
+        height 50px
+        margin 5px
+        overflow hidden
+        position relative
+        width 50px
+
+        img
+            display inline-block
+            left 50%
+            position absolute
+            top 50%
+            transform translate(-50%, -50%)
+            width 100px
+
+    // Icons have a max size of 88x88, so we'll use slightly more padding on
+    // the image here.
+    .icon
+        background #afafaf
+        img
+            width 44px
+        i
+            color #fefefe
+            font-size 32px
+            margin 10px 0 0 15px
 
     h3
-        background rgba(239, 239, 239, .75)
-        border-bottom 1px solid #cdcdcd
-        font-size 22px
-        line-height 1.6em
+        font-size 16px
+        font-weight bold
+        line-height 1em
+        padding 5px 0 2.5px
+        overflow hidden
+        text-overflow ellipsis
+        white-space nowrap
+
+    h4
+        color #242424
+        font-size 12px
+        line-height 1em
         overflow hidden
         text-overflow ellipsis
         white-space nowrap
 
     p
+        clear both
         font-size 12px
         line-height 1.3em
+        margin 0 0 0 5px
+
+    .arrow
+        display inline-block
+        position absolute
+        right 10px
+        top 50%
+        transform translate(0%, -50%)
+        -moz-transform translate(0%, -50%)
+        -webkit-transform translate(0%, -50%)
 
 .area-container
     background #00405d

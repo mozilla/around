@@ -1,4 +1,4 @@
-define ['zepto', 'underscore', 'backbone', 'cs!api', 'cs!geo', 'cs!models/checkin', 'cs!models/venue', 'cs!views/modal', 'tpl!templates/checkins/confirm.html.ejs', 'tpl!templates/checkins/create-from-venues.html.ejs', 'tpl!templates/checkins/header.html.ejs', 'tpl!templates/checkins/insight.html.ejs', 'tpl!templates/checkins/show.html.ejs'], ($, _, Backbone, API, Geo, Checkin, Venue, ModalView, ConfirmTemplate, CreateFromVenuesTemplate, HeaderTemplate, InsightTemplate, ShowTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'cs!api', 'cs!geo', 'cs!models/checkin', 'cs!models/venue', 'cs!views/modal', 'tpl!templates/checkins/confirm.html.ejs', 'tpl!templates/checkins/create-from-venues.html.ejs', 'tpl!templates/checkins/header.html.ejs', 'tpl!templates/checkins/insight.html.ejs', 'tpl!templates/checkins/show.html.ejs', 'tpl!templates/venues/show-list-item.html.ejs'], ($, _, Backbone, API, Geo, Checkin, Venue, ModalView, ConfirmTemplate, CreateFromVenuesTemplate, HeaderTemplate, InsightTemplate, ShowTemplate, VenueShowListItemTemplate) ->
   'use strict'
 
   # Confirmation view/modal; displayed whenever a user taps on a "check in"
@@ -73,9 +73,11 @@ define ['zepto', 'underscore', 'backbone', 'cs!api', 'cs!geo', 'cs!models/checki
 
     _cancelMap: false
     _originalVenues: []
+    _preventModal: false
     _skipResetCheck: false
 
     events:
+      "longTap .venue .arrow": "goToVenue"
       "click .venue": "showCheckinOptions"
       "longTap .venue": "checkInToVenue"
 
@@ -132,6 +134,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!api', 'cs!geo', 'cs!models/checki
       @render()
 
     checkInToVenue: (event) ->
+      return if @_preventModal
       window.app.destroyFullModal()
 
       new CreateView(
@@ -183,6 +186,16 @@ define ['zepto', 'underscore', 'backbone', 'cs!api', 'cs!geo', 'cs!models/checki
       .fail ->
         window.alert "Error getting venues!"
 
+    goToVenue: (event) ->
+      @_preventModal = true
+      event.stopPropagation()
+
+      window.app.destroyFullModal()
+
+      window.router.navigate "venues/#{$(event.currentTarget).data('venue')}",
+        replace: false
+        trigger: true
+
     loadOldVenues: ->
       if @_originalVenues.length
         @venues = @_originalVenues
@@ -226,6 +239,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!api', 'cs!geo', 'cs!models/checki
         @render()
 
     showCheckinOptions: (event) ->
+      return if @_preventModal
       window.GLOBALS.Venues.get($(event.currentTarget).data('venue')).done (venue) ->
         new ConfirmView({
           model: venue
@@ -266,6 +280,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!api', 'cs!geo', 'cs!models/checki
         sectionEnabled: @section
         sections: Venue.SECTIONS
         position: @position
+        VenueShowListItemTemplate: VenueShowListItemTemplate
         venues: @venues
         venueSearchValue: $('#venue-search').val()
       }

@@ -1,0 +1,38 @@
+<li class="venue" data-venue="<%= venue.id %>">
+  <% if (showLink) { %><a href="#venues/<%= venue.id %>"><% } %>
+    <% if (venue.photos && venue.photos.count) { %>
+      <div class="photo">
+        <img src="<%= venue.photos.groups[0].items[0].prefix %><%= venue.photos.groups[0].items[0].width %>x<%= venue.photos.groups[0].items[0].height %><%= venue.photos.groups[0].items[0].suffix %>">
+      </div>
+    <% } else if (venue.categories && venue.categories.length && venue.categories[0].icon) { %>
+      <div class="icon">
+        <img src="<%= venue.categories[0].icon.prefix %>88<%= venue.categories[0].icon.suffix %>">
+      </div>
+    <% } else { %>
+      <div class="icon">
+        <i class="fa fa-question"></i>
+      </div>
+    <% } %>
+
+    <span class="arrow" data-venue="<%= venue.id %>"><i class="fa fa-arrow-circle-o-right"></i></span>
+
+    <h3><%= venue.name %></h3>
+    <% if (venue.location.address) { %>
+      <h4><%= venue.location.address %></h4>
+    <% } %>
+    <% if (venue.location.distance) { %>
+      <h4><%= window.distance(venue.location.distance) %></h4>
+    <% } %>
+
+    <% if (venue.hereNow.count) { %>
+      <p>
+        <%= venue.hereNow.count %>
+        <% if (venue.hereNow.count == 1) { %>
+          <%= l('person is here.') %>
+        <% } else { %>
+          <%= l('people are here.') %>
+        <% } %>
+      </p>
+    <% } %>
+  <% if (showLink) { %></a><% } %>
+</li>

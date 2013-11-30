@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-27 01:06-0500\n"
+"POT-Creation-Date: 2013-11-30 04:02-0500\n"
 "PO-Revision-Date: 2013-10-27 18:37-0400\n"
 "Last-Translator: Matthew Riley MacPherson <matt@lonelyvegan.com>\n"
 "Language-Team: Language en-US\n"
@@ -20,8 +20,8 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
-#: www/js/templates/app.html.ejs:4
-msgid "around"
+#: www/js/templates/app.html.ejs:5
+msgid "Explore"
 msgstr ""
 
 #: www/js/templates/checkins/confirm.html.ejs:4
@@ -40,20 +40,24 @@ msgstr ""
 msgid "Check in"
 msgstr ""
 
-#: www/js/templates/checkins/create-from-venues.html.ejs:29
-msgid "person is here."
+#: www/js/templates/checkins/create-from-venues.html.ejs:10
+msgid "No venues found."
 msgstr ""
 
-#: www/js/templates/checkins/create-from-venues.html.ejs:31
-msgid "people are here."
-msgstr ""
-
-#: www/js/templates/checkins/create-from-venues.html.ejs:39
+#: www/js/templates/checkins/create-from-venues.html.ejs:12
 msgid "Finding places near you."
 msgstr ""
 
-#: www/js/templates/checkins/create-from-venues.html.ejs:41
+#: www/js/templates/checkins/create-from-venues.html.ejs:14
 msgid "Getting your location."
+msgstr ""
+
+#: www/js/templates/checkins/header.html.ejs:5
+msgid "Search for a venue"
+msgstr ""
+
+#: www/js/templates/checkins/header.html.ejs:6
+msgid "Search places"
 msgstr ""
 
 #: www/js/templates/checkins/insight.html.ejs:1
@@ -69,28 +73,32 @@ msgstr ""
 msgid "Dismiss"
 msgstr ""
 
-#: www/js/templates/timeline/show.html.ejs:3
+#: www/js/templates/timeline/show.html.ejs:4
 msgid "What's Happening"
 msgstr ""
 
-#: www/js/templates/timeline/show.html.ejs:6
+#: www/js/templates/timeline/show.html.ejs:8
+msgid "Refresh"
+msgstr ""
+
+#: www/js/templates/timeline/show.html.ejs:13
 msgid "Near me"
 msgstr ""
 
-#: www/js/templates/timeline/show.html.ejs:7
+#: www/js/templates/timeline/show.html.ejs:14
 msgid "Worldwide"
 msgstr ""
 
-#: www/js/templates/timeline/show.html.ejs:25
+#: www/js/templates/timeline/show.html.ejs:32
 msgid "around is powered by "
 msgstr ""
 
-#: www/js/templates/timeline/show.html.ejs:25
+#: www/js/templates/timeline/show.html.ejs:32
 msgid "Learn more"
 msgstr ""
 
-#: www/js/templates/timeline/show.html.ejs:28
-#: www/js/templates/venues/show.html.ejs:26
+#: www/js/templates/timeline/show.html.ejs:35
+#: www/js/templates/venues/show.html.ejs:47
 msgid "Check In"
 msgstr ""
 
@@ -124,7 +132,7 @@ msgid "From"
 msgstr ""
 
 #: www/js/templates/users/show.html.ejs:31
-#: www/js/templates/venues/show.html.ejs:66
+#: www/js/templates/venues/show.html.ejs:80
 msgid "Error"
 msgstr ""
 
@@ -132,22 +140,42 @@ msgstr ""
 msgid "User not found."
 msgstr ""
 
-#: www/js/templates/venues/show.html.ejs:14
+#: www/js/templates/venues/explore.html.ejs:6
+msgid "Find:"
+msgstr ""
+
+#: www/js/templates/venues/show-list-item.html.ejs:31
+msgid "person is here."
+msgstr ""
+
+#: www/js/templates/venues/show-list-item.html.ejs:33
+msgid "people are here."
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:15
 msgid "in"
 msgstr ""
 
-#: www/js/templates/venues/show.html.ejs:40
-msgid "Tips"
+#: www/js/templates/venues/show.html.ejs:31
+msgid "Closed right now"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:36
+msgid "Price:"
 msgstr ""
 
 #: www/js/templates/venues/show.html.ejs:54
-msgid "Photos"
-msgstr ""
-
-#: www/js/templates/venues/show.html.ejs:64
-msgid "See this venue on Foursquare's website."
+msgid "Tips"
 msgstr ""
 
 #: www/js/templates/venues/show.html.ejs:68
+msgid "Photos"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:78
+msgid "See this venue on Foursquare's website."
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:82
 msgid "Venue not found."
 msgstr ""

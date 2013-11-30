@@ -1,37 +1,36 @@
-<div id="timeline">
-  <div class="map" <% if (mapURL) { %>style="background-image: url('<%= mapURL %>')"<% } %>></div>
-  <h1>
-    <%= l("What's Happening") %>
-    <% if (loadingCheckins) { %>
-      <span class="circle-small"></span>
-    <% } else { %>
-      <a class="refresh"><i class="fa fa-refresh"><span class="hide"><%= l('Refresh') %></span></i></a>
-    <% } %>
-  </h1>
+<div class="map" <% if (mapURL) { %>style="background-image: url('<%= mapURL %>')"<% } %>></div>
 
-  <x-tabbar>
-    <x-tabbar-tab data-scope="nearby" data-target-selector="#timeline .nearby" <% if (scope === 'nearby') {%>class="active"<% } %>><%= l('Near me') %></x-tabbar-tab>
-    <x-tabbar-tab data-scope="worldwide" data-target-selector="#timeline .worldwide" <% if (scope === 'worldwide') {%>class="active"<% } %>><%= l('Worldwide') %></x-tabbar-tab>
-  </x-tabbar>
+<h1>
+  <%= l("What's Happening") %>
+  <% if (loadingCheckins) { %>
+    <span class="circle-small"></span>
+  <% } else { %>
+    <a class="refresh"><i class="fa fa-refresh"><span class="hide"><%= l('Refresh') %></span></i></a>
+  <% } %>
+</h1>
 
-  <x-slidebox orientation="x">
-    <x-slides>
-      <x-slide class="nearby <% if (scope === 'nearby') {%>active<% } %>">
-        <% for (var i in nearbyCheckins) { %>
-          <%= CheckinShowTemplate({checkin: nearbyCheckins[i]}) %>
-        <% } %>
-      </x-slide>
-      <x-slide class="worldwide <% if (scope === 'worldwide') {%>active<% } %>">
-        <% for (var i in checkins) { %>
-          <%= CheckinShowTemplate({checkin: checkins[i]}) %>
-        <% } %>
-      </x-slide>
-    </x-slides>
-  </x-slidebox>
+<x-tabbar>
+  <x-tabbar-tab data-scope="nearby" data-target-selector="#timeline .nearby" <% if (scope === 'nearby') {%>class="active"<% } %>><%= l('Near me') %></x-tabbar-tab>
+  <x-tabbar-tab data-scope="worldwide" data-target-selector="#timeline .worldwide" <% if (scope === 'worldwide') {%>class="active"<% } %>><%= l('Worldwide') %></x-tabbar-tab>
+</x-tabbar>
 
-  <p class="attribution"><%= l('around is powered by ') %><a href="https://foursquare.com/" target="_blank">Foursquare</a>.<!-- <a href="#learn-more-link"><%= l('Learn more') %></a>--></p>
+<x-slidebox orientation="x">
+  <x-slides>
+    <x-slide class="nearby <% if (scope === 'nearby') {%>active<% } %>">
+      <% for (var i in nearbyCheckins) { %>
+        <%= CheckinShowTemplate({checkin: nearbyCheckins[i]}) %>
+      <% } %>
+    </x-slide>
+    <x-slide class="worldwide <% if (scope === 'worldwide') {%>active<% } %>">
+      <% for (var i in checkins) { %>
+        <%= CheckinShowTemplate({checkin: checkins[i]}) %>
+      <% } %>
+    </x-slide>
+  </x-slides>
+</x-slidebox>
 
-  <footer>
-    <button class="check-in"><%= l('Check In') %></button>
-  </footer>
-</div>
+<p class="attribution"><%= l('around is powered by ') %><a href="https://foursquare.com/" target="_blank">Foursquare</a>.<!-- <a href="#learn-more-link"><%= l('Learn more') %></a>--></p>
+
+<footer>
+  <button class="check-in"><%= l('Check In') %></button>
+</footer>

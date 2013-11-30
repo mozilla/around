@@ -1,4 +1,4 @@
-define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/checkin', 'cs!models/venue', 'cs!views/modal', 'tpl!templates/checkins/confirm.html.ejs', 'tpl!templates/checkins/create-from-venues.html.ejs', 'tpl!templates/checkins/insight.html.ejs', 'tpl!templates/checkins/show.html.ejs'], ($, _, Backbone, Geo, Checkin, Venue, ModalView, ConfirmTemplate, CreateFromVenuesTemplate, InsightTemplate, ShowTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'cs!api', 'cs!geo', 'cs!models/checkin', 'cs!models/venue', 'cs!views/modal', 'tpl!templates/checkins/confirm.html.ejs', 'tpl!templates/checkins/create-from-venues.html.ejs', 'tpl!templates/checkins/header.html.ejs', 'tpl!templates/checkins/insight.html.ejs', 'tpl!templates/checkins/show.html.ejs'], ($, _, Backbone, API, Geo, Checkin, Venue, ModalView, ConfirmTemplate, CreateFromVenuesTemplate, HeaderTemplate, InsightTemplate, ShowTemplate) ->
   'use strict'
 
   # Confirmation view/modal; displayed whenever a user taps on a "check in"
@@ -63,15 +63,19 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/checkin', 'cs!mo
     isFullModal: true
     map: null
     position: null
+    searchResult: null
     section: null
     template: CreateFromVenuesTemplate
     user: null
+    venueSearchValue: ''
     venues: []
+    venueMarkers: []
 
     _cancelMap: false
+    _originalVenues: []
+    _skipResetCheck: false
 
     events:
-      "change select": "changeSectionSearch"
       "click .venue": "showCheckinOptions"
       "longTap .venue": "checkInToVenue"
 
@@ -80,13 +84,34 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/checkin', 'cs!mo
       Geo.getCurrentPosition().done(@_geoSuccess).fail(@_geoError)
 
     _render: ->
-      if @position and @venues.length
+      unless $('.modal .area-container').length
+        $('#modal-content').before HeaderTemplate(@_templateData())
+
+      # These event handlers are added here as they are outside the usually
+      # re-rendered part of the view's template.
+      $('.modal .area-container .venue-search').on 'reset', @resetSearch
+      $('.modal .area-container #venue-search').on 'blur', @blurSearch
+      $('.modal .area-container #venue-search').on 'focus', @focusSearch
+      $('.modal .area-container #venue-search').on 'input', @checkSearchInputLength
+      $('.modal .area-container #venue-search').on 'input', @searchForVenue
+
+      @checkSearchInputLength()
+
+      if @position and @venues and @venues.length
         # Create bounds for the map to focus on.
         bounds = new L.Bounds()
 
+        # Remove old markers first
+        @venueMarkers.forEach (marker) =>
+          @map.removeLayer(marker)
+
         # Add the top five venues to the map.
         _.first(@venues, 5).forEach (v) =>
-          L.marker([v.location.lat, v.location.lng]).addTo(@map)
+          marker = L.marker([v.location.lat, v.location.lng])
+
+          marker.addTo(@map)
+          @venueMarkers.push(marker)
+
           bounds.extend [v.location.lat, v.location.lng]
 
         latLngBounds = new L.LatLngBounds([
@@ -96,6 +121,9 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/checkin', 'cs!mo
         @map.fitBounds(latLngBounds, {
           padding: [25, 25]
         })
+
+    blurSearch: ->
+      $('#map').removeClass('hide-on-mobile')
 
     changeSectionSearch: (event) ->
       @section = $(event.target).children('option')[event.target.selectedIndex].value
@@ -109,6 +137,23 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/checkin', 'cs!mo
       new CreateView(
         venueID: $(event.currentTarget).data('venue')
       )
+
+    checkSearchInputLength: (event) ->
+      if @_skipResetCheck
+        @_skipResetCheck = false
+        return
+
+      $input = if event then $(event.target) else $('#venue-search')
+
+      return unless $input.length
+
+      if $input.val().length
+        $('.venue-search button[type=reset]').addClass('visible')
+      else
+        @resetSearch()
+
+    focusSearch: ->
+      $('#map').addClass('hide-on-mobile')
 
     getVenues: ->
       return unless @position
@@ -124,7 +169,12 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/checkin', 'cs!mo
 
         @headerLocation = response.headerFullLocation
 
+        $areaContainer = $('.modal .area-container')
+        if $areaContainer.length
+          $areaContainer.replaceWith(HeaderTemplate(@_templateData()))
+
         if @venues.length
+          @_originalVenues = @venues
           @render()
         else
           console.info "Nothing available for #{@section}; searching for everything instead."
@@ -132,6 +182,48 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/checkin', 'cs!mo
           @getVenues()
       .fail ->
         window.alert "Error getting venues!"
+
+    loadOldVenues: ->
+      if @_originalVenues.length
+        @venues = @_originalVenues
+        @_skipResetCheck = true
+        @render()
+
+    resetSearch: ->
+      $('#venue-search').val('')
+      $('.venue-search button[type=reset]').removeClass('visible')
+      @_skipResetCheck = true
+      @checkSearchInputLength()
+      @loadOldVenues()
+
+    searchForVenue: (event) ->
+      searchQuery = $("#venue-search").val()
+
+      return unless searchQuery.length
+
+      # Make sure, if this is an autocomplete search request, we have at least
+      # two characters to search for.
+      if event and $(event.target).attr('id') == 'venue-search'
+        return unless searchQuery.length >= window.GLOBALS.CHARACTERS_FOR_AUTOCOMPLETE
+
+      if @searchRequest
+        @searchRequest.abort()
+
+      @searchRequest = API.request "venues/search",
+        data:
+          intent: 'checkin'
+          ll: "#{@position.coords.latitude},#{@position.coords.longitude}"
+          query: searchQuery
+      .done (data) =>
+        @searchRequest = null
+        if data.response.venues and data.response.venues.length
+          @venues = []
+          _(data.response.venues).each (venue) =>
+            @venues.push venue
+        else
+          @venues = null
+
+        @render()
 
     showCheckinOptions: (event) ->
       window.GLOBALS.Venues.get($(event.currentTarget).data('venue')).done (venue) ->
@@ -175,6 +267,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!geo', 'cs!models/checkin', 'cs!mo
         sections: Venue.SECTIONS
         position: @position
         venues: @venues
+        venueSearchValue: $('#venue-search').val()
       }
 
   ShowView = Backbone.View.extend

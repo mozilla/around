@@ -8,6 +8,9 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
       "access_token=:token": "userCreate"
       # Check-in views
       "checkins/:id": "checkinShow"
+      # Explore view; see what's around without checking in.
+      "explore": "explore"
+      "explore/:section": "explore"
       # User views
       "login": "userLogin"
       # "users": "userList"
@@ -32,7 +35,7 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
     # Run after each routing action is complete.
     after: (route) ->
       @_historyCleanup(route)
-      @_modifyTitle()
+      @_modifyTitle(route)
 
     # Main view; shows the timeline view.
     index: ->
@@ -46,6 +49,12 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
     # Show information about a check-in including points, comments, etc.
     checkinShow: ->
       return
+
+    # The famous "Explore" view, where users can see what's in the area; from
+    # popular venues to coffee to trending.
+    explore: (section) ->
+      appView.currentView = new VenueViews.Explore
+        section: section
 
     # User creation route; we get the user's login token here and save
     # it to our datastore.
@@ -86,7 +95,12 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
 
     # Modify the title tag; for now simply a debugging tool to show route in
     # history.
-    _modifyTitle: ->
+    _modifyTitle: (route) ->
+      if route is 'explore' or route is 'explore/:section'
+        $('x-appbar').addClass('explore')
+      else
+        $('x-appbar').removeClass('explore')
+
       $('title').text "around: #{window.location.hash}"
 
   return AppRouter

@@ -1,0 +1,22 @@
+<div class="area-container">
+  <p class="data-attribution"><%= ('Data from ') %><a href="https://foursquare.com/" target="_blank">Foursquare</a></p>
+
+  <% if (sections) { %>
+    <div id="sections">
+      <span><%= l('Find:') %></span>
+      <select>
+        <% for (var s in sections) { %>
+          <option value="<%= sections[s] %>" <%= sectionEnabled === sections[s] ? 'selected' : '' %>><%= s %></option>
+        <% } %>
+      </select>
+    </div>
+  <% } %>
+</div>
+
+<% if (venues && venues.length) { %>
+  <ul class="venues">
+    <% venues.forEach(function(venue) { %>
+      <li class="venue"><a href="#venues/<%= venue.id %>"><%= venue.name %></a></li>
+    <% }) %>
+  </ul>
+<% } %>

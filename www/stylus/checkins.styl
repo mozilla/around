@@ -7,24 +7,11 @@
         position relative
         width 100%
         z-index 12000
+        transition height linear 100ms
 
-    .attribution-container
-        background #00405d
-        color #eaeaea
-        height 1.2em
-
-        p
-            float right
-            font-size .8em
-            margin .275em .275em 0 0
-
-        &:after
-            clear both
-            content ""
-            display block
-
-    h2
-        font-size 18px
+        &.hide-on-mobile
+            @media screen and (max-height: 480px)
+                height 0
 
     .venue
         background no-repeat 100% 50% / 150px auto

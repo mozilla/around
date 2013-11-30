@@ -11,6 +11,7 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!models/user', 'tpl!templ
 
     events:
       'click #back': 'goBack'
+      'click #explore-link': 'explore'
       'click #full-modal .accept': 'destroyFullModal'
       'click #full-modal-bg': 'destroyFullModal'
       'longTap #back': 'goToTimeline'
@@ -45,6 +46,12 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!models/user', 'tpl!templ
     destroyFullModal: ->
       @trigger 'destroy:modal'
       $('#full-modal,#full-modal-bg').remove()
+
+    # Launch the explore view.
+    explore: ->
+      window.router.navigate 'explore',
+        replace: false
+        trigger: true
 
     # Go back one step in the app. For now, we simply use our router to control
     # all state and thus just go back in history. Cheeky!

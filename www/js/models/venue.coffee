@@ -39,6 +39,7 @@ define ["zepto", "api", "human_model"], ($, API, HumanModel) ->
       # contact: {}
       _attributes: ["object"]
       categories: ["array"]
+      price: ["object"]
       verified: ["boolean", true, false]
       # stats: {}
       # url: null

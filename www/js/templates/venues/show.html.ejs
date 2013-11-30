@@ -31,6 +31,19 @@
         <h3 class="hours subheader"><%= l('Closed right now') %></h3>
       <% } %>
 
+      <% if (venue.price && venue.price.tier) { %>
+        <h3 title="<%= venue.price.message %>">
+          <%= l('Price:') %>
+
+          <% for (var i = 1; i <= venue.price.tier; i++) { %>
+            <i class="fa fa-circle"></i>
+          <% } %>
+          <% for (var i = 1; i <= (4 - venue.price.tier); i++) { %>
+            <i class="fa fa-circle-o"></i>
+          <% } %>
+        </h3>
+      <% } %>
+
       <button class="check-in"><%= l('Check In') %></button>
     </div>
 

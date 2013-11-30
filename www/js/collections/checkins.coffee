@@ -16,13 +16,14 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!geo', 'localfor
 
       results = @where {id: id}
 
-      if results.length
+      if results.length and results[0]._lastUpdated + (window.GLOBALS.HOUR * 12) > window.timestamp() and !forceUpdate
         d.resolve(results[0])
         return d.promise()
 
       # Get information about this checkin.
       API.request("checkins/#{id}").done (data) =>
         checkin = new Checkin(data.response.checkin)
+        checkin._lastUpdated = window.timestamp()
         @add(checkin)
         checkin.save()
 

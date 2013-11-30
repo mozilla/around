@@ -58,6 +58,7 @@ define ["zepto", "api", "human_model"], ($, API, HumanModel) ->
       like: ["boolean"]
       dislike: ["boolean"]
       # page: null
+      _lastUpdated: ["number"]
 
     derived:
       info:

@@ -22,6 +22,8 @@ define ['human_model'], (HumanModel) ->
       createdAt: ['date']
       _isInRecent: ['boolean', true, false]
 
+      _lastUpdated: ["number"]
+
     derived:
       # Checkin location, obtained from venue object.
       location:

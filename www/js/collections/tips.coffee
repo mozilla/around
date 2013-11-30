@@ -20,6 +20,7 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'localforage', 'cs!
         tips = []
         for tip in data.response.tips.items
           tip = new Tip(tip)
+          tip._lastUpdated = window.timestamp()
           tip._venueID = venue.id || venue
 
           @add(tip)

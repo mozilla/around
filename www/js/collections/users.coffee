@@ -12,18 +12,19 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!api', 'cs!model
 
     # Get a user by their Foursquare ID. Will make a request to the Foursquare
     # API if the user is not available in the local datastore.
-    get: (id) ->
+    get: (id, forceUpdate = false) ->
       d = $.Deferred()
 
       results = @where {id: id}
 
-      if results.length
+      if results.length and results[0]._lastUpdated + (window.GLOBALS.HOUR * 12) > window.timestamp() and !forceUpdate
         d.resolve(results[0])
         return d.promise()
 
       # Get information about this user.
       API.request("users/#{id}").done (data) =>
         user = new User(data.response.user)
+        user._lastUpdated = window.timestamp()
         @add(user)
         user.save()
 

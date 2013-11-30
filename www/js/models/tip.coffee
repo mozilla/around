@@ -24,4 +24,6 @@ define ["human_model"], (HumanModel) ->
       likes: ['object']
       _venueID: ['string']
 
+      _lastUpdated: ["number"]
+
   return _.extend Tip

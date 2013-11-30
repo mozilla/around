@@ -71,6 +71,8 @@ define ['zepto', 'cs!geo', 'human_model', 'cs!api', 'cs!models/checkin'], ($, Ge
 
       access_token: ['string', true]
 
+      _lastUpdated: ["number"]
+
     derived:
       # User's full name.
       name:

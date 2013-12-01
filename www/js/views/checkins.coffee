@@ -125,7 +125,9 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'cs!model
         })
 
     blurSearch: ->
-      $('#map').removeClass('hide-on-mobile')
+      setTimeout ->
+        $('#map').removeClass('hide-on-mobile')
+      , 300
 
     changeSectionSearch: (event) ->
       @section = $(event.target).children('option')[event.target.selectedIndex].value

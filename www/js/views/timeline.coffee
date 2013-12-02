@@ -1,4 +1,4 @@
-define ['zepto', 'underscore', 'backbone', 'cs!lib/geo', 'cs!views/checkins', 'tpl!templates/checkins/show.html.ejs', 'tpl!templates/timeline/show.html.ejs'], ($, _, Backbone, Geo, CheckinViews, CheckinShowTemplate, TimelineShowTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'moment', 'cs!lib/geo', 'cs!views/checkins', 'tpl!templates/checkins/show.html.ejs', 'tpl!templates/timeline/show.html.ejs'], ($, _, Backbone, moment, Geo, CheckinViews, CheckinShowTemplate, TimelineShowTemplate) ->
   'use strict'
 
   ShowView = Backbone.View.extend
@@ -13,6 +13,9 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/geo', 'cs!views/checkins', 't
     loadingCheckins: true
     mapURL: null
     nearbyCheckins: null
+
+    _timeoutForRefresh: null
+    _timeoutLength: 30000 # Refresh times every 30 seconds
 
     events:
       'click #timeline .check-in': 'showCheckinModal'
@@ -63,11 +66,24 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/geo', 'cs!views/checkins', 't
 
       @render()
 
+      # Refresh the view every minute to update the times.
+      @refreshTimes()
+
     refreshFriendsCheckins: ->
       @loadingCheckins = true
       @render()
 
       window.GLOBALS.Checkins.recent(true).done @loadCheckins
+
+    # Refresh all relative times in the timeline so they don't ever appear
+    # out-of-date.
+    # TODO: Offer this in an x-tag or something globally, so all <time> tags
+    # with a relative data-relative="true" refresh every minute in the app?
+    refreshTimes: ->
+      $('.checkin time').each ->
+        $(this).text moment($(this).attr('datetime')).fromNow()
+
+      @_timeoutForRefresh = setTimeout @refreshTimes, @_timeoutLength
 
     showCheckinModal: ->
       # HACK: No idea why, but this listener gets repeated or some such

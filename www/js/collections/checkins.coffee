@@ -49,7 +49,7 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/geo', 'loca
           # Save the current time so we don't update for another hour.
           localForage.setItem "lastUpdatedTimestamp-checkins/recent", window.timestamp()
 
-          Geo.getCurrentPosition().always (position, latLng) =>
+          Geo.getCurrentPosition(null, null, forceUpdate).always (position, latLng) =>
             apiParams = {afterTimestamp: lastUpdatedTimestamp or '1'}
             apiParams.ll = "#{latLng.lat},#{latLng.lng}" if latLng
 

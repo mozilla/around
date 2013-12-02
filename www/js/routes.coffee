@@ -67,7 +67,13 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
           trigger: true
 
     userLogin: ->
-      appView.currentView = new UserViews.Login
+      # Don't allow authorized users to access the login page.
+      if window.GLOBALS.Users.getSelf()
+        @navigate '',
+          replace: true
+          trigger: true
+      else
+        appView.currentView = new UserViews.Login()
 
     # Show a user's profile. The template adjusts for various user
     # relationships, including the case where this is the active/self user's
@@ -88,7 +94,7 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
 
     # Do some slightly-messy DOM cleanup on history state change.
     _historyCleanup: (route) ->
-      if _.contains ['', 'nearby', 'worldwide'], route
+      if _.contains ['', 'login', 'nearby', 'worldwide'], route
         $('body').addClass 'hide-back-button'
       else
         $('body').removeClass 'hide-back-button'

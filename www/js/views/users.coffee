@@ -43,9 +43,6 @@ define ['zepto', 'underscore', 'backbone', 'localforage', 'cs!models/user', 'tpl
     template: LoginTemplate
 
     initialize: ->
-      # If we're showing the login screen, we'll kick the footer (with the
-      # "Check In" button) off the screen.
-      $('x-layout').attr 'maxcontent', true
       @render()
 
     render: ->

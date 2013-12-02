@@ -94,6 +94,11 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
 
     # Do some slightly-messy DOM cleanup on history state change.
     _historyCleanup: (route) ->
+      if route is 'login'
+        $('body').addClass 'login'
+      else
+        $('body').removeClass 'login'
+
       if _.contains ['', 'login', 'nearby', 'worldwide'], route
         $('body').addClass 'hide-back-button'
       else

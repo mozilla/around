@@ -12206,7 +12206,7 @@ define('tpl!templates/timeline/show.html.ejs', function() {return function(obj) 
 
 define('tpl!templates/users/list.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('');}return __p.join('');}});
 
-define('tpl!templates/users/login.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<p class="center">', l('around is a Foursquare app for Firefox OS, mobile phones, and web browsers.') ,'</p><p class="center">', l('Touch the "Sign in" button to get started:') ,'</p><div class="center">  <a id="sign-in" href="', loginURL ,'">', l('Sign in with Foursquare') ,'</a></div>');}return __p.join('');}});
+define('tpl!templates/users/login.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<div id="login">  <h1>', l('Sign in to Foursquare') ,'</h1>  <p>', l('around is a Foursquare app for Firefox OS, mobile phones, and web browsers.') ,'</p>  <p>', l('Tap the connect button below to link your Foursquare account and start exploring venues nearby.') ,'</p>  <div class="center">    <a id="sign-in" href="', loginURL ,'">', l('Sign in with Foursquare') ,'</a>  </div></div>');}return __p.join('');}});
 
 define('tpl!templates/users/show.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push(''); if (user) { ; __p.push('  <img src="', user.profilePhoto() ,'" alt="', l('Profile photo for ') + user.name ,'" class="profile-photo">  <div class="profile-summary summary">    <h2>', user.name ,'</h2>    '); if (user.checkins && user.checkins.items.length) { ; __p.push('      <h4 class="subheader">        <!--          If the user checked in less than a few hours ago, we\'ll say          they\'re still there.        -->        ', user.checkins.items[0].createdAt + window.GLOBALS.RECENT_CHECKIN_TIME > window.timestamp() ? l('Currently at:') : l('Last at:') ,'        <a href="#venues/', user.checkins.items[0].venue.id ,'">', user.checkins.items[0].venue.name ,'</a>      </h4>    '); } ; __p.push('    <!--    <h4 class="subheader">', l('From') ,' ', user.homeCity ,'</h4>    -->    <p>', user.bio ,'</p>    <!-- Show recent checkins -->    '); if (user.checkins) { ; __p.push('      ', user.checkins ,'    '); } ; __p.push('  </div>'); } else { ; __p.push('  <h2>', l('Error') ,'</h2>  <p>', l('User not found.') ,'</p>'); } ; __p.push('');}return __p.join('');}});
 
@@ -12246,7 +12246,6 @@ define('tpl!templates/users/show.html.ejs', function() {return function(obj) { v
       $el: $('#content'),
       template: LoginTemplate,
       initialize: function() {
-        $('x-layout').attr('maxcontent', true);
         return this.render();
       },
       render: function() {
@@ -12593,7 +12592,14 @@ define('tpl!templates/venues/show.html.ejs', function() {return function(obj) { 
         });
       },
       userLogin: function() {
-        return appView.currentView = new UserViews.Login;
+        if (window.GLOBALS.Users.getSelf()) {
+          return this.navigate('', {
+            replace: true,
+            trigger: true
+          });
+        } else {
+          return appView.currentView = new UserViews.Login();
+        }
       },
       userShow: function(id) {
         return appView.currentView = new UserViews.Show({
@@ -12610,7 +12616,12 @@ define('tpl!templates/venues/show.html.ejs', function() {return function(obj) { 
         });
       },
       _historyCleanup: function(route) {
-        if (_.contains(['', 'nearby', 'worldwide'], route)) {
+        if (route === 'login') {
+          $('body').addClass('login');
+        } else {
+          $('body').removeClass('login');
+        }
+        if (_.contains(['', 'login', 'nearby', 'worldwide'], route)) {
           return $('body').addClass('hide-back-button');
         } else {
           return $('body').removeClass('hide-back-button');

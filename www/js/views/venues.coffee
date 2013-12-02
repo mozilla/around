@@ -178,10 +178,13 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/geo', 'localforage', 'cs!mode
   # Venue view; used to show a venue in various places, with information
   # obscured via CSS.
   ShowView = Backbone.View.extend
+    el: '#content'
+    $el: $('#content')
     model: Venue
     template: ShowTemplate
 
     hours: null
+    isLoading: true
     isLocal: true
     tips: []
 
@@ -192,7 +195,10 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/geo', 'localforage', 'cs!mode
     mapURL: null
 
     initialize: ->
+      @render()
+
       window.GLOBALS.Venues.get(@id).done (venue) =>
+        @isLoading = false
         @model = venue
 
         @mapURL = Geo.staticMap([venue.location.lat, venue.location.lng], [[venue.location.lat, venue.location.lng]], 16, [$(window).width(), 125])
@@ -216,15 +222,18 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/geo', 'localforage', 'cs!mode
     render: ->
       html = @template
         hours: @hours
+        isLoading: @isLoading
         isLocal: @isLocal
         mapURL: @mapURL
         tips: @tips
         venue: @model
       $(@$el).html(html)
 
-    checkIn: ->
-      # HACK: Resolve this in the modal code.
-      return if $('.modal').length
+    checkIn: (event) ->
+      # TODO: See why this is fired for old venue code... maybe it's not
+      # getting removed properly?
+      return unless $(event.target).data('venue') is @model.id
+
       new CheckinViews.ConfirmModal({
         model: @model
       })

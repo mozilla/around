@@ -1,4 +1,4 @@
-<% if (venue) { %>
+<% if (venue && venue.id) { %>
   <div class="map venue" style="background-image: url('<%= mapURL %>')"></div>
 
   <div class="venue-summary summary" id="venue-<%= venue.id %>">
@@ -44,7 +44,7 @@
         </h3>
       <% } %>
 
-      <button class="check-in"><%= l('Check In') %></button>
+      <button class="check-in" data-venue="<%= venue.id %>"><%= l('Check In') %></button>
     </div>
 
     <p><%= venue.description %></p>
@@ -53,15 +53,15 @@
   <% if (tips) { %>
     <h1><%= l('Tips') %></h1>
 
-    <% tips.forEach(function(tip) { %>
-      <ul class="venue tips">
+    <ul class="venue tips">
+      <% tips.forEach(function(tip) { %>
         <li class="tip">
           <p class="text"><%= tip.text %></p>
 
           <p class="author"><cite><a href="#/users/<%= tip.user.id %>"><%= tip.user.firstName %></a></cite></p>
         </li>
-      </ul>
-    <% }) %>
+      <% }) %>
+    </ul>
   <% } %>
 
   <% if (venue.photos) { %>
@@ -76,6 +76,14 @@
   <% } %>
 
   <p class="attribution"><a href="https://foursquare.com/v/<%= venue.id %>?ref=<%= window.GLOBALS.CLIENT_ID %>" target="_blank"><%= l("See this venue on Foursquare's website.") %></a></p>
+<% } else if (isLoading) { %>
+  <div class="map venue"></div>
+
+  <div class="venue-summary summary">
+    <div class="center">
+      <h1><%= l('Loading') %><span class="circle-small"></span></h1>
+    </div>
+  </div>
 <% } else { %>
   <h2><%= l('Error') %></h2>
 

@@ -20,6 +20,7 @@ define ['zepto', 'underscore', 'backbone', 'tpl!templates/modal.html.ejs'], ($, 
     _el: '#modal-content'
     fixedContent: ''
     isFullModal: false
+    modal: null
 
     events:
       "click .cancel": "dismiss"
@@ -27,6 +28,11 @@ define ['zepto', 'underscore', 'backbone', 'tpl!templates/modal.html.ejs'], ($, 
     # Load the fixed content and template HTML into the modal, then add it to
     # the body of the page.
     initialize: ->
+      if @isFullModal
+        return if $('#full-modal').length
+      else
+        return if $('.modal.standard').length
+
       _.bindAll this
 
       $('body').append ModalTemplate({

@@ -1,6 +1,6 @@
 # User views. Includes "first run" login screen, and all views related to user
 # tasks.
-define ['zepto', 'underscore', 'backbone', 'localforage', 'cs!models/user', 'tpl!templates/users/list.html.ejs', 'tpl!templates/users/login.html.ejs', 'tpl!templates/users/show.html.ejs'], ($, _, Backbone, localForage, User, ListTemplate, LoginTemplate, ShowTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'localforage', 'cs!models/user', 'tpl!templates/checkins/show.html.ejs', 'tpl!templates/users/list.html.ejs', 'tpl!templates/users/login.html.ejs', 'tpl!templates/users/show.html.ejs'], ($, _, Backbone, localForage, User, CheckinShowTemplate, ListTemplate, LoginTemplate, ShowTemplate) ->
   'use strict'
 
   # Static method called to create a user, then run a callback once the user
@@ -66,6 +66,7 @@ define ['zepto', 'underscore', 'backbone', 'localforage', 'cs!models/user', 'tpl
 
     render: ->
       html = @template
+        CheckinShowTemplate: CheckinShowTemplate
         user: @model
       $(@$el).html(html)
 

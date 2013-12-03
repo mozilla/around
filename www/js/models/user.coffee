@@ -78,7 +78,11 @@ define ['zepto', 'cs!lib/geo', 'human_model', 'cs!lib/api', 'cs!models/checkin']
       name:
         deps: ['firstName', 'lastName']
         fn: ->
-          "#{@firstName} #{@lastName}"
+          nameString = ""
+          nameString += @firstName if @firstName
+          nameString += " #{@lastName}" if @lastName
+
+          nameString
 
     # otherMethods:
     # Check this user into a venue. Creates a new check-in object added to this

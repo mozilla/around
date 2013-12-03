@@ -1,11 +1,14 @@
 <% if (user) { %>
   <img src="<%= user.profilePhoto() %>" alt="<%= l('Profile photo for ') + user.name %>" class="profile-photo">
 
-  <div class="profile-summary summary">
-    <h2><%= user.name %></h2>
+  <div class="profile-summary">
+    <h1><%= user.name %></h1>
+    <h2 class="subheader"><%= l('From:') %> <%= user.homeCity %></h2>
+
+    <p><%= user.bio %></p>
 
     <% if (user.checkins && user.checkins.items.length) { %>
-      <h4 class="subheader">
+      <h2>
         <!--
           If the user checked in less than a few hours ago, we'll say
           they're still there.
@@ -13,18 +16,18 @@
         <%= user.checkins.items[0].createdAt + window.GLOBALS.RECENT_CHECKIN_TIME > window.timestamp() ? l('Currently at:') : l('Last at:') %>
 
         <a href="#venues/<%= user.checkins.items[0].venue.id %>"><%= user.checkins.items[0].venue.name %></a>
-      </h4>
+      </h2>
     <% } %>
 
-    <!--
-    <h4 class="subheader"><%= l('From') %> <%= user.homeCity %></h4>
-    -->
-
-    <p><%= user.bio %></p>
-
     <!-- Show recent checkins -->
-    <% if (user.checkins) { %>
-      <%= user.checkins %>
+    <% if (user.checkins && user.checkins.items && user.checkins.items.length) { %>
+      <h1><%= l('History') %></h1>
+
+      <div class="checkins">
+        <% user.checkins.items.forEach(function(checkin) { %>
+          <%= CheckinShowTemplate({checkin: checkin}) %>
+        <% }) %>
+      </div>
     <% } %>
   </div>
 <% } else { %>

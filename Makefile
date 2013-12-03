@@ -19,6 +19,7 @@ build: update_locale_json
 	mv www-built/js/main.built.js www-built/js/main.js
 	rm www-built/fonts/firasans/stylesheet.css
 	cat www-built/manifest.appcache | sed -e "s/TIMESTAMP/`date +%s`/" > www-built/manifest.appcache
+	cat www-built/index.html | sed -e "s/<html/<html manifest=\"manifest\.appcache\"/" > www-built/index.html
 
 deploy: build
 	volo ghdeploy

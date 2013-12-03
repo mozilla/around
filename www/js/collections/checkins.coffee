@@ -6,8 +6,8 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/geo', 'loca
     offlineStore: new Store 'Checkins'
 
     # Sort all checkins based on their creation date.
-    comparator: (episode) ->
-      -(new Date(episode.createdAt).getTime())
+    comparator: (checkin) ->
+      -checkin.createdAt.getTime()
 
     # Get a checkin based on Foursquare ID. Will make a request to the
     # Foursquare API if this checkin is not available in the local datastore.
@@ -38,7 +38,7 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/geo', 'loca
 
     recent: (forceUpdate = false) ->
       d = $.Deferred()
-      checkins = @where {_isInRecent: true}
+      checkins = @where {_fromFriends: true}
 
       # Check to see if we've made a request to the "recent" API endpoint in
       # the past hour.
@@ -49,27 +49,24 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/geo', 'loca
           # Save the current time so we don't update for another hour.
           localForage.setItem "lastUpdatedTimestamp-checkins/recent", window.timestamp()
 
-          Geo.getCurrentPosition(null, null, forceUpdate).always (position, latLng) =>
-            apiParams = {afterTimestamp: lastUpdatedTimestamp or '1'}
-            apiParams.ll = "#{latLng.lat},#{latLng.lng}" if latLng
+          API.request "checkins/recent",
+            data:
+              afterTimestamp: lastUpdatedTimestamp or '1'
+          .done (data) =>
+            data.response.recent.forEach (c) =>
+              checkin = new Checkin(c)
+              checkin._fromFriends = true
 
-            API.request "checkins/recent",
-              data: apiParams
-            .done (data) =>
-              data.response.recent.forEach (c) =>
-                checkin = new Checkin(c)
-                checkin._isInRecent = true
+              @add(checkin, {merge: true})
+              checkin.save()
 
-                @add(checkin, {merge: true})
-                checkin.save()
+              window.GLOBALS.Users.get(checkin.user.id)
+              window.GLOBALS.Venues.get(checkin.venue.id)
 
-                window.GLOBALS.Users.get(checkin.user.id)
-                window.GLOBALS.Venues.get(checkin.venue.id)
+            checkins = @where {_fromFriends: true}
 
-                checkins.push(checkin)
-
-              d.resolve(@_onePerUser(checkins))
-            .fail d.reject
+            d.resolve(@_onePerUser(checkins))
+          .fail d.reject
         else
           d.resolve(@_onePerUser(checkins))
 

@@ -77,6 +77,4 @@ require.config({
     }
 });
 
-window._FORCE_LOCALSTORAGE = true;
-
 require(['backbone_promises', 'cs!app']);

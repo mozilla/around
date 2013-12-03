@@ -1,5 +1,42 @@
-define ['zepto', 'underscore', 'backbone', 'cs!lib/geo', 'localforage', 'cs!models/venue', 'cs!views/checkins', 'tpl!templates/venues/explore.html.ejs', 'tpl!templates/venues/list.html.ejs', 'tpl!templates/venues/show.html.ejs', 'tpl!templates/venues/show-list-item.html.ejs', 'tpl!templates/venues/tips.html.ejs'], ($, _, Backbone, Geo, localForage, Venue, CheckinViews, ExploreTemplate, ListTemplate, ShowTemplate, ShowListItemTemplate, TipsTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'localforage', 'cs!models/tip', 'cs!models/venue', 'cs!views/checkins', 'cs!views/modal', 'tpl!templates/venues/create-tip.html.ejs', 'tpl!templates/venues/explore.html.ejs', 'tpl!templates/venues/list.html.ejs', 'tpl!templates/venues/show.html.ejs', 'tpl!templates/venues/show-list-item.html.ejs', 'tpl!templates/venues/tips.html.ejs'], ($, _, Backbone, API, Geo, localForage, Tip, Venue, CheckinViews, ModalView, CreateTipTemplate, ExploreTemplate, ListTemplate, ShowTemplate, ShowListItemTemplate, TipsTemplate) ->
   'use strict'
+
+  # Modal view to add a tip to a venue.
+  CreateTip = ModalView.extend
+    _el: '#create-tip'
+    model: Venue
+    template: CreateTipTemplate
+
+    _isPosting: false
+
+    events:
+      "click .accept": "addTip"
+      "click .cancel": "dismiss"
+
+    addTip: ->
+      return if @_isPosting
+
+      @_isPosting = true
+
+      API.request "tips/add",
+        data:
+          text: $('#tip-text').val()
+          venueId: $('#tip-text').data('venue')
+        requestMethod: "POST"
+      .done (data) =>
+        tipModel = new Tip(data.response.tip)
+        tipModel._lastUpdated = window.timestamp()
+        tipModel._venueID = $('#tip-text').data('venue')
+
+        window.GLOBALS.Tips.add(tipModel)
+        tipModel.save()
+
+        @dismiss()
+
+    _templateData: ->
+      {
+        venue: @model
+      }
 
   # List of venue views, most often used when searching for a venue, using
   # explore, or tapping the persistent check-in button in the bottom of the app.
@@ -191,6 +228,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/geo', 'localforage', 'cs!mode
     events:
       'click .venue-summary .check-in': 'checkIn'
       'click .photos.venue .photo': 'showPhoto'
+      'click .more-tips .leave-tip': 'leaveTip'
 
     mapURL: null
 
@@ -239,6 +277,15 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/geo', 'localforage', 'cs!mode
       return unless $(event.target).data('venue') is @model.id
 
       new CheckinViews.ConfirmModal({
+        model: @model
+      })
+
+    leaveTip: (event) ->
+      # TODO: See why this is fired for old venue code... maybe it's not
+      # getting removed properly?
+      return unless $(event.target).data('venue') is @model.id
+
+      new CreateTip({
         model: @model
       })
 

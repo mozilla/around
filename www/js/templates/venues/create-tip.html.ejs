@@ -1,0 +1,9 @@
+<div>
+  <h2><%= venue.name %></h2>
+
+  <label for="tip-text" class="hide"><%= l('Leave a tip for this venue') %></label>
+  <textarea id="tip-text" data-venue="<%= venue.id %>" placeholder="<%= l('Leave a tip for this place') %>" maxlength="200"></textarea>
+</div>
+
+<button class="cancel"><%= l('Cancel') %></button>
+<button class="accept" data-venue="<%= venue.id %>"><%= l('Check in') %></button>

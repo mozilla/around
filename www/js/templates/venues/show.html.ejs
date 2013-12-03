@@ -64,11 +64,11 @@
     </ul>
   <% } %>
 
-  <% if (venue.photos) { %>
+  <% if (venue.photos && venue.photos.length) { %>
     <h1><%= l('Photos') %></h1>
 
     <ul class="venue photos">
-      <% venue.photosInGroup("venue").forEach(function(photo) { %>
+      <% venue.photos.forEach(function(photo) { %>
         <!-- TODO: Obviously, add a modal photo viewer -->
         <li><a class="photo" style="background-image: url(<%= photo.prefix %><%= photo.width %>x<%= photo.height %><%= photo.suffix %>);" href="<%= photo.prefix %><%= photo.width %>x<%= photo.height %><%= photo.suffix %>" target="_blank"></a></li>
       <% }) %>

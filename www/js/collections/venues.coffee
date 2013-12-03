@@ -18,12 +18,32 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/api', 'cs!m
 
       # Get information about this venue.
       API.request("venues/#{id}").done (data) =>
+        # We move the photos object around because we want to save it as an
+        # array.
+        photoGroup = _.filter data.response.venue.photos.groups, (group) ->
+          group.type is "venue"
+        data.response.venue.photos = if photoGroup[0] then photoGroup[0].items else []
+
         venue = new Venue(data.response.venue)
         venue._lastUpdated = window.timestamp()
+
         @add(venue)
         venue.save()
 
         d.resolve(venue)
+
+        # Get more photos if any are available.
+        return unless venue.photos.length >= Venue.PHOTOS_RETURNED_FROM_GET_CALL
+
+        # Get all photos for this venue.
+        # TODO: Get photos past the 200 count.
+        API.request("venues/#{id}/photos").done (data) =>
+          if data.response.photos and data.response.photos.items
+            venue.photos = data.response.photos.items
+
+          venue.save()
+
+          d.resolve(venue)
       .fail (xhr, type) ->
         d.reject(xhr.response) # if xhr.status == 400
 

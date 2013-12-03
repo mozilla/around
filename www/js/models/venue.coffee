@@ -5,6 +5,8 @@ define ["zepto", "cs!lib/api", "human_model"], ($, API, HumanModel) ->
 
   # Venue constants
   CONSTANTS =
+    # Number of photos returned from a /venues/:id called.
+    PHOTOS_RETURNED_FROM_GET_CALL: 6
     # Available "section" queries, mostly for reference.
     SECTIONS:
       "Everything": null
@@ -53,7 +55,7 @@ define ["zepto", "cs!lib/api", "human_model"], ($, API, HumanModel) ->
       # beenHere: ["boolean"]
       shortUrl: ["string"]
       canonicalUrl: ["string"]
-      photos: ["object"]
+      photos: ["array"]
       likes: ["object"]
       like: ["boolean"]
       dislike: ["boolean"]
@@ -113,14 +115,6 @@ define ["zepto", "cs!lib/api", "human_model"], ($, API, HumanModel) ->
         d.reject()
 
       d.promise()
-
-    photosInGroup: (type = "venue") ->
-      return [] unless @photos and @photos.count
-
-      photoGroup = _.filter @photos.groups, (group) ->
-        group.type is type
-
-      photoGroup[0].items
 
     tips: ->
       window.GLOBALS.Tips.getForVenue(@id)

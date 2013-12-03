@@ -195,11 +195,15 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/geo', 'localforage', 'cs!mode
     mapURL: null
 
     initialize: ->
+      _.bindAll this
+
       @render()
 
       window.GLOBALS.Venues.get(@id).done (venue) =>
         @isLoading = false
         @model = venue
+
+        @model.on 'change:photos', @render
 
         @mapURL = Geo.staticMap([venue.location.lat, venue.location.lng], [[venue.location.lat, venue.location.lng]], 16, [$(window).width(), 125])
 

@@ -17,7 +17,7 @@
     "url": "http://lonelyvegan.com/"
   },
   "launch_path": "/",
-  "installs_allowed_from": ["https://marketplace.firefox.com"],
+  "installs_allowed_from": ["https://marketplace.firefox.com", "http://around.lonelyvegan.com"],
   "appcache_path": "/manifest.appcache",
   "permissions": {
     "geolocation": {

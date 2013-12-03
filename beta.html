@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <title data-l10n="around">around Beta</title>
+    <meta name="description" content="Foursquare via HTML5, for any device.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- iOS-specific meta information; for homescreen web app capabilities -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- iPhone -->
+    <link rel="apple-touch-icon-precomposed" sizes="57x57" href="apple-touch-icon-57x57-precomposed.png">
+    <link rel="apple-touch-startup-image" media="(device-width: 320px)" href="img/default.png">
+    <!-- Retina iPhone -->
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-startup-image" media="(device-width: 320px) and (-webkit-device-pixel-ratio: 2)" href="img/default@2x.png">
+
+    <meta http-equiv="cleartype" content="on">
+
+    <!-- Responsive and mobile friendly stuff -->
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+
+    <!-- App CSS, compiled with require.js. -->
+    <link rel="stylesheet" href="css/app.css">
+  </head>
+
+  <!-- Content gets replaced by the app.ejs template. -->
+  <body>
+    <x-layout>
+      <x-appbar>
+        <div class="text"></div>
+        <header style="display: block; visibility: visible;">around Beta for Firefox OS</header>
+      </x-appbar>
+
+      <div id="content">
+        <h1>around for Foursquare Beta</h1>
+
+        <p style="line-height: 1.2em; margin: 1em auto; width: 80%;">Howdy! Welcome to the around beta. around is an HTML5 Foursquare client. See what your friends are up to, read restaurant reviews, find out what's trending nearby, all on your Firefox OS device or web browser.</p>
+
+        <h1>Install the beta</h1>
+
+        <p style="line-height: 1.2em; margin: 1em auto; width: 80%;">This is the <strong>beta</strong> version of around and may have bugs or missing features. If you do find bugs, please <strong>report them to tofumatt</strong> by emailing <a href="mailto:tofumatt@mozilla.com">tofumatt@mozilla.com</a>. You can send feature requests too, but remember this is a beta. The short-term <a href="https://github.com/tofumatt/around/issues">roadmap is available online</a>, but the long-term goal is near feature-parity with Foursquare's iOS app and website.</p>
+
+        <p style="line-height: 1.2em; margin: 1em auto; width: 80%;">Tap the button below on your Firefox OS device to install the around beta. Happy exploring!</p>
+
+        <div class="center" style="margin: 2em 0;">
+          <button id="install" style="font-size: 24px;">Install</button>
+        </div>
+      </div>
+    </x-layout>
+  </body>
+
+  <!-- Let's load 'er up! -->
+  <script src="js/vendor/brick.js"></script>
+  <script>
+      // Inline installation prompt and script, cribbled from https://github.com/robnyman/Firefox-OS-Boilerplate-App
+      window.addEventListener('load', function() {
+          'use strict';
+
+          if (window.navigator.mozApps) {
+              var checkIfInstalled = window.navigator.mozApps.getSelf();
+              var installButton = window.document.querySelector("#install");
+
+              checkIfInstalled.addEventListener('success', function () {
+                  if (checkIfInstalled.result) {
+                      // The beta is already installed; for now we'll just blank
+                      // out the install button.
+                      if (installButton) {
+                          installButton.style.display = "none";
+                      }
+                  } else {
+                      var manifestURL = window.location.href.substring(0, window.location.href.lastIndexOf("/")) + "/manifest.webapp";
+
+                      installButton.addEventListener('click', function () {
+                          var installApp = window.navigator.mozApps.install(manifestURL);
+
+                          installApp.addEventListener('success', function(data) {
+                              install.style.display = "none";
+                          });
+
+                          installApp.addEventListener('error', function() {
+                              alert("Install failed\n\n:" + installApp.error.name);
+                          });
+                      });
+                  }
+              });
+          } else {
+              console.log("Open Web Apps not supported");
+          }
+      });
+  </script>
+</html>
+<!-- The distance is quite simply much too far for me to row -->

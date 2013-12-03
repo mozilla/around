@@ -9942,7 +9942,7 @@ define('localforage',['async_storage', 'promise'], function(asyncStorage, promis
         })()
       },
       HOUR: 3600,
-      LANGUAGE: window.navigator.language,
+      LOCALES: ['en-GB', 'en-US'],
       MAP_ID: mapID,
       MAP_URL: "http://a.tiles.mapbox.com/v3/" + mapID + "/",
       MAX_DOWNLOADS: 2,
@@ -9952,6 +9952,10 @@ define('localforage',['async_storage', 'promise'], function(asyncStorage, promis
       TOKEN: void 0
     };
     GLOBALS.AUTH_URL = "https://foursquare.com/oauth2/authenticate?client_id=" + GLOBALS.CLIENT_ID + "&response_type=token&redirect_uri=" + window.location.origin;
+    GLOBALS.LANGUAGE = window.navigator.language;
+    if (!_.contains(GLOBALS.LOCALES, GLOBALS.LANGUAGE)) {
+      GLOBALS.LANGUAGE = 'en-US';
+    }
     window.moment = moment;
     window.distance = distance = function(length, imperial) {
       if (imperial == null) {
@@ -11187,7 +11191,7 @@ define("human_model", ["backbone"], (function (global) {
         venue: ['object'],
         shout: ['string'],
         createdAt: ['date'],
-        _isInRecent: ['boolean', true, false],
+        _fromFriends: ['boolean', true, false],
         _lastUpdated: ["number"]
       },
       derived: {
@@ -11256,7 +11260,15 @@ define("human_model", ["backbone"], (function (global) {
         name: {
           deps: ['firstName', 'lastName'],
           fn: function() {
-            return "" + this.firstName + " " + this.lastName;
+            var nameString;
+            nameString = "";
+            if (this.firstName) {
+              nameString += this.firstName;
+            }
+            if (this.lastName) {
+              nameString += " " + this.lastName;
+            }
+            return nameString;
           }
         }
       },
@@ -11288,6 +11300,7 @@ define("human_model", ["backbone"], (function (global) {
           }).done(function(data) {
             var checkin;
             checkin = new Checkin(data.response.checkin);
+            checkin._fromFriends = true;
             window.GLOBALS.Checkins.add(checkin);
             checkin.save();
             return d.resolve(checkin);
@@ -11591,6 +11604,7 @@ define('tpl!templates/app.html.ejs', function() {return function(obj) { var __p=
     
     var CONSTANTS, Venue;
     CONSTANTS = {
+      PHOTOS_RETURNED_FROM_GET_CALL: 6,
       SECTIONS: {
         "Everything": null,
         "Food": "food",
@@ -11633,7 +11647,7 @@ define('tpl!templates/app.html.ejs', function() {return function(obj) { var __p=
         mayor: ["object"],
         shortUrl: ["string"],
         canonicalUrl: ["string"],
-        photos: ["object"],
+        photos: ["array"],
         likes: ["object"],
         like: ["boolean"],
         dislike: ["boolean"],
@@ -11703,19 +11717,6 @@ define('tpl!templates/app.html.ejs', function() {return function(obj) { var __p=
           return d.reject();
         });
         return d.promise();
-      },
-      photosInGroup: function(type) {
-        var photoGroup;
-        if (type == null) {
-          type = "venue";
-        }
-        if (!(this.photos && this.photos.count)) {
-          return [];
-        }
-        photoGroup = _.filter(this.photos.groups, function(group) {
-          return group.type === type;
-        });
-        return photoGroup[0].items;
       },
       tips: function() {
         return window.GLOBALS.Tips.getForVenue(this.id);
@@ -11802,7 +11803,7 @@ define('tpl!templates/checkins/header.html.ejs', function() {return function(obj
 
 define('tpl!templates/checkins/insight.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<h2>', l('Right on!') ,'</h2><p>  ', l("We have you checked in at") ,' <br>  <strong>', checkin.venue.name ,'</strong>!</p><button class="cancel">', l('Dismiss') ,'</button>');}return __p.join('');}});
 
-define('tpl!templates/checkins/show.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<div class="checkin">  <a href="#venues/', checkin.venue.id ,'" class="arrow"><i class="fa fa-arrow-circle-o-right"></i></a>  <a href="#users/', checkin.user.id ,'">    <img src="', checkin.user.photo.prefix ,'100x100', checkin.user.photo.suffix ,'" alt="', checkin.user.firstName ,'" class="profile-photo">    <h3 class="user">', checkin.user.firstName ,'</h3>  </a>  <h2 class="venue"><a href="#venues/', checkin.venue.id ,'">', checkin.venue.name ,'</a></h2>  <h4><time datetime="', window.moment.unix(checkin.createdAt).format() ,'">', window.moment.unix(checkin.createdAt).fromNow() ,'</time></h4>    '); if (checkin.shout) { ; __p.push('    <p class="shout">', checkin.shout ,'</p>  '); } ; __p.push('</div>');}return __p.join('');}});
+define('tpl!templates/checkins/show.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<div class="checkin">  <a href="#venues/', checkin.venue.id ,'" class="arrow"><i class="fa fa-arrow-circle-o-right"></i></a>  '); if (checkin.user) { ; __p.push('    <a href="#users/', checkin.user.id ,'">      <img src="', checkin.user.photo.prefix ,'100x100', checkin.user.photo.suffix ,'" alt="', checkin.user.firstName ,'" class="profile-photo">      <h3 class="user">', checkin.user.firstName ,'</h3>    </a>  '); } ; __p.push('  <h2 class="venue"><a href="#venues/', checkin.venue.id ,'">', checkin.venue.name ,'</a></h2>  <h4><time datetime="', window.moment.unix(checkin.createdAt).format() ,'">', window.moment.unix(checkin.createdAt).fromNow() ,'</time></h4>    '); if (checkin.shout) { ; __p.push('    <p class="shout">', checkin.shout ,'</p>  '); } ; __p.push('</div>');}return __p.join('');}});
 
 define('tpl!templates/venues/show-list-item.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<li class="venue" data-venue="', venue.id ,'">  '); if (showLink) { ; __p.push('<a href="#venues/', venue.id ,'">'); } ; __p.push('    '); if (venue.photos && venue.photos.count) { ; __p.push('      <div class="photo">        <img src="', venue.photos.groups[0].items[0].prefix ,'', venue.photos.groups[0].items[0].width ,'x', venue.photos.groups[0].items[0].height ,'', venue.photos.groups[0].items[0].suffix ,'">      </div>    '); } else if (venue.categories && venue.categories.length && venue.categories[0].icon) { ; __p.push('      <div class="icon">        <img src="', venue.categories[0].icon.prefix ,'88', venue.categories[0].icon.suffix ,'">      </div>    '); } else { ; __p.push('      <div class="icon">        <i class="fa fa-question"></i>      </div>    '); } ; __p.push('    <span class="arrow" data-venue="', venue.id ,'"><i class="fa fa-arrow-circle-o-right"></i></span>    <h3>', venue.name ,'</h3>    '); if (venue.location.address) { ; __p.push('      <h4>', venue.location.address ,'</h4>    '); } ; __p.push('    '); if (venue.location.distance) { ; __p.push('      <h4>', window.distance(venue.location.distance) ,'</h4>    '); } ; __p.push('    '); if (venue.hereNow.count) { ; __p.push('      <p>        ', venue.hereNow.count ,'        '); if (venue.hereNow.count == 1) { ; __p.push('          ', l('person is here.') ,'        '); } else { ; __p.push('          ', l('people are here.') ,'        '); } ; __p.push('      </p>    '); } ; __p.push('  '); if (showLink) { ; __p.push('</a>'); } ; __p.push('</li>');}return __p.join('');}});
 
@@ -12208,10 +12209,10 @@ define('tpl!templates/users/list.html.ejs', function() {return function(obj) { v
 
 define('tpl!templates/users/login.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<div id="login">  <h1>', l('Sign in to Foursquare') ,'</h1>  <p>', l('around is a Foursquare app for Firefox OS, mobile phones, and web browsers.') ,'</p>  <p>', l('Tap the connect button below to link your Foursquare account and start exploring venues nearby.') ,'</p>  <div class="center">    <a id="sign-in" href="', loginURL ,'">', l('Sign in with Foursquare') ,'</a>  </div></div>');}return __p.join('');}});
 
-define('tpl!templates/users/show.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push(''); if (user) { ; __p.push('  <img src="', user.profilePhoto() ,'" alt="', l('Profile photo for ') + user.name ,'" class="profile-photo">  <div class="profile-summary summary">    <h2>', user.name ,'</h2>    '); if (user.checkins && user.checkins.items.length) { ; __p.push('      <h4 class="subheader">        <!--          If the user checked in less than a few hours ago, we\'ll say          they\'re still there.        -->        ', user.checkins.items[0].createdAt + window.GLOBALS.RECENT_CHECKIN_TIME > window.timestamp() ? l('Currently at:') : l('Last at:') ,'        <a href="#venues/', user.checkins.items[0].venue.id ,'">', user.checkins.items[0].venue.name ,'</a>      </h4>    '); } ; __p.push('    <!--    <h4 class="subheader">', l('From') ,' ', user.homeCity ,'</h4>    -->    <p>', user.bio ,'</p>    <!-- Show recent checkins -->    '); if (user.checkins) { ; __p.push('      ', user.checkins ,'    '); } ; __p.push('  </div>'); } else { ; __p.push('  <h2>', l('Error') ,'</h2>  <p>', l('User not found.') ,'</p>'); } ; __p.push('');}return __p.join('');}});
+define('tpl!templates/users/show.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push(''); if (user) { ; __p.push('  <img src="', user.profilePhoto() ,'" alt="', l('Profile photo for ') + user.name ,'" class="profile-photo">  <div class="profile-summary">    <h1>', user.name ,'</h1>    <h2 class="subheader">', l('From:') ,' ', user.homeCity ,'</h2>    <p>', user.bio ,'</p>    '); if (user.checkins && user.checkins.items.length) { ; __p.push('      <h2>        <!--          If the user checked in less than a few hours ago, we\'ll say          they\'re still there.        -->        ', user.checkins.items[0].createdAt + window.GLOBALS.RECENT_CHECKIN_TIME > window.timestamp() ? l('Currently at:') : l('Last at:') ,'        <a href="#venues/', user.checkins.items[0].venue.id ,'">', user.checkins.items[0].venue.name ,'</a>      </h2>    '); } ; __p.push('    <!-- Show recent checkins -->    '); if (user.checkins && user.checkins.items && user.checkins.items.length) { ; __p.push('      <h1>', l('History') ,'</h1>      <div class="checkins">        '); user.checkins.items.forEach(function(checkin) { ; __p.push('          ', CheckinShowTemplate({checkin: checkin}) ,'        '); }) ; __p.push('      </div>    '); } ; __p.push('  </div>'); } else { ; __p.push('  <h2>', l('Error') ,'</h2>  <p>', l('User not found.') ,'</p>'); } ; __p.push('');}return __p.join('');}});
 
 (function() {
-  define('cs!views/users',['zepto', 'underscore', 'backbone', 'localforage', 'cs!models/user', 'tpl!templates/users/list.html.ejs', 'tpl!templates/users/login.html.ejs', 'tpl!templates/users/show.html.ejs'], function($, _, Backbone, localForage, User, ListTemplate, LoginTemplate, ShowTemplate) {
+  define('cs!views/users',['zepto', 'underscore', 'backbone', 'localforage', 'cs!models/user', 'tpl!templates/checkins/show.html.ejs', 'tpl!templates/users/list.html.ejs', 'tpl!templates/users/login.html.ejs', 'tpl!templates/users/show.html.ejs'], function($, _, Backbone, localForage, User, CheckinShowTemplate, ListTemplate, LoginTemplate, ShowTemplate) {
     
     var CreateSelf, ListView, LoginView, ShowView;
     CreateSelf = function(token) {
@@ -12272,6 +12273,7 @@ define('tpl!templates/users/show.html.ejs', function() {return function(obj) { v
       render: function() {
         var html;
         html = this.template({
+          CheckinShowTemplate: CheckinShowTemplate,
           user: this.model
         });
         return $(this.$el).html(html);
@@ -12287,16 +12289,90 @@ define('tpl!templates/users/show.html.ejs', function() {return function(obj) { v
 
 }).call(this);
 
+(function() {
+  define('cs!models/tip',["human_model"], function(HumanModel) {
+    
+    var Tip;
+    Tip = HumanModel.define({
+      type: "tip",
+      props: {
+        id: {
+          setOnce: true,
+          type: "string"
+        },
+        text: ["string"],
+        location: [
+          "object", true, {
+            lat: null,
+            lng: null
+          }
+        ],
+        createdAt: ['date'],
+        status: ['string'],
+        url: ['string'],
+        user: ['object'],
+        venue: ['object'],
+        likes: ['object'],
+        _venueID: ['string'],
+        _lastUpdated: ["number"]
+      }
+    });
+    return _.extend(Tip);
+  });
+
+}).call(this);
+
+define('tpl!templates/venues/create-tip.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<div>  <h2>', venue.name ,'</h2>  <label for="tip-text" class="hide">', l('Leave a tip for this venue') ,'</label>  <textarea id="tip-text" data-venue="', venue.id ,'" placeholder="', l('Leave a tip for this place') ,'" maxlength="200"></textarea></div><button class="cancel">', l('Cancel') ,'</button><button class="accept" data-venue="', venue.id ,'">', l('Check in') ,'</button>');}return __p.join('');}});
+
 define('tpl!templates/venues/explore.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<div class="area-container">  <p class="data-attribution">', ('Data from ') ,'<a href="https://foursquare.com/" target="_blank">Foursquare</a></p>  '); if (sections) { ; __p.push('    <div id="sections">      <span>', l('Find:') ,'</span>      <select>        '); for (var s in sections) { ; __p.push('          <option value="', sections[s] ,'" ', sectionEnabled === sections[s] ? 'selected' : '' ,'>', s ,'</option>        '); } ; __p.push('      </select>    </div>  '); } ; __p.push('</div>'); if (venues && venues.length) { ; __p.push('  <ul class="venues">    '); venues.forEach(function(venue) { ; __p.push('      ', VenueShowListItemTemplate({        showLink: true,        venue: venue      }) ,'    '); }) ; __p.push('  </ul>'); } ; __p.push('');}return __p.join('');}});
 
 define('tpl!templates/venues/list.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('');}return __p.join('');}});
 
-define('tpl!templates/venues/show.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push(''); if (venue && venue.id) { ; __p.push('  <div class="map venue" style="background-image: url(\'', mapURL ,'\')"></div>  <div class="venue-summary summary" id="venue-', venue.id ,'">    <div class="center">      <h1>', venue.name ,'</h1>      '); if (venue.categories.length || venue.location.city) { ; __p.push('        <h3 class="category subheader">          '); if (venue.categories.length) { ; __p.push('            ', venue.categories[0].name ,'          '); } ; __p.push('          '); if (!isLocal) { ; __p.push('            '); if (venue.categories.length || venue.location.city) { ; __p.push('              <small>', l('in') ,'            '); } ; __p.push('            '); if (venue.location.city) { ; __p.push('              ', venue.location.city ,'              '); if (venue.categories.length) { ; __p.push('                </small>              '); } ; __p.push('            '); } ; __p.push('          '); } ; __p.push('        </h3>      '); } ; __p.push('      '); if (hours) { ; __p.push('        <h3 class="hours subheader"></h3>      '); } else if (venue.hours && venue.hours.length && !venue.hours.isOpen) { ; __p.push('        <h3 class="hours subheader">', l('Closed right now') ,'</h3>      '); } ; __p.push('      '); if (venue.price && venue.price.tier) { ; __p.push('        <h3 title="', venue.price.message ,'">          ', l('Price:') ,'          '); for (var i = 1; i <= venue.price.tier; i++) { ; __p.push('            <i class="fa fa-circle"></i>          '); } ; __p.push('          '); for (var i = 1; i <= (4 - venue.price.tier); i++) { ; __p.push('            <i class="fa fa-circle-o"></i>          '); } ; __p.push('        </h3>      '); } ; __p.push('      <button class="check-in" data-venue="', venue.id ,'">', l('Check In') ,'</button>    </div>    <p>', venue.description ,'</p>  </div>  '); if (tips) { ; __p.push('    <h1>', l('Tips') ,'</h1>    <ul class="venue tips">      '); tips.forEach(function(tip) { ; __p.push('        <li class="tip">          <p class="text">', tip.text ,'</p>          <p class="author"><cite><a href="#/users/', tip.user.id ,'">', tip.user.firstName ,'</a></cite></p>        </li>      '); }) ; __p.push('    </ul>  '); } ; __p.push('  '); if (venue.photos) { ; __p.push('    <h1>', l('Photos') ,'</h1>    <ul class="venue photos">      '); venue.photosInGroup("venue").forEach(function(photo) { ; __p.push('        <!-- TODO: Obviously, add a modal photo viewer -->        <li><a class="photo" style="background-image: url(', photo.prefix ,'', photo.width ,'x', photo.height ,'', photo.suffix ,');" href="', photo.prefix ,'', photo.width ,'x', photo.height ,'', photo.suffix ,'" target="_blank"></a></li>      '); }) ; __p.push('    </ul>  '); } ; __p.push('  <p class="attribution"><a href="https://foursquare.com/v/', venue.id ,'?ref=', window.GLOBALS.CLIENT_ID ,'" target="_blank">', l("See this venue on Foursquare's website.") ,'</a></p>'); } else if (isLoading) { ; __p.push('  <div class="map venue"></div>  <div class="venue-summary summary">    <div class="center">      <h1>', l('Loading') ,'<span class="circle-small"></span></h1>    </div>  </div>'); } else { ; __p.push('  <h2>', l('Error') ,'</h2>  <p>', l('Venue not found.') ,'</p>'); } ; __p.push('');}return __p.join('');}});
+define('tpl!templates/venues/show.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push(''); if (venue && venue.id) { ; __p.push('  <div class="map venue" style="background-image: url(\'', mapURL ,'\')"></div>  <div class="venue-summary summary" id="venue-', venue.id ,'">    <div class="center">      <h1>', venue.name ,'</h1>      '); if (venue.categories.length || venue.location.city) { ; __p.push('        <h3 class="category subheader">          '); if (venue.categories.length) { ; __p.push('            ', venue.categories[0].name ,'          '); } ; __p.push('          '); if (!isLocal) { ; __p.push('            '); if (venue.categories.length || venue.location.city) { ; __p.push('              <small>', l('in') ,'            '); } ; __p.push('            '); if (venue.location.city) { ; __p.push('              ', venue.location.city ,'              '); if (venue.categories.length) { ; __p.push('                </small>              '); } ; __p.push('            '); } ; __p.push('          '); } ; __p.push('        </h3>      '); } ; __p.push('      '); if (hours) { ; __p.push('        <h3 class="hours subheader"></h3>      '); } else if (venue.hours && venue.hours.length && !venue.hours.isOpen) { ; __p.push('        <h3 class="hours subheader">', l('Closed right now') ,'</h3>      '); } ; __p.push('      '); if (venue.price && venue.price.tier) { ; __p.push('        <h3 title="', venue.price.message ,'">          ', l('Price:') ,'          '); for (var i = 1; i <= venue.price.tier; i++) { ; __p.push('            <i class="fa fa-circle"></i>          '); } ; __p.push('          '); for (var i = 1; i <= (4 - venue.price.tier); i++) { ; __p.push('            <i class="fa fa-circle-o"></i>          '); } ; __p.push('        </h3>      '); } ; __p.push('      <button class="check-in" data-venue="', venue.id ,'">', l('Check in here') ,'</button>    </div>    <p>', venue.description ,'</p>  </div>  '); if (tips && tips.length) { ; __p.push('    <h1>', l('Tips') ,'</h1>    <ul class="venue tips">      '); _.first(tips, 3).forEach(function(tip) { ; __p.push('        <li class="tip">          <p class="text">', tip.text ,'</p>          <p class="author"><cite><a href="#/users/', tip.user.id ,'">', tip.user.firstName ,'</a></cite></p>        </li>      '); }) ; __p.push('    </ul>    '); if (tips && tips.length > 3) { ; __p.push('      <div class="more-tips center">        <button class="leave-tip" data-venue="', venue.id ,'">', l('Leave a tip') ,'</button>        <a class="read-all-tips" href="#venues/', venue.id ,'/tips">', l('Read all tips') ,'</a>      </div>    '); } ; __p.push('  '); } else { ; __p.push('    <h1>', l('Tips') ,'</h1>    <div class="more-tips center">      <button class="leave-tip" data-venue="', venue.id ,'">', l('Leave a tip') ,'</button>    </div>  '); } ; __p.push('  '); if (venue.photos && venue.photos.length) { ; __p.push('    <h1>', l('Photos') ,'</h1>    <ul class="venue photos">      '); venue.photos.forEach(function(photo) { ; __p.push('        <!-- TODO: Obviously, add a modal photo viewer -->        <li><a class="photo" style="background-image: url(', photo.prefix ,'', photo.width ,'x', photo.height ,'', photo.suffix ,');" href="', photo.prefix ,'', photo.width ,'x', photo.height ,'', photo.suffix ,'" target="_blank"></a></li>      '); }) ; __p.push('    </ul>  '); } ; __p.push('  <p class="attribution"><a href="https://foursquare.com/v/', venue.id ,'?ref=', window.GLOBALS.CLIENT_ID ,'" target="_blank">', l("See this venue on Foursquare's website.") ,'</a></p>'); } else if (isLoading) { ; __p.push('  <div class="map venue"></div>  <div class="venue-summary summary">    <div class="center">      <h1>', l('Loading') ,'<span class="circle-small"></span></h1>    </div>  </div>'); } else { ; __p.push('  <h2>', l('Error') ,'</h2>  <p>', l('Venue not found.') ,'</p>'); } ; __p.push('');}return __p.join('');}});
+
+define('tpl!templates/venues/tips.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push(''); if (venue && venue.id) { ; __p.push('  <div class="venue-summary summary" id="venue-', venue.id ,'">    '); if (tips) { ; __p.push('      <div class="center">        <h1>', l('Tips left at ') ,'', venue.name ,'</h1>      </div>      <ul class="venue tips">        '); tips.forEach(function(tip) { ; __p.push('          <li class="tip">            <p class="text">', tip.text ,'</p>            <p class="author"><cite><a href="#/users/', tip.user.id ,'">', tip.user.firstName ,'</a></cite></p>          </li>        '); }) ; __p.push('      </ul>    '); } else { ; __p.push('      <div class="center">        <h1>', l('No tips for ') ,'', venue.name ,'</h1>      </div>    '); } ; __p.push('  </div>  <p class="attribution"><a href="https://foursquare.com/v/', venue.id ,'?ref=', window.GLOBALS.CLIENT_ID ,'" target="_blank">', l("See this venue on Foursquare's website.") ,'</a></p>'); } else if (isLoading) { ; __p.push('  <div class="venue-summary summary">    <div class="center">      <h1>', l('Loading') ,'<span class="circle-small"></span></h1>    </div>  </div>'); } else { ; __p.push('  <h2>', l('Error') ,'</h2>  <p>', l('Venue not found.') ,'</p>'); } ; __p.push('');}return __p.join('');}});
 
 (function() {
-  define('cs!views/venues',['zepto', 'underscore', 'backbone', 'cs!lib/geo', 'localforage', 'cs!models/venue', 'cs!views/checkins', 'tpl!templates/venues/explore.html.ejs', 'tpl!templates/venues/list.html.ejs', 'tpl!templates/venues/show.html.ejs', 'tpl!templates/venues/show-list-item.html.ejs'], function($, _, Backbone, Geo, localForage, Venue, CheckinViews, ExploreTemplate, ListTemplate, ShowTemplate, ShowListItemTemplate) {
+  define('cs!views/venues',['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'localforage', 'cs!models/tip', 'cs!models/venue', 'cs!views/checkins', 'cs!views/modal', 'tpl!templates/venues/create-tip.html.ejs', 'tpl!templates/venues/explore.html.ejs', 'tpl!templates/venues/list.html.ejs', 'tpl!templates/venues/show.html.ejs', 'tpl!templates/venues/show-list-item.html.ejs', 'tpl!templates/venues/tips.html.ejs'], function($, _, Backbone, API, Geo, localForage, Tip, Venue, CheckinViews, ModalView, CreateTipTemplate, ExploreTemplate, ListTemplate, ShowTemplate, ShowListItemTemplate, TipsTemplate) {
     
-    var ExploreView, ListView, ShowView;
+    var CreateTip, ExploreView, ListView, ShowView, TipsView;
+    CreateTip = ModalView.extend({
+      _el: '#create-tip',
+      model: Venue,
+      template: CreateTipTemplate,
+      _isPosting: false,
+      events: {
+        "click .accept": "addTip",
+        "click .cancel": "dismiss"
+      },
+      addTip: function() {
+        var _this = this;
+        if (this._isPosting) {
+          return;
+        }
+        this._isPosting = true;
+        return API.request("tips/add", {
+          data: {
+            text: $('#tip-text').val(),
+            venueId: $('#tip-text').data('venue')
+          },
+          requestMethod: "POST"
+        }).done(function(data) {
+          var tipModel;
+          tipModel = new Tip(data.response.tip);
+          tipModel._lastUpdated = window.timestamp();
+          tipModel._venueID = $('#tip-text').data('venue');
+          window.GLOBALS.Tips.add(tipModel);
+          tipModel.save();
+          return _this.dismiss();
+        });
+      },
+      _templateData: function() {
+        return {
+          venue: this.model
+        };
+      }
+    });
     ListView = Backbone.View.extend({
       model: Venue,
       models: null,
@@ -12463,15 +12539,18 @@ define('tpl!templates/venues/show.html.ejs', function() {return function(obj) { 
       tips: [],
       events: {
         'click .venue-summary .check-in': 'checkIn',
-        'click .photos.venue .photo': 'showPhoto'
+        'click .photos.venue .photo': 'showPhoto',
+        'click .more-tips .leave-tip': 'leaveTip'
       },
       mapURL: null,
       initialize: function() {
         var _this = this;
+        _.bindAll(this);
         this.render();
         return window.GLOBALS.Venues.get(this.id).done(function(venue) {
           _this.isLoading = false;
           _this.model = venue;
+          _this.model.on('change:photos', _this.render);
           _this.mapURL = Geo.staticMap([venue.location.lat, venue.location.lng], [[venue.location.lat, venue.location.lng]], 16, [$(window).width(), 125]);
           _this.render();
           Geo.isNearby(venue.location.lat, venue.location.lng).done(function(isLocal) {
@@ -12484,7 +12563,7 @@ define('tpl!templates/venues/show.html.ejs', function() {return function(obj) { 
             if (!$("#venue-" + _this.model.id).length) {
               return;
             }
-            _this.tips = _.first(tips, 5);
+            _this.tips = tips;
             return _this.render();
           });
         }).fail(function() {
@@ -12511,6 +12590,14 @@ define('tpl!templates/venues/show.html.ejs', function() {return function(obj) { 
           model: this.model
         });
       },
+      leaveTip: function(event) {
+        if ($(event.target).data('venue') !== this.model.id) {
+          return;
+        }
+        return new CreateTip({
+          model: this.model
+        });
+      },
       showPhoto: function(event) {
         var openURL;
         if (window.MozActivity) {
@@ -12525,10 +12612,47 @@ define('tpl!templates/venues/show.html.ejs', function() {return function(obj) { 
         }
       }
     });
+    TipsView = Backbone.View.extend({
+      el: '#content',
+      $el: $('#content'),
+      model: Venue,
+      template: TipsTemplate,
+      isLoading: true,
+      tips: [],
+      initialize: function() {
+        var _this = this;
+        _.bindAll(this);
+        this.render();
+        return window.GLOBALS.Venues.get(this.id).done(function(venue) {
+          _this.isLoading = false;
+          _this.model = venue;
+          _this.render();
+          return venue.tips().done(function(tips) {
+            if (!$("#venue-" + _this.model.id).length) {
+              return;
+            }
+            _this.tips = tips;
+            return _this.render();
+          });
+        }).fail(function() {
+          return _this.render();
+        });
+      },
+      render: function() {
+        var html;
+        html = this.template({
+          isLoading: this.isLoading,
+          tips: this.tips,
+          venue: this.model
+        });
+        return $(this.$el).html(html);
+      }
+    });
     return {
       Explore: ExploreView,
       List: ListView,
-      Show: ShowView
+      Show: ShowView,
+      Tips: TipsView
     };
   });
 
@@ -12548,6 +12672,7 @@ define('tpl!templates/venues/show.html.ejs', function() {return function(obj) { 
         "login": "userLogin",
         "users/:id": "userShow",
         "venues/:id": "venueShow",
+        "venues/:id/tips": "venueShowTips",
         "nearby": "index",
         "worldwide": "index",
         "": "index"
@@ -12610,6 +12735,13 @@ define('tpl!templates/venues/show.html.ejs', function() {return function(obj) { 
       },
       venueShow: function(id) {
         return appView.currentView = new VenueViews.Show({
+          el: "#content",
+          $el: $("#content"),
+          id: id
+        });
+      },
+      venueShowTips: function(id) {
+        return appView.currentView = new VenueViews.Tips({
           el: "#content",
           $el: $("#content"),
           id: id
@@ -12860,8 +12992,8 @@ define('backbone_store',["underscore", "zepto", "backbone", "localforage"], func
     CheckinCollection = Backbone.Collection.extend({
       model: Checkin,
       offlineStore: new Store('Checkins'),
-      comparator: function(episode) {
-        return -(new Date(episode.createdAt).getTime());
+      comparator: function(checkin) {
+        return -checkin.createdAt.getTime();
       },
       get: function(id) {
         var d, results,
@@ -12878,7 +13010,9 @@ define('backbone_store',["underscore", "zepto", "backbone", "localforage"], func
           var checkin;
           checkin = new Checkin(data.response.checkin);
           checkin._lastUpdated = window.timestamp();
-          _this.add(checkin);
+          _this.add(checkin, {
+            merge: true
+          });
           checkin.save();
           return d.resolve(checkin);
         }).fail(function(xhr, type) {
@@ -12894,35 +13028,32 @@ define('backbone_store',["underscore", "zepto", "backbone", "localforage"], func
         }
         d = $.Deferred();
         checkins = this.where({
-          _isInRecent: true
+          _fromFriends: true
         });
         localForage.getItem("lastUpdatedTimestamp-checkins/recent", function(lastUpdatedTimestamp) {
           if (!lastUpdatedTimestamp || lastUpdatedTimestamp + window.GLOBALS.HOUR < window.timestamp() || forceUpdate) {
             localForage.setItem("lastUpdatedTimestamp-checkins/recent", window.timestamp());
-            return Geo.getCurrentPosition(null, null, forceUpdate).always(function(position, latLng) {
-              var apiParams;
-              apiParams = {
+            return API.request("checkins/recent", {
+              data: {
                 afterTimestamp: lastUpdatedTimestamp || '1'
-              };
-              if (latLng) {
-                apiParams.ll = "" + latLng.lat + "," + latLng.lng;
               }
-              return API.request("checkins/recent", {
-                data: apiParams
-              }).done(function(data) {
-                data.response.recent.forEach(function(c) {
-                  var checkin;
-                  checkin = new Checkin(c);
-                  checkin._isInRecent = true;
-                  _this.add(checkin);
-                  checkin.save();
-                  window.GLOBALS.Users.get(checkin.user.id);
-                  window.GLOBALS.Venues.get(checkin.venue.id);
-                  return checkins.push(checkin);
+            }).done(function(data) {
+              data.response.recent.forEach(function(c) {
+                var checkin;
+                checkin = new Checkin(c);
+                checkin._fromFriends = true;
+                _this.add(checkin, {
+                  merge: true
                 });
-                return d.resolve(_this._onePerUser(checkins));
-              }).fail(d.reject);
-            });
+                checkin.save();
+                window.GLOBALS.Users.get(checkin.user.id);
+                return window.GLOBALS.Venues.get(checkin.venue.id);
+              });
+              checkins = _this.where({
+                _fromFriends: true
+              });
+              return d.resolve(_this._onePerUser(checkins));
+            }).fail(d.reject);
           } else {
             return d.resolve(_this._onePerUser(checkins));
           }
@@ -12943,39 +13074,6 @@ define('backbone_store',["underscore", "zepto", "backbone", "localforage"], func
       }
     });
     return CheckinCollection;
-  });
-
-}).call(this);
-
-(function() {
-  define('cs!models/tip',["human_model"], function(HumanModel) {
-    
-    var Tip;
-    Tip = HumanModel.define({
-      type: "tip",
-      props: {
-        id: {
-          setOnce: true,
-          type: "string"
-        },
-        text: ["string"],
-        location: [
-          "object", true, {
-            lat: null,
-            lng: null
-          }
-        ],
-        createdAt: ['date'],
-        status: ['string'],
-        url: ['string'],
-        user: ['object'],
-        venue: ['object'],
-        likes: ['object'],
-        _venueID: ['string'],
-        _lastUpdated: ["number"]
-      }
-    });
-    return _.extend(Tip);
   });
 
 }).call(this);
@@ -13007,7 +13105,9 @@ define('backbone_store',["underscore", "zepto", "backbone", "localforage"], func
             tip = new Tip(tip);
             tip._lastUpdated = window.timestamp();
             tip._venueID = venue.id || venue;
-            _this.add(tip);
+            _this.add(tip, {
+              merge: true
+            });
             tip.save();
             tips.push(tip);
           }
@@ -13045,7 +13145,7 @@ define('backbone_store',["underscore", "zepto", "backbone", "localforage"], func
         results = this.where({
           id: id
         });
-        if (results.length && results[0]._lastUpdated + (window.GLOBALS.HOUR * 12) > window.timestamp() && !forceUpdate) {
+        if (results.length && results[0]._lastUpdated + (window.GLOBALS.HOUR * 1) > window.timestamp() && !forceUpdate) {
           d.resolve(results[0]);
           return d.promise();
         }
@@ -13053,7 +13153,9 @@ define('backbone_store',["underscore", "zepto", "backbone", "localforage"], func
           var user;
           user = new User(data.response.user);
           user._lastUpdated = window.timestamp();
-          _this.add(user);
+          _this.add(user, {
+            merge: true
+          });
           user.save();
           return d.resolve(user);
         }).fail(function(xhr, type) {
@@ -13095,17 +13197,33 @@ define('backbone_store',["underscore", "zepto", "backbone", "localforage"], func
         results = this.where({
           id: id
         });
-        if (results.length && results[0]._lastUpdated + (window.GLOBALS.HOUR * 12) > window.timestamp() && !forceUpdate) {
+        if (results.length && results[0]._lastUpdated + (window.GLOBALS.HOUR * 1) > window.timestamp() && !forceUpdate) {
           d.resolve(results[0]);
           return d.promise();
         }
         API.request("venues/" + id).done(function(data) {
-          var venue;
+          var photoGroup, venue;
+          photoGroup = _.filter(data.response.venue.photos.groups, function(group) {
+            return group.type === "venue";
+          });
+          data.response.venue.photos = photoGroup[0] ? photoGroup[0].items : [];
           venue = new Venue(data.response.venue);
           venue._lastUpdated = window.timestamp();
-          _this.add(venue);
+          _this.add(venue, {
+            merge: true
+          });
           venue.save();
-          return d.resolve(venue);
+          d.resolve(venue);
+          if (!(venue.photos.length >= Venue.PHOTOS_RETURNED_FROM_GET_CALL)) {
+            return;
+          }
+          return API.request("venues/" + id + "/photos").done(function(data) {
+            if (data.response.photos && data.response.photos.items) {
+              venue.photos = data.response.photos.items;
+            }
+            venue.save();
+            return d.resolve(venue);
+          });
         }).fail(function(xhr, type) {
           return d.reject(xhr.response);
         });

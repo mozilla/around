@@ -17,6 +17,8 @@ build: update_locale_json
 	cp -R www/*.* www-built/
 	mv www-built/css/app.built.css www-built/css/app.css
 	mv www-built/js/main.built.js www-built/js/main.js
+	rm www-built/fonts/firasans/stylesheet.css
+	cat www-built/manifest.appcache | sed -e "s/TIMESTAMP/`date +%s`/" > www-built/manifest.appcache
 
 deploy: build
 	volo ghdeploy

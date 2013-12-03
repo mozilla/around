@@ -50,11 +50,11 @@
     <p><%= venue.description %></p>
   </div>
 
-  <% if (tips) { %>
+  <% if (tips && tips.length) { %>
     <h1><%= l('Tips') %></h1>
 
     <ul class="venue tips">
-      <% tips.forEach(function(tip) { %>
+      <% _.first(tips, 3).forEach(function(tip) { %>
         <li class="tip">
           <p class="text"><%= tip.text %></p>
 
@@ -62,6 +62,12 @@
         </li>
       <% }) %>
     </ul>
+
+    <% if (tips && tips.length > 3) { %>
+      <div class="more-tips center">
+        <a href="#venues/<%= venue.id %>/tips"><%= l('Read all tips') %></a>
+      </div>
+    <% } %>
   <% } %>
 
   <% if (venue.photos && venue.photos.length) { %>

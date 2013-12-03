@@ -1,4 +1,4 @@
-define ['zepto', 'underscore', 'backbone', 'cs!lib/geo', 'localforage', 'cs!models/venue', 'cs!views/checkins', 'tpl!templates/venues/explore.html.ejs', 'tpl!templates/venues/list.html.ejs', 'tpl!templates/venues/show.html.ejs', 'tpl!templates/venues/show-list-item.html.ejs'], ($, _, Backbone, Geo, localForage, Venue, CheckinViews, ExploreTemplate, ListTemplate, ShowTemplate, ShowListItemTemplate) ->
+define ['zepto', 'underscore', 'backbone', 'cs!lib/geo', 'localforage', 'cs!models/venue', 'cs!views/checkins', 'tpl!templates/venues/explore.html.ejs', 'tpl!templates/venues/list.html.ejs', 'tpl!templates/venues/show.html.ejs', 'tpl!templates/venues/show-list-item.html.ejs', 'tpl!templates/venues/tips.html.ejs'], ($, _, Backbone, Geo, localForage, Venue, CheckinViews, ExploreTemplate, ListTemplate, ShowTemplate, ShowListItemTemplate, TipsTemplate) ->
   'use strict'
 
   # List of venue views, most often used when searching for a venue, using
@@ -218,7 +218,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/geo', 'localforage', 'cs!mode
 
         venue.tips().done (tips) =>
           return unless $("#venue-#{@model.id}").length
-          @tips = _.first(tips, 5)
+          @tips = tips
           @render()
       .fail =>
         @render()
@@ -254,8 +254,44 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/geo', 'localforage', 'cs!mode
             type: "url"
             url: $(event.target).attr "href"
 
+  # Tips view; show all the tips for this venue.
+  TipsView = Backbone.View.extend
+    el: '#content'
+    $el: $('#content')
+    model: Venue
+    template: TipsTemplate
+
+    isLoading: true
+    tips: []
+
+    initialize: ->
+      _.bindAll this
+
+      @render()
+
+      window.GLOBALS.Venues.get(@id).done (venue) =>
+        @isLoading = false
+        @model = venue
+
+        @render()
+
+        venue.tips().done (tips) =>
+          return unless $("#venue-#{@model.id}").length
+          @tips = tips
+          @render()
+      .fail =>
+        @render()
+
+    render: ->
+      html = @template
+        isLoading: @isLoading
+        tips: @tips
+        venue: @model
+      $(@$el).html(html)
+
   return {
     Explore: ExploreView
     List: ListView
     Show: ShowView
+    Tips: TipsView
   }

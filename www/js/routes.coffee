@@ -16,6 +16,7 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
       # "users": "userList"
       "users/:id": "userShow"
       "venues/:id": "venueShow"
+      "venues/:id/tips": "venueShowTips"
       "nearby": "index"
       "worldwide": "index"
       "": "index"
@@ -88,6 +89,13 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
     # like/dislike the venue.
     venueShow: (id) ->
       appView.currentView = new VenueViews.Show
+        el: "#content"
+        $el: $("#content")
+        id: id
+
+    # Show all tips for a select venue.
+    venueShowTips: (id) ->
+      appView.currentView = new VenueViews.Tips
         el: "#content"
         $el: $("#content")
         id: id

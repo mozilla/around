@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-30 04:17-0500\n"
+"POT-Creation-Date: 2013-12-02 20:36-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -91,7 +91,7 @@ msgid "Worldwide"
 msgstr ""
 
 #: www/js/templates/timeline/show.html.ejs:32
-msgid "around is powered by "
+msgid "Data from "
 msgstr ""
 
 #: www/js/templates/timeline/show.html.ejs:32
@@ -103,16 +103,22 @@ msgstr ""
 msgid "Check In"
 msgstr ""
 
-#: www/js/templates/users/login.html.ejs:1
+#: www/js/templates/users/login.html.ejs:2
+msgid "Sign in to Foursquare"
+msgstr ""
+
+#: www/js/templates/users/login.html.ejs:4
 msgid ""
 "around is a Foursquare app for Firefox OS, mobile phones, and web browsers."
 msgstr ""
 
-#: www/js/templates/users/login.html.ejs:3
-msgid "Touch the \"Sign in\" button to get started:"
+#: www/js/templates/users/login.html.ejs:6
+msgid ""
+"Tap the connect button below to link your Foursquare account and start "
+"exploring venues nearby."
 msgstr ""
 
-#: www/js/templates/users/login.html.ejs:6
+#: www/js/templates/users/login.html.ejs:9
 msgid "Sign in with Foursquare"
 msgstr ""
 
@@ -133,7 +139,7 @@ msgid "From"
 msgstr ""
 
 #: www/js/templates/users/show.html.ejs:31
-#: www/js/templates/venues/show.html.ejs:80
+#: www/js/templates/venues/show.html.ejs:88
 msgid "Error"
 msgstr ""
 
@@ -177,6 +183,10 @@ msgstr ""
 msgid "See this venue on Foursquare's website."
 msgstr ""
 
-#: www/js/templates/venues/show.html.ejs:82
+#: www/js/templates/venues/show.html.ejs:84
+msgid "Loading"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:90
 msgid "Venue not found."
 msgstr ""

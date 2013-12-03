@@ -5,6 +5,9 @@ www-ghdeploy
 # CSS output from Stylus
 www/css/*.css
 
+# Output from locale files; don't include these in git
+www/locale
+
 .DS_Store
 
 lib-cov

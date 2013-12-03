@@ -16,7 +16,10 @@ define ['zepto', 'localforage', 'moment'], ($, localForage, moment, UserCollecti
         "WebkitOverflowScrolling" in window.document.createElement("div").style
       )()
     HOUR: 3600
-    LANGUAGE: window.navigator.language # HACK: Better way for this, I assume?
+    LOCALES: [
+      'en-GB'
+      'en-US'
+    ]
     MAP_ID: mapID
     MAP_URL: "http://a.tiles.mapbox.com/v3/#{mapID}/"
     MAX_DOWNLOADS: 2 # Maximum number of podcast downloads at one time.
@@ -25,6 +28,11 @@ define ['zepto', 'localforage', 'moment'], ($, localForage, moment, UserCollecti
     OBJECT_STORE_NAME: "around"
     TOKEN: undefined # Set in app.coffee
   GLOBALS.AUTH_URL = "https://foursquare.com/oauth2/authenticate?client_id=#{GLOBALS.CLIENT_ID}&response_type=token&redirect_uri=#{window.location.origin}"
+
+  # Determine the locale; fallback to en-US if not available.
+  # HACK: Better way for this, I assume?
+  GLOBALS.LANGUAGE = window.navigator.language
+  GLOBALS.LANGUAGE = 'en-US' unless _.contains GLOBALS.LOCALES, GLOBALS.LANGUAGE
 
   # We want the moment library available everywhere, especially inside
   # templates.

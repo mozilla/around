@@ -23,7 +23,7 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'localforage', 'cs!
           tip._lastUpdated = window.timestamp()
           tip._venueID = venue.id || venue
 
-          @add(tip)
+          @add(tip, {merge: true})
           tip.save()
 
           tips.push(tip)

@@ -24,7 +24,7 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/geo', 'loca
       API.request("checkins/#{id}").done (data) =>
         checkin = new Checkin(data.response.checkin)
         checkin._lastUpdated = window.timestamp()
-        @add(checkin)
+        @add(checkin, {merge: true})
         checkin.save()
 
         d.resolve(checkin)
@@ -60,7 +60,7 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/geo', 'loca
                 checkin = new Checkin(c)
                 checkin._isInRecent = true
 
-                @add(checkin)
+                @add(checkin, {merge: true})
                 checkin.save()
 
                 window.GLOBALS.Users.get(checkin.user.id)

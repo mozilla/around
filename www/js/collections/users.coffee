@@ -25,7 +25,7 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/api', 'cs!m
       API.request("users/#{id}").done (data) =>
         user = new User(data.response.user)
         user._lastUpdated = window.timestamp()
-        @add(user)
+        @add(user, {merge: true})
         user.save()
 
         d.resolve(user)

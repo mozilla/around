@@ -27,7 +27,7 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/api', 'cs!m
         venue = new Venue(data.response.venue)
         venue._lastUpdated = window.timestamp()
 
-        @add(venue)
+        @add(venue, {merge: true})
         venue.save()
 
         d.resolve(venue)

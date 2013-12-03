@@ -20,7 +20,7 @@ define ['human_model'], (HumanModel) ->
       shout: ['string']
 
       createdAt: ['date']
-      _isInRecent: ['boolean', true, false]
+      _fromFriends: ['boolean', true, false]
 
       _lastUpdated: ["number"]
 

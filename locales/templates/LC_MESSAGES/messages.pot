@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-02 20:58-0500\n"
+"POT-Creation-Date: 2013-12-03 01:56-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,10 +34,12 @@ msgid "What are you up to?"
 msgstr ""
 
 #: www/js/templates/checkins/confirm.html.ejs:8
+#: www/js/templates/venues/create-tip.html.ejs:8
 msgid "Cancel"
 msgstr ""
 
 #: www/js/templates/checkins/confirm.html.ejs:9
+#: www/js/templates/venues/create-tip.html.ejs:9
 msgid "Check in"
 msgstr ""
 
@@ -99,7 +101,6 @@ msgid "Learn more"
 msgstr ""
 
 #: www/js/templates/timeline/show.html.ejs:35
-#: www/js/templates/venues/show.html.ejs:47
 msgid "Check In"
 msgstr ""
 
@@ -139,12 +140,21 @@ msgid "From"
 msgstr ""
 
 #: www/js/templates/users/show.html.ejs:31
-#: www/js/templates/venues/show.html.ejs:88
+#: www/js/templates/venues/show.html.ejs:101
+#: www/js/templates/venues/tips.html.ejs:32
 msgid "Error"
 msgstr ""
 
 #: www/js/templates/users/show.html.ejs:33
 msgid "User not found."
+msgstr ""
+
+#: www/js/templates/venues/create-tip.html.ejs:4
+msgid "Leave a tip for this venue"
+msgstr ""
+
+#: www/js/templates/venues/create-tip.html.ejs:5
+msgid "Leave a tip for this place"
 msgstr ""
 
 #: www/js/templates/venues/explore.html.ejs:6
@@ -171,22 +181,47 @@ msgstr ""
 msgid "Price:"
 msgstr ""
 
+#: www/js/templates/venues/show.html.ejs:47
+msgid "Check in here"
+msgstr ""
+
 #: www/js/templates/venues/show.html.ejs:54
+#: www/js/templates/venues/show.html.ejs:74
 msgid "Tips"
 msgstr ""
 
 #: www/js/templates/venues/show.html.ejs:68
+#: www/js/templates/venues/show.html.ejs:77
+msgid "Leave a tip"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:70
+msgid "Read all tips"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:81
 msgid "Photos"
 msgstr ""
 
-#: www/js/templates/venues/show.html.ejs:78
+#: www/js/templates/venues/show.html.ejs:91
+#: www/js/templates/venues/tips.html.ejs:24
 msgid "See this venue on Foursquare's website."
 msgstr ""
 
-#: www/js/templates/venues/show.html.ejs:84
+#: www/js/templates/venues/show.html.ejs:97
+#: www/js/templates/venues/tips.html.ejs:28
 msgid "Loading"
 msgstr ""
 
-#: www/js/templates/venues/show.html.ejs:90
+#: www/js/templates/venues/show.html.ejs:103
+#: www/js/templates/venues/tips.html.ejs:34
 msgid "Venue not found."
+msgstr ""
+
+#: www/js/templates/venues/tips.html.ejs:5
+msgid "Tips left at "
+msgstr ""
+
+#: www/js/templates/venues/tips.html.ejs:19
+msgid "No tips for "
 msgstr ""

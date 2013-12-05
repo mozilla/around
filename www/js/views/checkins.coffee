@@ -228,6 +228,8 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'cs!model
         @venues = venues
         @searchRequest = null
 
+        @_getPhotosForVenues(@venues)
+
         @render()
 
     showCheckinOptions: (event) ->
@@ -250,6 +252,10 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'cs!model
       # Disable tap handler, if present.
       @map.tap.disable() if @map.tap
 
+    _cleanUpMap: ->
+      @_cancelMap = true
+      @map.remove()
+
     _geoSuccess: (position, coords, accuracy) ->
       @position = position
 
@@ -262,9 +268,16 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'cs!model
     _geoError: ->
       return
 
-    _cleanUpMap: ->
-      @_cancelMap = true
-      @map.remove()
+    # Slightly expensive way to get all the photos for some venues in the
+    # "Explore" view. We don't get every single venue's photos, as it requires
+    # a few extra HTTP requests per-venue (one for the full venue data and
+    # then the image file itself).
+    #
+    # TODO: Use Foursquare's "multi request API":
+    # https://developer.foursquare.com/docs/multi/multi
+    _getPhotosForVenues: (venues) ->
+      _.first(venues, window.GLOBALS.VENUES_TO_GET_PHOTOS_FOR_IN_SEARCH).forEach (v) =>
+        v.getPhotos().done(@render) unless v.photos
 
     _templateData: ->
       {

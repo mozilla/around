@@ -36,13 +36,7 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/api', 'cs!m
         return unless venue.photos.length >= Venue.PHOTOS_RETURNED_FROM_GET_CALL
 
         # Get all photos for this venue.
-        # TODO: Get photos past the 200 count.
-        API.request("venues/#{id}/photos").done (data) =>
-          if data.response.photos and data.response.photos.items
-            venue.photos = data.response.photos.items
-
-          venue.save()
-
+        venue.getPhotos().done ->
           d.resolve(venue)
       .fail (xhr, type) ->
         d.reject(xhr.response) # if xhr.status == 400

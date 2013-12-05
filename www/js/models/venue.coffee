@@ -129,6 +129,16 @@ define ["zepto", "cs!lib/api", "human_model"], ($, API, HumanModel) ->
 
       d.promise()
 
+    getPhotos: ->
+      # TODO: Get photos past the 200 count.
+      API.request("venues/#{@id}/photos").done (data) =>
+        if data.response.photos and data.response.photos.items
+          @photos = data.response.photos.items
+        else
+          @photos = []
+
+        @save()
+
     photo: (index = 0) ->
       return null unless @photos.length and @photos[index]
 

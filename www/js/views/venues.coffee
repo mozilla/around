@@ -194,6 +194,10 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'localfor
       # Disable tap handler, if present.
       @map.tap.disable() if @map.tap
 
+    _cleanUpMap: ->
+      @_cancelMap = true
+      @map.remove()
+
     _geoSuccess: (position, coords, accuracy) ->
       @position = position
 
@@ -205,10 +209,6 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'localfor
 
     _geoError: ->
       return
-
-    _cleanUpMap: ->
-      @_cancelMap = true
-      @map.remove()
 
   # Venue view; used to show a venue in various places, with information
   # obscured via CSS.

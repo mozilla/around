@@ -23,6 +23,8 @@ define ['zepto', 'underscore', 'backbone', 'localforage', 'cs!models/user', 'tpl
       user.set
         access_token: token
         relationship: User.RELATIONSHIP.SELF
+        _isFullObject: true
+        _lastUpdated: window.timestamp()
 
       window.GLOBALS.Users.add(user)
       user.save()

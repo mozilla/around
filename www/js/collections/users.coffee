@@ -17,14 +17,19 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/api', 'cs!m
 
       results = @where {id: id}
 
-      if results.length and results[0]._lastUpdated + (window.GLOBALS.HOUR * 1) > window.timestamp() and !forceUpdate
+      if (results.length and
+          results[0]._lastUpdated + (window.GLOBALS.HOUR * 1) > window.timestamp() and
+          results[0]._isFullObject and
+          !forceUpdate)
         d.resolve(results[0])
         return d.promise()
 
       # Get information about this user.
       API.request("users/#{id}").done (data) =>
         user = new User(data.response.user)
+        user._isFullObject = true
         user._lastUpdated = window.timestamp()
+
         @add(user, {merge: true})
         user.save()
 

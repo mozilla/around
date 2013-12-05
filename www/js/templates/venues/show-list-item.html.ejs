@@ -1,8 +1,8 @@
 <li class="venue" data-venue="<%= venue.id %>">
-  <% if (showLink) { %><a href="#venues/<%= venue.id %>"><% } %>
-    <% if (venue.photos && venue.photos.count) { %>
+  <% if (showLink) { %><a href="<%= venue.url %>"><% } %>
+    <% if (venue.photos && venue.photos.length) { %>
       <div class="photo">
-        <img src="<%= venue.photos.groups[0].items[0].prefix %><%= venue.photos.groups[0].items[0].width %>x<%= venue.photos.groups[0].items[0].height %><%= venue.photos.groups[0].items[0].suffix %>">
+        <img src="<%= venue.photo() %>">
       </div>
     <% } else if (venue.categories && venue.categories.length && venue.categories[0].icon) { %>
       <div class="icon">
@@ -24,7 +24,7 @@
       <h4><%= window.distance(venue.location.distance) %></h4>
     <% } %>
 
-    <% if (venue.hereNow.count) { %>
+    <% if (venue.hereNow && venue.hereNow.count) { %>
       <p>
         <%= venue.hereNow.count %>
         <% if (venue.hereNow.count == 1) { %>

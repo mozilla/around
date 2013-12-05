@@ -16,14 +16,19 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/geo', 'loca
 
       results = @where {id: id}
 
-      if results.length and results[0]._lastUpdated + (window.GLOBALS.HOUR * 12) > window.timestamp() and !forceUpdate
+      if (results.length and
+          results[0]._lastUpdated + (window.GLOBALS.HOUR * 12) > window.timestamp() and
+          results[0]._isFullObject and
+          !forceUpdate)
         d.resolve(results[0])
         return d.promise()
 
       # Get information about this checkin.
       API.request("checkins/#{id}").done (data) =>
         checkin = new Checkin(data.response.checkin)
+        checkin._isFullObject = true
         checkin._lastUpdated = window.timestamp()
+
         @add(checkin, {merge: true})
         checkin.save()
 
@@ -56,6 +61,7 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/geo', 'loca
             data.response.recent.forEach (c) =>
               checkin = new Checkin(c)
               checkin._fromFriends = true
+              checkin._isFullObject = true
 
               @add(checkin, {merge: true})
               checkin.save()

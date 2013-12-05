@@ -72,6 +72,7 @@ define ['zepto', 'cs!lib/geo', 'human_model', 'cs!lib/api', 'cs!models/checkin']
       access_token: ['string', true]
 
       _lastUpdated: ["number"]
+      _isFullObject: ['boolean', true, false]
 
     derived:
       # User's full name.
@@ -83,6 +84,12 @@ define ['zepto', 'cs!lib/geo', 'human_model', 'cs!lib/api', 'cs!models/checkin']
           nameString += " #{@lastName}" if @lastName
 
           nameString
+
+      # App URL for this user, used to display GET links to it in the app.
+      url:
+        deps: ['id']
+        fn: ->
+          "#/users/#{@id}"
 
     # otherMethods:
     # Check this user into a venue. Creates a new check-in object added to this

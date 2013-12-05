@@ -152,20 +152,18 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'localfor
       localForage.getItem "explore-#{section}", (data) =>
         if data and data.timestamp + (window.GLOBALS.MINUTE * 2) > window.timestamp()
           @headerLocation = data.headerLocation
-          @venues = data.venues
+          @venues = _.map JSON.parse(data.venues), (v) ->
+            new Venue(v)
 
           return @render()
 
         window.GLOBALS.Venues.near({
           ll: "#{@position.coords.latitude},#{@position.coords.longitude}"
           accuracy: @position.coords.accuracy
-        }, section).done (apiResponse) =>
-          @venues = []
-          response = apiResponse.response
-          _(response.groups[0].items).each (item) =>
-            @venues.push item.venue
+        }, section).done (venues, data) =>
+          @venues = venues
 
-          @headerLocation = response.headerFullLocation
+          @headerLocation = data.response.headerFullLocation
 
           if @venues.length
             # Store these venues for a brief period of time for fast reloading of
@@ -173,7 +171,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'localfor
             localForage.setItem "explore-#{section}",
               headerLocation: @headerLocation
               timestamp: window.timestamp()
-              venues: @venues
+              venues: JSON.stringify(@venues)
 
             @render()
           else

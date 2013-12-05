@@ -23,6 +23,7 @@ define ['human_model'], (HumanModel) ->
       _fromFriends: ['boolean', true, false]
 
       _lastUpdated: ["number"]
+      _isFullObject: ['boolean', true, false]
 
     derived:
       # Checkin location, obtained from venue object.
@@ -30,5 +31,11 @@ define ['human_model'], (HumanModel) ->
         deps: ['venue']
         fn: ->
           @venue.location
+
+      # App URL for this checkin, used to display GET links to it in the app.
+      url:
+        deps: ['id']
+        fn: ->
+          "#/checkins/#{@id}"
 
   return Checkin

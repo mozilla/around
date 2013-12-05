@@ -25,5 +25,6 @@ define ["human_model"], (HumanModel) ->
       _venueID: ['string']
 
       _lastUpdated: ["number"]
+      _isFullObject: ['boolean', true, false]
 
   return _.extend Tip

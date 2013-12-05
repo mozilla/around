@@ -49,7 +49,6 @@ define ["zepto", "cs!lib/api", "human_model"], ($, API, HumanModel) ->
       # popular: null
       # price: {}
       # specials: {}
-      hereNow: ["object"]
       mayor: ["object"] # User object... maybe just point to their ID?
       # tips: ['object']
       # beenHere: ["boolean"]
@@ -61,6 +60,7 @@ define ["zepto", "cs!lib/api", "human_model"], ($, API, HumanModel) ->
       dislike: ["boolean"]
       # page: null
       _lastUpdated: ["number"]
+      _isFullObject: ['boolean', true, false]
 
     derived:
       info:
@@ -81,6 +81,19 @@ define ["zepto", "cs!lib/api", "human_model"], ($, API, HumanModel) ->
 
           crossStreet = if @location.crossStreet then " (#{@location.crossStreet})" else ""
           "#{@location.address}#{crossStreet}"
+
+      # App URL for this venue, used to display GET links to it in the app.
+      url:
+        deps: ['id']
+        fn: ->
+          "#/venues/#{@id}"
+
+      # App URL for this venue's tips, used to display GET links to the list
+      # of venue tips inside the app.
+      urlForTips:
+        deps: ['id']
+        fn: ->
+          "#/venues/#{@id}/tips"
 
     hours: ->
       d = $.Deferred()
@@ -116,6 +129,11 @@ define ["zepto", "cs!lib/api", "human_model"], ($, API, HumanModel) ->
 
       d.promise()
 
+    photo: (index = 0) ->
+      return null unless @photos.length and @photos[index]
+
+      "#{@photos[index].prefix}#{@photos[index].width}x#{@photos[index].height}#{@photos[index].suffix}"
+
     tips: ->
       window.GLOBALS.Tips.getForVenue(@id)
 
@@ -126,5 +144,6 @@ define ["zepto", "cs!lib/api", "human_model"], ($, API, HumanModel) ->
         outsideRadius: false
         exactMatch: false
       }]
+      hereNow: ["object"]
 
   return _.extend Venue, CONSTANTS

@@ -33,7 +33,7 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/api', 'cs!m
         d.resolve(venue)
 
         # Get more photos if any are available.
-        return unless venue.photos.length >= Venue.PHOTOS_RETURNED_FROM_GET_CALL
+        return unless venue.photos.length <= Venue.PHOTOS_RETURNED_FROM_GET_CALL
 
         # Get all photos for this venue.
         # TODO: Get photos past the 200 count.

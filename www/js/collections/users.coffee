@@ -7,6 +7,8 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/api', 'cs!m
     model: User
     offlineStore: new Store "Users"
 
+    _selfRequest: null
+
     initialize: (storeName) ->
       @offlineStore = new Store(storeName) if storeName
 
@@ -38,6 +40,11 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/api', 'cs!m
       user = @where {relationship: User.RELATIONSHIP.SELF}
 
       if user.length
+        # Update the current user in the background for now.
+        # TODO: Return a promise or something here; this is sloppy.
+        if user[0]._lastUpdated + window.GLOBALS.HOUR < window.timestamp() and !@_selfRequest
+          @_selfRequest = @get(user[0].id, true).done => @_selfRequest = null
+
         user[0]
       else
         null

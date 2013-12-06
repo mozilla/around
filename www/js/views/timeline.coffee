@@ -64,6 +64,11 @@ define ['zepto', 'underscore', 'backbone', 'moment', 'cs!lib/geo', 'cs!views/che
         @loadingCheckins = false
         @render()
 
+        if !@nearbyCheckins or @nearbyCheckins.length == 0
+          window.router.navigate "worldwide",
+            replace: true
+            trigger: true
+
       @render()
 
       # Refresh the view every minute to update the times.
@@ -103,7 +108,7 @@ define ['zepto', 'underscore', 'backbone', 'moment', 'cs!lib/geo', 'cs!views/che
       @options.scope = $(event.target).data('scope')
       window.router.navigate $(event.target).data('scope'),
         replace: true
-        trigger: false 
+        trigger: false
 
   return {
     Show: ShowView

@@ -17,8 +17,16 @@
 <x-slidebox orientation="x">
   <x-slides>
     <x-slide class="nearby <% if (scope === 'nearby') {%>active<% } %>">
-      <% for (var i in nearbyCheckins) { %>
-        <%= CheckinShowTemplate({checkin: nearbyCheckins[i]}) %>
+      <% if (!nearbyCheckins || !nearbyCheckins.length) { %>
+        <div class="checkin">
+          <h1><%= l('No friends are nearby.') %></h1>
+
+          <p><%= l('Tap “Worldwide” to see all of your friend’s recent checkins.') %></p>
+        </div>
+      <% } else { %>
+        <% for (var i in nearbyCheckins) { %>
+          <%= CheckinShowTemplate({checkin: nearbyCheckins[i]}) %>
+        <% } %>
       <% } %>
     </x-slide>
     <x-slide class="worldwide <% if (scope === 'worldwide') {%>active<% } %>">

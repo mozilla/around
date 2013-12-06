@@ -224,9 +224,15 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'localfor
     tips: []
 
     events:
+      # Check in; that's important!
       'click .venue-summary .check-in': 'checkIn'
+
       'click .photos.venue .photo': 'showPhoto'
+
+      # Leave feedback via likes, dislikes, and tips.
+      'click .venue-summary .like': 'like'
       'click .more-tips .leave-tip': 'leaveTip'
+      'click .venue-summary .dislike': 'dislike'
 
     mapURL: null
 
@@ -239,7 +245,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'localfor
         @isLoading = false
         @model = venue
 
-        @model.on 'change:photos', @render
+        @model.on 'change', @render
 
         @mapURL = Geo.staticMap([venue.location.lat, venue.location.lng], [[venue.location.lat, venue.location.lng]], 16, [$(window).width(), 125])
 
@@ -278,6 +284,14 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'localfor
         model: @model
       })
 
+    # Change whether or not the user dislikes this venue.
+    dislike: (event) ->
+      return unless $(event.target).data('venue') is @model.id
+
+      event.target.disabled = true
+
+      @model.changeDislike($(event.target).data('action'))
+
     leaveTip: (event) ->
       # TODO: See why this is fired for old venue code... maybe it's not
       # getting removed properly?
@@ -286,6 +300,14 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'localfor
       new CreateTip({
         model: @model
       })
+
+    # Change whether or not the user likes this venue.
+    like: (event) ->
+      return unless $(event.target).data('venue') is @model.id
+
+      event.target.disabled = true
+
+      @model.changeLike($(event.target).data('action'))
 
     # Opens the photo in a browser if on Firefox OS; otherwise just passes
     # the event off and lets the user's browser open it in a new tab/window.

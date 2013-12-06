@@ -45,6 +45,20 @@
       <% } %>
 
       <button class="check-in" data-venue="<%= venue.id %>"><%= l('Check in here') %></button>
+
+      <div class="like-buttons">
+        <% if (venue.like) { %>
+          <button class="like" data-venue="<%= venue.id %>" title="<%= l('You liked this place!') %>"><i class="fa fa-thumbs-up"></i> <%= l('Liked!') %></button>
+        <% } else { %>
+          <button class="like" data-venue="<%= venue.id %>" title="<%= l('Like this place to get better recommendations.') %>"><i class="fa fa-thumbs-o-up"></i> <%= l('Like') %></button>
+        <% } %>
+
+        <% if (venue.dislike) { %>
+          <button class="dislike" data-venue="<%= venue.id %>" title="<%= l("Sorry you didn't like this place :-(") %>"><i class="fa fa-thumbs-down"></i> <%= l('Disliked') %></button>
+        <% } else { %>
+          <button class="dislike" data-venue="<%= venue.id %>" title="<%= l("Didn't have a good time?") %>"><i class="fa fa-thumbs-o-down"></i> <%= l('Dislike') %></button>
+        <% } %>
+      </div>
     </div>
 
     <p><%= venue.description %></p>

@@ -11,6 +11,9 @@ define ['zepto', 'localforage'], ($, localForage) ->
   # while we make another request.
   CACHE_TIME_WITH_UPDATE = window.GLOBALS.MINUTE * 5
 
+  # Multiplier for determining what's "nearby".
+  GEO_PADDING = 350
+
   getCurrentPosition = (successCallback, failureCallback, forceUpdate = false) ->
     d = $.Deferred()
 
@@ -74,7 +77,7 @@ define ['zepto', 'localforage'], ($, localForage) ->
         [position.coords.latitude + 0.0001, position.coords.longitude - 0.0001],
         [position.coords.latitude - 0.0001, position.coords.longitude + 0.0001],
         [position.coords.latitude + 0.0001, position.coords.longitude + 0.0001]        
-      ]).pad 350
+      ]).pad(GEO_PADDING)
 
       d.resolve _.filter(collection, (item) ->
         return false unless item.location and (item.location.lat or item.location.latitude) and (item.location.lng or item.location.longitude)
@@ -99,7 +102,7 @@ define ['zepto', 'localforage'], ($, localForage) ->
         [position.coords.latitude + 0.0001, position.coords.longitude - 0.0001],
         [position.coords.latitude - 0.0001, position.coords.longitude + 0.0001],
         [position.coords.latitude + 0.0001, position.coords.longitude + 0.0001]        
-      ]).pad 350
+      ]).pad(GEO_PADDING)
 
       d.resolve bounds.contains(L.latLng(lat, lng))
 

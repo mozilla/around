@@ -125,6 +125,11 @@ define ['zepto', 'cs!lib/geo', 'human_model', 'cs!lib/api', 'cs!models/checkin']
 
       d.promise()
 
+    # Return true if this object is out-of-date and should be refreshed using
+    # Foursquare's API.
+    isOutdated: ->
+      @lastUpdated + window.GLOBALS.HOUR < window.timestamp()
+
     profilePhoto: (size = 100) ->
       return "" unless @photo
       "#{@photo.prefix}#{size}x#{size}#{@photo.suffix}"

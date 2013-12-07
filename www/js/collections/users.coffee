@@ -19,7 +19,7 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/api', 'cs!m
 
       results = @where {id: id}
 
-      if results.length and results[0].lastUpdated + (window.GLOBALS.HOUR * 1) > window.timestamp() and !forceUpdate
+      unless !results.length or results[0].isOutdated() or forceUpdate
         d.resolve(results[0])
         return d.promise()
 

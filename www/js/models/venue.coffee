@@ -95,6 +95,16 @@ define ["zepto", "cs!lib/api", "human_model"], ($, API, HumanModel) ->
         fn: ->
           "#/venues/#{@id}/tips"
 
+    getPhotos: ->
+      # TODO: Get photos past the 200 count.
+      API.request("venues/#{@id}/photos").done (data) =>
+        if data.response.photos and data.response.photos.items
+          @photos = data.response.photos.items
+        else
+          @photos = []
+
+        @save()
+
     hours: ->
       d = $.Deferred()
 
@@ -129,15 +139,10 @@ define ["zepto", "cs!lib/api", "human_model"], ($, API, HumanModel) ->
 
       d.promise()
 
-    getPhotos: ->
-      # TODO: Get photos past the 200 count.
-      API.request("venues/#{@id}/photos").done (data) =>
-        if data.response.photos and data.response.photos.items
-          @photos = data.response.photos.items
-        else
-          @photos = []
-
-        @save()
+    # Return true if this object is out-of-date and should be refreshed using
+    # Foursquare's API.
+    isOutdated: ->
+      @lastUpdated + window.GLOBALS.HOUR < window.timestamp()
 
     photo: (index = 0) ->
       return null unless @photos.length and @photos[index]

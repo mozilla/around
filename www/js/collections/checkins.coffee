@@ -11,15 +11,12 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/geo', 'loca
 
     # Get a checkin based on Foursquare ID. Will make a request to the
     # Foursquare API if this checkin is not available in the local datastore.
-    get: (id) ->
+    get: (id, forceUpdate = false) ->
       d = $.Deferred()
 
       results = @where {id: id}
 
-      if (results.length and
-          results[0].lastUpdated + (window.GLOBALS.HOUR * 12) > window.timestamp() and
-          results[0].isFullObject and
-          !forceUpdate)
+      unless !results.length or results[0].isOutdated() or !results[0].isFullObject or forceUpdate
         d.resolve(results[0])
         return d.promise()
 

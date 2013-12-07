@@ -166,13 +166,8 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'cs!model
       window.GLOBALS.Venues.near({
         ll: "#{@position.coords.latitude},#{@position.coords.longitude}"
         accuracy: @position.coords.accuracy
-      }, @section).done (apiResponse) =>
-        @venues = []
-        response = apiResponse.response
-        _(response.groups[0].items).each (item) =>
-          @venues.push item.venue
-
-        @headerLocation = response.headerFullLocation
+      }, @section).done (venues) =>
+        @venues = venues
 
         $areaContainer = $('.modal .area-container')
         if $areaContainer.length
@@ -221,22 +216,19 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'cs!model
       if event and $(event.target).attr('id') == 'venue-search'
         return unless searchQuery.length >= window.GLOBALS.CHARACTERS_FOR_AUTOCOMPLETE
 
+      # Abort the previous search request as we've got more characters.
       if @searchRequest
-        @searchRequest.abort()
+        @searchRequest._request.abort()
 
-      @searchRequest = API.request "venues/search",
-        data:
-          intent: 'checkin'
-          ll: "#{@position.coords.latitude},#{@position.coords.longitude}"
-          query: searchQuery
-      .done (data) =>
+      @searchRequest = window.GLOBALS.Venues.search
+        intent: 'checkin'
+        ll: "#{@position.coords.latitude},#{@position.coords.longitude}"
+        query: searchQuery
+      .done (venues) =>
+        @venues = venues
         @searchRequest = null
-        if data.response.venues and data.response.venues.length
-          @venues = []
-          _(data.response.venues).each (venue) =>
-            @venues.push venue
-        else
-          @venues = null
+
+        @_getPhotosForVenues(@venues)
 
         @render()
 
@@ -260,6 +252,10 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'cs!model
       # Disable tap handler, if present.
       @map.tap.disable() if @map.tap
 
+    _cleanUpMap: ->
+      @_cancelMap = true
+      @map.remove()
+
     _geoSuccess: (position, coords, accuracy) ->
       @position = position
 
@@ -272,9 +268,16 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'cs!model
     _geoError: ->
       return
 
-    _cleanUpMap: ->
-      @_cancelMap = true
-      @map.remove()
+    # Slightly expensive way to get all the photos for some venues in the
+    # "Explore" view. We don't get every single venue's photos, as it requires
+    # a few extra HTTP requests per-venue (one for the full venue data and
+    # then the image file itself).
+    #
+    # TODO: Use Foursquare's "multi request API":
+    # https://developer.foursquare.com/docs/multi/multi
+    _getPhotosForVenues: (venues) ->
+      _.first(venues, window.GLOBALS.SEARCH_NUMBER_VENUES_WITH_PHOTO).forEach (v) =>
+        v.getPhotos().done(@render) unless v.photos
 
     _templateData: ->
       {

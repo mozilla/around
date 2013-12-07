@@ -71,7 +71,7 @@ define ['zepto', 'cs!lib/geo', 'human_model', 'cs!lib/api', 'cs!models/checkin']
 
       access_token: ['string', true]
 
-      _lastUpdated: ["number"]
+      lastUpdated: ["number"]
 
     derived:
       # User's full name.
@@ -116,7 +116,7 @@ define ['zepto', 'cs!lib/geo', 'human_model', 'cs!lib/api', 'cs!models/checkin']
         .done (data) ->
           # Add a checkin to this user's collection.
           checkin = new Checkin(data.response.checkin)
-          checkin._fromFriends = true
+          checkin.isFromFriend = true
 
           window.GLOBALS.Checkins.add(checkin)
           checkin.save()
@@ -124,6 +124,11 @@ define ['zepto', 'cs!lib/geo', 'human_model', 'cs!lib/api', 'cs!models/checkin']
           d.resolve(checkin)
 
       d.promise()
+
+    # Return true if this object is out-of-date and should be refreshed using
+    # Foursquare's API.
+    isOutdated: ->
+      @lastUpdated + window.GLOBALS.HOUR < window.timestamp()
 
     profilePhoto: (size = 100) ->
       return "" unless @photo

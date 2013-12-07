@@ -12,7 +12,7 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/api', 'cs!m
 
       results = @where {id: id}
 
-      if results.length and results[0]._lastUpdated + (window.GLOBALS.HOUR * 1) > window.timestamp() and !forceUpdate
+      unless !results.length or results[0].isOutdated() or !results[0].isFullObject or forceUpdate
         d.resolve(results[0])
         return d.promise()
 
@@ -25,7 +25,8 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/api', 'cs!m
         data.response.venue.photos = if photoGroup[0] then photoGroup[0].items else []
 
         venue = new Venue(data.response.venue)
-        venue._lastUpdated = window.timestamp()
+        venue.isFullObject = true
+        venue.lastUpdated = window.timestamp()
 
         @add(venue, {merge: true})
         venue.save()

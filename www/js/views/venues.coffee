@@ -25,7 +25,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'localfor
         requestMethod: "POST"
       .done (data) =>
         tipModel = new Tip(data.response.tip)
-        tipModel._lastUpdated = window.timestamp()
+        tipModel.lastUpdated = window.timestamp()
         tipModel._venueID = $('#tip-text').data('venue')
 
         window.GLOBALS.Tips.add(tipModel)

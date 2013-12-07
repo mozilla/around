@@ -20,10 +20,11 @@ define ['human_model'], (HumanModel) ->
       shout: ['string']
 
       createdAt: ['date']
-      _fromFriends: ['boolean', true, false]
+      
+      isFromFriend: ['boolean', true, false]
 
-      _lastUpdated: ["number"]
-      _isFullObject: ['boolean', true, false]
+      lastUpdated: ["number"]
+      isFullObject: ['boolean', true, false]
 
     derived:
       # Checkin location, obtained from venue object.

@@ -59,8 +59,8 @@ define ["zepto", "cs!lib/api", "human_model"], ($, API, HumanModel) ->
       like: ["boolean"]
       dislike: ["boolean"]
       # page: null
-      _lastUpdated: ["number"]
-      _isFullObject: ['boolean', true, false]
+      lastUpdated: ["number"]
+      isFullObject: ['boolean', true, false]
 
     derived:
       info:

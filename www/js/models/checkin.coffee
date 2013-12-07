@@ -24,6 +24,9 @@ define ['human_model'], (HumanModel) ->
       isFromFriend: ['boolean', true, false]
 
       lastUpdated: ["number"]
+
+      # TODO: Make this a computed property by looking for properties that
+      # would only be in a full object rather than an attribute we manually set.
       isFullObject: ['boolean', true, false]
 
     derived:

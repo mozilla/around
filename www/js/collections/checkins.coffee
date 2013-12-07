@@ -11,19 +11,21 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/geo', 'loca
 
     # Get a checkin based on Foursquare ID. Will make a request to the
     # Foursquare API if this checkin is not available in the local datastore.
-    get: (id) ->
+    get: (id, forceUpdate = false) ->
       d = $.Deferred()
 
       results = @where {id: id}
 
-      if results.length and results[0]._lastUpdated + (window.GLOBALS.HOUR * 12) > window.timestamp() and !forceUpdate
+      unless !results.length or results[0].isOutdated() or !results[0].isFullObject or forceUpdate
         d.resolve(results[0])
         return d.promise()
 
       # Get information about this checkin.
       API.request("checkins/#{id}").done (data) =>
         checkin = new Checkin(data.response.checkin)
-        checkin._lastUpdated = window.timestamp()
+        checkin.isFullObject = true
+        checkin.lastUpdated = window.timestamp()
+
         @add(checkin, {merge: true})
         checkin.save()
 
@@ -38,7 +40,7 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/geo', 'loca
 
     recent: (forceUpdate = false) ->
       d = $.Deferred()
-      checkins = @where {_fromFriends: true}
+      checkins = @where {isFromFriend: true}
 
       # Check to see if we've made a request to the "recent" API endpoint in
       # the past hour.
@@ -55,7 +57,8 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/geo', 'loca
           .done (data) =>
             data.response.recent.forEach (c) =>
               checkin = new Checkin(c)
-              checkin._fromFriends = true
+              checkin.isFromFriend = true
+              checkin.isFullObject = true
 
               @add(checkin, {merge: true})
               checkin.save()
@@ -63,7 +66,7 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/geo', 'loca
               window.GLOBALS.Users.get(checkin.user.id)
               window.GLOBALS.Venues.get(checkin.venue.id)
 
-            checkins = @where {_fromFriends: true}
+            checkins = @where {isFromFriend: true}
 
             d.resolve(@_onePerUser(checkins))
           .fail d.reject

@@ -24,6 +24,11 @@ define ["human_model"], (HumanModel) ->
       likes: ['object']
       _venueID: ['string']
 
-      _lastUpdated: ["number"]
+      lastUpdated: ["number"]
+
+    # Return true if this object is out-of-date and should be refreshed using
+    # Foursquare's API.
+    isOutdated: ->
+      @lastUpdated + (window.GLOBALS.HOUR * 12) < window.timestamp()
 
   return _.extend Tip

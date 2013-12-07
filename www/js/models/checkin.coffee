@@ -20,9 +20,14 @@ define ['human_model'], (HumanModel) ->
       shout: ['string']
 
       createdAt: ['date']
-      _fromFriends: ['boolean', true, false]
+      
+      isFromFriend: ['boolean', true, false]
 
-      _lastUpdated: ["number"]
+      lastUpdated: ["number"]
+
+      # TODO: Make this a computed property by looking for properties that
+      # would only be in a full object rather than an attribute we manually set.
+      isFullObject: ['boolean', true, false]
 
     derived:
       # Checkin location, obtained from venue object.
@@ -30,5 +35,16 @@ define ['human_model'], (HumanModel) ->
         deps: ['venue']
         fn: ->
           @venue.location
+
+      # App URL for this checkin, used to display GET links to it in the app.
+      url:
+        deps: ['id']
+        fn: ->
+          "#/checkins/#{@id}"
+
+    # Return true if this object is out-of-date and should be refreshed using
+    # Foursquare's API.
+    isOutdated: ->
+      @lastUpdated + (window.GLOBALS.HOUR * 12) < window.timestamp()
 
   return Checkin

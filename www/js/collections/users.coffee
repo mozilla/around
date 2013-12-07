@@ -19,14 +19,14 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/api', 'cs!m
 
       results = @where {id: id}
 
-      if results.length and results[0]._lastUpdated + (window.GLOBALS.HOUR * 1) > window.timestamp() and !forceUpdate
+      unless !results.length or results[0].isOutdated() or forceUpdate
         d.resolve(results[0])
         return d.promise()
 
       # Get information about this user.
       API.request("users/#{id}").done (data) =>
         user = new User(data.response.user)
-        user._lastUpdated = window.timestamp()
+        user.lastUpdated = window.timestamp()
         @add(user, {merge: true})
         user.save()
 
@@ -42,7 +42,7 @@ define ['underscore', 'zepto', 'backbone', 'backbone_store', 'cs!lib/api', 'cs!m
       if user.length
         # Update the current user in the background for now.
         # TODO: Return a promise or something here; this is sloppy.
-        if user[0]._lastUpdated + window.GLOBALS.HOUR < window.timestamp() and !@_selfRequest
+        if user[0].isOutdated() and !@_selfRequest
           @_selfRequest = @get(user[0].id, true).done => @_selfRequest = null
 
         user[0]

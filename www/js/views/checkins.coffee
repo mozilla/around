@@ -276,7 +276,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'cs!model
     # TODO: Use Foursquare's "multi request API":
     # https://developer.foursquare.com/docs/multi/multi
     _getPhotosForVenues: (venues) ->
-      _.first(venues, window.GLOBALS.VENUES_TO_GET_PHOTOS_FOR_IN_SEARCH).forEach (v) =>
+      _.first(venues, window.GLOBALS.SEARCH_NUMBER_VENUES_WITH_PHOTO).forEach (v) =>
         v.getPhotos().done(@render) unless v.photos
 
     _templateData: ->

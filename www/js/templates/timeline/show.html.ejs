@@ -17,7 +17,7 @@
 <x-slidebox orientation="x">
   <x-slides>
     <x-slide class="nearby <% if (scope === 'nearby') {%>active<% } %>">
-      <% if (!nearbyCheckins || !nearbyCheckins.length) { %>
+      <% if (nearbyCheckins && !nearbyCheckins.length) { %>
         <div class="checkin">
           <h1><%= l('No friends are nearby.') %></h1>
 

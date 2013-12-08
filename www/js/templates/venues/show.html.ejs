@@ -63,13 +63,13 @@
       <% }) %>
     </ul>
 
-    <% if (tips && tips.length > 3) { %>
-      <div class="more-tips center">
-        <button class="leave-tip" data-venue="<%= venue.id %>"><%= l('Leave a tip') %></button>
+    <div class="more-tips center">
+      <button class="leave-tip" data-venue="<%= venue.id %>"><%= l('Leave a tip') %></button>
 
+      <% if (tips && tips.length > 3) { %>
         <a class="read-all-tips" href="#venues/<%= venue.id %>/tips"><%= l('Read all tips') %></a>
-      </div>
-    <% } %>
+      <% } %>
+    </div>
   <% } else { %>
     <h1><%= l('Tips') %></h1>
 
@@ -77,6 +77,7 @@
       <button class="leave-tip" data-venue="<%= venue.id %>"><%= l('Leave a tip') %></button>
     </div>
   <% } %>
+
   <% if (venue.photos && venue.photos.length) { %>
     <h1><%= l('Photos') %></h1>
 

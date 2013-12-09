@@ -84,7 +84,6 @@ define ['zepto', 'underscore', 'backbone', 'brick', 'cs!models/user', 'tpl!templ
         # actually finished loading yet (and thus isn't assigned to
         # `window.router`, where we'd usually access its `.navigate`
         # method).
-        # self.render()
         window.location.hash = "login"
 
     # Set the minimum height of the #content section to be the height of the

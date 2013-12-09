@@ -334,7 +334,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'localfor
       # Check for existance of file.
       return unless event.target.files.length
 
-      @model.addPhoto(event.target.files[0]).done @render
+      @model.addPhoto(event.target.files[0]).done(@render).fail(window.alert)
 
   # Tips view; show all the tips for this venue.
   TipsView = Backbone.View.extend

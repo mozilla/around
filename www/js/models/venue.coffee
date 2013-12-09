@@ -101,20 +101,33 @@ define ["zepto", "cs!lib/api", "human_model"], ($, API, HumanModel) ->
     #
     # TODO: Resize images on the client if they're too large.
     addPhoto: (photo, postData = {}) ->
+      d = $.Deferred()
+
       # TODO: Handle this error.
       if photo.size > 5000000
-        console.error "Photo bigger than 5MB; upload will fail."
+        d.reject l("Photo is too large; maximum photo size is 5MB.")
+        return d.promise()
 
       # TODO: Convert to JPEG?
       unless photo.type != 'image/jpg'
-        console.error "Photo is of type #{photo.type}; upload will fail."
+        d.reject l("Photo file must be JPEG.")
+        return d.promise()
 
       API.upload "photos/add",
         photo: photo,
         venueId: @id
       .done (data) =>
-        @photos.push(data.response.photo)
-        @save()
+        if data.response.photo
+          @photos.push(data.response.photo)
+          @save()
+
+          d.resolve(data.response.photo)
+        else
+          d.reject l("Upload failed. Please try again.")
+      .fail ->
+        d.reject l("Upload failed. Please try again.")
+
+      d.promise()
 
     # Dislike this venue, or, if the user already dislikes it, remove their
     # previous "dislike".

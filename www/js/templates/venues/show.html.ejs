@@ -103,6 +103,12 @@
     </ul>
   <% } %>
 
+  <div class="center">
+    <label for="upload-photo" class="hide"><%= l('Upload a photo') %></label>
+    <input type="file" id="upload-photo" name="upload-photo" data-venue="<%= venue.id %>" class="hide">
+    <button class="upload-photo" data-venue="<%= venue.id %>"><%= l('Upload a photo') %></button>
+  </div>
+
   <p class="attribution"><a href="https://foursquare.com/v/<%= venue.id %>?ref=<%= window.GLOBALS.CLIENT_ID %>" target="_blank"><%= l("See this venue on Foursquare's website.") %></a></p>
 <% } else if (isLoading) { %>
   <div class="map venue"></div>

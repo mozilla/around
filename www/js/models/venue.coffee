@@ -95,6 +95,27 @@ define ["zepto", "cs!lib/api", "human_model"], ($, API, HumanModel) ->
         fn: ->
           "#/venues/#{@id}/tips"
 
+    # Add a photo to this venue. This will upload the photo to Foursquare, then
+    # add it to the venue model itself once the request is completed. As per
+    # Foursquare's API rules, images must be a JPEG, 5MB or smaller.
+    #
+    # TODO: Resize images on the client if they're too large.
+    addPhoto: (photo, postData = {}) ->
+      # TODO: Handle this error.
+      if photo.size > 5000000
+        console.error "Photo bigger than 5MB; upload will fail."
+
+      # TODO: Convert to JPEG?
+      unless photo.type != 'image/jpg'
+        console.error "Photo is of type #{photo.type}; upload will fail."
+
+      API.upload "photos/add",
+        photo: photo,
+        venueId: @id
+      .done (data) =>
+        @photos.push(data.response.photo)
+        @save()
+
     # Dislike this venue, or, if the user already dislikes it, remove their
     # previous "dislike".
     changeDislike: (forceRemove = false) ->
@@ -126,7 +147,6 @@ define ["zepto", "cs!lib/api", "human_model"], ($, API, HumanModel) ->
 
         @likes = data.response
         @like = !@like
-        @save()
 
     getPhotos: ->
       # TODO: Get photos past the 200 count.
@@ -145,7 +165,7 @@ define ["zepto", "cs!lib/api", "human_model"], ($, API, HumanModel) ->
         hours = {}
         popular = {}
 
-        if data.response.hours.length
+        if data.response and data.response.hours.length
           data.response.hours.forEach (day) ->
             hours[day.days[0]] = []
             day.open.forEach (segment) ->
@@ -154,7 +174,7 @@ define ["zepto", "cs!lib/api", "human_model"], ($, API, HumanModel) ->
                 opens: segment.start
               }
 
-        if data.response.popular.timeframes.length
+        if data.response and data.response.popular.timeframes.length
           data.response.popular.timeframes.forEach (day) ->
             popular[day.days[0]] = []
             day.open.forEach (segment) ->

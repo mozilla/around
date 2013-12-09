@@ -95,6 +95,39 @@ define ["zepto", "cs!lib/api", "human_model"], ($, API, HumanModel) ->
         fn: ->
           "#/venues/#{@id}/tips"
 
+    # Dislike this venue, or, if the user already dislikes it, remove their
+    # previous "dislike".
+    changeDislike: (forceRemove = false) ->
+      action = if @dislike or forceRemove then '0' else '1'
+
+      API.request "venues/#{@id}/dislike",
+        data:
+          action: action
+        requestMethod: "POST"
+      .done (data) =>
+        # Automatically remove a like if we "dislike" this place.
+        @changeLike(true) if @like and action is '1'
+
+        @dislike = !@dislike
+        @save()
+
+    # Like this venue, or, if the user already likes it, remove their previous
+    # "like".
+    changeLike: (forceRemove = false) ->
+      action = if @like or forceRemove then '0' else '1'
+
+      API.request "venues/#{@id}/like",
+        data:
+          action: action
+        requestMethod: "POST"
+      .done (data) =>
+        # Automatically remove a dislike if we "like" this place.
+        @changeDislike(true) if @dislike and action is '1'
+
+        @likes = data.response
+        @like = !@like
+        @save()
+
     getPhotos: ->
       # TODO: Get photos past the 200 count.
       API.request("venues/#{@id}/photos").done (data) =>

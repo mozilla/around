@@ -1,11 +1,11 @@
 <div class="map" <% if (mapURL) { %>style="background-image: url('<%= mapURL %>')"<% } %>></div>
 
-<h1>
+<h1 class="happening">
   <%= l("What's Happening") %>
   <% if (loadingCheckins) { %>
     <span class="circle-small"></span>
   <% } else { %>
-    <a class="refresh"><i class="fa fa-refresh"><span class="hide"><%= l('Refresh') %></span></i></a>
+    <span class="refresh"><i class="fa fa-refresh"><span class="hide"><%= l('Refresh') %></span></i></span>
   <% } %>
 </h1>
 

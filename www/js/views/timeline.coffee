@@ -19,7 +19,7 @@ define ['zepto', 'underscore', 'backbone', 'moment', 'cs!lib/geo', 'cs!views/che
 
     events:
       'click #timeline .check-in': 'showCheckinModal'
-      'click #timeline a.refresh': 'refreshFriendsCheckins'
+      'click #timeline .happening': 'refreshFriendsCheckins'
       # HACK: This should work in brick, but currently doesn't.
       'click x-tabbar-tab': 'toggleTabs'
 
@@ -69,12 +69,16 @@ define ['zepto', 'underscore', 'backbone', 'moment', 'cs!lib/geo', 'cs!views/che
             replace: true
             trigger: true
 
+      $('#timeline .happening').removeClass 'refreshing'
+
       @render()
 
       # Refresh the view every minute to update the times.
       @refreshTimes()
 
-    refreshFriendsCheckins: ->
+    refreshFriendsCheckins: (event) ->
+      $(event.target).addClass 'refreshing'
+
       @loadingCheckins = true
       @render()
 

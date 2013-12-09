@@ -42,6 +42,10 @@ define ['human_model'], (HumanModel) ->
         fn: ->
           "#/checkins/#{@id}"
 
+    session:
+      # The entire API response object, used for insight modals and such.
+      response: ["object"]
+
     # Return true if this object is out-of-date and should be refreshed using
     # Foursquare's API.
     isOutdated: ->

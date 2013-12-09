@@ -117,6 +117,7 @@ define ['zepto', 'cs!lib/geo', 'human_model', 'cs!lib/api', 'cs!models/checkin']
           # Add a checkin to this user's collection.
           checkin = new Checkin(data.response.checkin)
           checkin.isFromFriend = true
+          checkin.response = data.response
 
           window.GLOBALS.Checkins.add(checkin)
           checkin.save()

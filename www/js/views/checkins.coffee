@@ -32,7 +32,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'cs!model
     initialize: ->
       user = window.GLOBALS.Users.getSelf() unless user
 
-      $.when(user.checkIn(@options.venueID, @options.shout)).done (checkin) =>
+      user.checkIn(@options.venueID, @options.shout).done (checkin) =>
         # Navigate to the venue page first, then load our insight modal.
         # TODO: This shouldn't be part of state; load it in as a special
         # modal view instead?

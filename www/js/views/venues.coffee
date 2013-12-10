@@ -278,8 +278,10 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'localfor
         venue: @model
       $(@$el).html(html)
 
+    # Simply activate the file upload, because we stylize a button to make
+    # things seem pretty rather than rely on the <input type="file"> directly.
     activateUpload: () ->
-      $('#upload-photo').trigger 'click'
+      $('#upload-photo').click()
 
     checkIn: (event) ->
       # TODO: See why this is fired for old venue code... maybe it's not

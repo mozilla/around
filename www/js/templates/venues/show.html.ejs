@@ -44,7 +44,11 @@
         </h3>
       <% } %>
 
-      <button class="check-in" data-venue="<%= venue.id %>"><%= l('Check in here') %></button>
+      <% if (!user.currentLocation || (user.currentLocation.venue.id !== venue.id && user.currentLocation.timestamp + (window.GLOBALS.HOUR * 1.5) < window.timestamp())) { %>
+        <button class="check-in" data-venue="<%= venue.id %>"><%= l('Check in here') %></button>
+      <% } else { %>
+        <span class="you-are-here"><%= l("You're here!") %></span>
+      <% } %>
 
       <div class="like-buttons">
         <% if (venue.like) { %>

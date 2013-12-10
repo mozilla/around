@@ -20,10 +20,15 @@ define ['zepto'], ($) ->
   # including the required OAuth and version arguments.
   # All requests are sent over HTTPS.
   request = (url, args = {}) ->
-    data = {
-      oauth_token: window.GLOBALS.TOKEN
-      v: window.GLOBALS.API_DATE
-    }
+    if window.GLOBALS.TOKEN
+      data = {
+        oauth_token: window.GLOBALS.TOKEN
+        v: window.GLOBALS.API_DATE
+      }
+    else
+      data = {
+        v: window.GLOBALS.API_DATE
+      }
 
     _.extend data, args.data if args.data
 

@@ -43,6 +43,39 @@ define ['zepto'], ($) ->
       success: args.success || defaultSuccessHandler
       error: args.error || defaultErrorHander
 
+  # Upload abstraction, mainly used for uploading photos to checkins, venues,
+  # etc. The postData object should include a "file" attribute we will use for
+  # uploading. We use a raw XMLHttpRequest here to maintain tighter control
+  # over the upload process and to use FormData.
+  upload = (url, postData = {}) ->
+    d = $.Deferred()
+
+    data = {
+      oauth_token: window.GLOBALS.TOKEN
+      v: window.GLOBALS.API_DATE
+    }
+
+    _.extend data, postData if postData
+
+    request = new XMLHttpRequest()
+
+    formData = new FormData()
+    for k, v of data
+      formData.append k, v
+
+    console.debug "UPLOAD (POST) /#{url}", data
+
+    request.open 'POST', "#{window.GLOBALS.API_URL}photos/add", true
+    request.responseType = 'json'
+
+    request.addEventListener 'error', d.reject
+    request.addEventListener 'readystatechange', ->
+      d.resolve(request.response) if request.readyState is 4 # readyState DONE
+
+    request.send(formData)
+
+    d.promise()
+
   # The default error handler for requests to Foursquare that don't define
   # their own error handler. Simply spits out raw error information.
   defaultErrorHander = (xhr, errorType, error) ->
@@ -56,4 +89,5 @@ define ['zepto'], ($) ->
 
   return {
     request: request
+    upload: upload
   }

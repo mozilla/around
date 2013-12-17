@@ -234,6 +234,9 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'localfor
       'click .more-tips .leave-tip': 'leaveTip'
       'click .venue-summary .dislike': 'dislike'
 
+      'click .upload-photo': 'activateUpload'
+      'change #upload-photo': 'uploadPhoto'
+
     mapURL: null
 
     initialize: ->
@@ -274,6 +277,11 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'localfor
         tips: @tips
         venue: @model
       $(@$el).html(html)
+
+    # Simply activate the file upload, because we stylize a button to make
+    # things seem pretty rather than rely on the <input type="file"> directly.
+    activateUpload: () ->
+      $('#upload-photo').click()
 
     checkIn: (event) ->
       # TODO: See why this is fired for old venue code... maybe it's not
@@ -320,6 +328,15 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'localfor
           data:
             type: "url"
             url: $(event.target).attr "href"
+
+    # Upload a photo to Foursquare for this venue.
+    uploadPhoto: (event) ->
+      return unless $(event.target).data('venue') is @model.id
+
+      # Check for existance of file.
+      return unless event.target.files.length
+
+      @model.addPhoto(event.target.files[0]).done(@render).fail(window.alert)
 
   # Tips view; show all the tips for this venue.
   TipsView = Backbone.View.extend

@@ -55,12 +55,10 @@ define ['zepto', 'cs!lib/geo', 'human_model', 'cs!lib/api', 'cs!models/checkin']
         allowNull: true
         default: CONSTANTS.RELATIONSHIP.NONE
         type: "string"
-        # values: [_.filter _.values(CONSTANTS.RELATIONSHIP), (v) -> v]
       type:
         allowNull: true
         default: CONSTANTS.TYPE.USER
         type: "string"
-        # values: [_.filter _.values(CONSTANTS.TYPE), (v) -> v]
       # friends: null
       homeCity: ['string']
       gender: ['string']
@@ -84,7 +82,6 @@ define ['zepto', 'cs!lib/geo', 'human_model', 'cs!lib/api', 'cs!models/checkin']
 
           nameString
 
-    # otherMethods:
     # Check this user into a venue. Creates a new check-in object added to this
     # user account.
     checkIn: (venue, shout = null) ->
@@ -130,6 +127,8 @@ define ['zepto', 'cs!lib/geo', 'human_model', 'cs!lib/api', 'cs!models/checkin']
     isOutdated: ->
       @lastUpdated + window.GLOBALS.HOUR < window.timestamp()
 
+    # Return the absolute URL to this user's profile photo at a given size.
+    # Defaults to 100px x 100px.
     profilePhoto: (size = 100) ->
       return "" unless @photo
       "#{@photo.prefix}#{size}x#{size}#{@photo.suffix}"

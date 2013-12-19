@@ -42,6 +42,12 @@ fonts/fontawesome-webfont.ttf
 fonts/fontawesome-webfont.woff
 fonts/FontAwesome.otf
 fonts/OpenSans-SemiBold.ttf
+img/icon-32.png
+img/icon-60.png
+img/icon-64.png
+img/icon-90.png
+img/icon-128.png
+img/icon-256.png
 img/vendor/foursquare/connect-blue.png
 index.html
 js/main.js

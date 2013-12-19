@@ -16303,7 +16303,7 @@ define("human_model", ["backbone"], (function (global) {
 
 (function() {
   define('cs!lib/api',['zepto'], function($) {
-    var defaultErrorHander, defaultSuccessHandler, request;
+    var defaultErrorHander, defaultSuccessHandler, request, upload;
     request = function(url, args) {
       var data;
       if (args == null) {
@@ -16332,6 +16332,37 @@ define("human_model", ["backbone"], (function (global) {
         error: args.error || defaultErrorHander
       });
     };
+    upload = function(url, postData) {
+      var d, data, formData, k, v;
+      if (postData == null) {
+        postData = {};
+      }
+      d = $.Deferred();
+      data = {
+        oauth_token: window.GLOBALS.TOKEN,
+        v: window.GLOBALS.API_DATE
+      };
+      if (postData) {
+        _.extend(data, postData);
+      }
+      request = new XMLHttpRequest();
+      formData = new FormData();
+      for (k in data) {
+        v = data[k];
+        formData.append(k, v);
+      }
+      console.debug("UPLOAD (POST) /" + url, data);
+      request.open('POST', "" + window.GLOBALS.API_URL + "photos/add", true);
+      request.responseType = 'json';
+      request.addEventListener('error', d.reject);
+      request.addEventListener('readystatechange', function() {
+        if (request.readyState === 4) {
+          return d.resolve(request.response);
+        }
+      });
+      request.send(formData);
+      return d.promise();
+    };
     defaultErrorHander = function(xhr, errorType, error) {
       return console.error("Foursquare API Error | " + xhr.status, xhr, errorType, error);
     };
@@ -16339,7 +16370,8 @@ define("human_model", ["backbone"], (function (global) {
       return console.info("Foursquare API Response | " + xhr.status, response, xhr);
     };
     return {
-      request: request
+      request: request,
+      upload: upload
     };
   });
 
@@ -16380,6 +16412,9 @@ define("human_model", ["backbone"], (function (global) {
             return "#/checkins/" + this.id;
           }
         }
+      },
+      session: {
+        response: ["object"]
       },
       isOutdated: function() {
         return this.lastUpdated + (window.GLOBALS.HOUR * 12) < window.timestamp();
@@ -16435,6 +16470,7 @@ define("human_model", ["backbone"], (function (global) {
         gender: ['string'],
         bio: ['string'],
         checkins: ['object'],
+        currentLocation: ['object'],
         access_token: ['string', true],
         lastUpdated: ["number"]
       },
@@ -16455,7 +16491,8 @@ define("human_model", ["backbone"], (function (global) {
         }
       },
       checkIn: function(venue, shout) {
-        var d;
+        var d,
+          _this = this;
         if (shout == null) {
           shout = null;
         }
@@ -16481,8 +16518,14 @@ define("human_model", ["backbone"], (function (global) {
             requestMethod: "POST"
           }).done(function(data) {
             var checkin;
+            _this.currentLocation = {
+              timestamp: window.timestamp(),
+              venue: data.response.checkin.venue
+            };
+            _this.save();
             checkin = new Checkin(data.response.checkin);
             checkin.isFromFriend = true;
+            checkin.response = data.response;
             window.GLOBALS.Checkins.add(checkin);
             checkin.save();
             return d.resolve(checkin);
@@ -16877,6 +16920,37 @@ define('tpl!templates/app.html.ejs', function() {return function(obj) { var __p=
           }
         }
       },
+      addPhoto: function(photo, postData) {
+        var d,
+          _this = this;
+        if (postData == null) {
+          postData = {};
+        }
+        d = $.Deferred();
+        if (photo.size > 5000000) {
+          d.reject(l("Photo is too large; maximum photo size is 5MB."));
+          return d.promise();
+        }
+        if (photo.type === 'image/jpg') {
+          d.reject(l("Photo file must be JPEG."));
+          return d.promise();
+        }
+        API.upload("photos/add", {
+          photo: photo,
+          venueId: this.id
+        }).done(function(data) {
+          if (data.response.photo) {
+            _this.photos.push(data.response.photo);
+            _this.save();
+            return d.resolve(data.response.photo);
+          } else {
+            return d.reject(l("Upload failed. Please try again."));
+          }
+        }).fail(function() {
+          return d.reject(l("Upload failed. Please try again."));
+        });
+        return d.promise();
+      },
       changeDislike: function(forceRemove) {
         var action,
           _this = this;
@@ -16914,8 +16988,7 @@ define('tpl!templates/app.html.ejs', function() {return function(obj) { var __p=
             _this.changeDislike(true);
           }
           _this.likes = data.response;
-          _this.like = !_this.like;
-          return _this.save();
+          return _this.like = !_this.like;
         });
       },
       getPhotos: function() {
@@ -16936,7 +17009,7 @@ define('tpl!templates/app.html.ejs', function() {return function(obj) { var __p=
           var hours, popular;
           hours = {};
           popular = {};
-          if (data.response.hours.length) {
+          if (data.response && data.response.hours.length) {
             data.response.hours.forEach(function(day) {
               hours[day.days[0]] = [];
               return day.open.forEach(function(segment) {
@@ -16947,7 +17020,7 @@ define('tpl!templates/app.html.ejs', function() {return function(obj) { var __p=
               });
             });
           }
-          if (data.response.popular.timeframes.length) {
+          if (data.response && data.response.popular.timeframes.length) {
             data.response.popular.timeframes.forEach(function(day) {
               popular[day.days[0]] = [];
               return day.open.forEach(function(segment) {
@@ -16997,7 +17070,7 @@ define('tpl!templates/app.html.ejs', function() {return function(obj) { var __p=
 
 }).call(this);
 
-define('tpl!templates/modal.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push(''); if (isFullModal) { ; __p.push('  <div id="full-modal-bg"></div>'); } ; __p.push('<div '); if (isFullModal) { ; __p.push('id="full-modal"'); } ; __p.push(' class="modal '); if (!isFullModal) { ; __p.push('standard'); } ; __p.push('">  <div class="content">    ', fixedContent ,'    ', templateHTML ,'  </div>  '); if (isFullModal) { ; __p.push('    <div class="accept">', l('Dismiss') ,'</div>  '); } ; __p.push('</div>');}return __p.join('');}});
+define('tpl!templates/modal.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push(''); if (isFullModal) { ; __p.push('  <div id="full-modal-bg"></div>'); } ; __p.push('<div '); if (isFullModal) { ; __p.push('id="full-modal"'); } ; __p.push(' class="modal '); if (!isFullModal) { ; __p.push('standard'); } ; __p.push('">  <div class="content">    ', fixedContent ,'    ', templateHTML ,'  </div>  '); if (isFullModal) { ; __p.push('    <div class="accept">', l('Cancel') ,'</div>  '); } ; __p.push('</div>');}return __p.join('');}});
 
 (function() {
   define('cs!views/modal',['zepto', 'underscore', 'backbone', 'tpl!templates/modal.html.ejs'], function($, _, Backbone, ModalTemplate) {
@@ -17063,7 +17136,7 @@ define('tpl!templates/checkins/create-from-venues.html.ejs', function() {return 
 
 define('tpl!templates/checkins/header.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<div class="area-container">  <p class="data-attribution">', ('Data from ') ,'<a href="https://foursquare.com/" target="_blank">Foursquare</a></p>  <form class="venue-search" autocomplete="off">    <label class="hide" for="venue-search">', l('Search for a venue') ,'</label>    <input type="search" id="venue-search" value="', venueSearchValue ,'" placeholder="', l('Search places') ,'">    <button type="reset"><i class="fa fa-times"></i></button>    <button type="submit"><i class="fa fa-search"></i></button>  </form></div>');}return __p.join('');}});
 
-define('tpl!templates/checkins/insight.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<h2>', l('Right on!') ,'</h2><p>  ', l("We have you checked in at") ,' <br>  <strong>', checkin.venue.name ,'</strong>!</p><button class="cancel">', l('Dismiss') ,'</button>');}return __p.join('');}});
+define('tpl!templates/checkins/insight.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<h2>', l('Right on!') ,'</h2><p>  ', l("We have you checked in at") ,' <br>  <strong>', checkin.venue.name ,'</strong>!</p>'); if (checkin.response.checkin.score.total) { ; __p.push('  <ul class="points">    '); checkin.response.checkin.score.scores.forEach(function (score) { ; __p.push('      <li><img src="', score.icon ,'"> ', score.message ,' <strong>+', score.points ,'</strong></li>    '); }) ; __p.push('  </ul>'); } else { ; __p.push('  <p class="points">', l('Awwww, no points for this checkin.') ,'</p>'); } ; __p.push('<button class="cancel">', l('Dismiss') ,'</button>');}return __p.join('');}});
 
 define('tpl!templates/checkins/show.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<div class="checkin">  <a href="#venues/', checkin.venue.id ,'" class="arrow"><i class="fa fa-arrow-circle-o-right"></i></a>  '); if (checkin.user) { ; __p.push('    <a href="#users/', checkin.user.id ,'">      <img src="', checkin.user.photo.prefix ,'100x100', checkin.user.photo.suffix ,'" alt="', checkin.user.firstName ,'" class="profile-photo">      <h3 class="user">', checkin.user.firstName ,'</h3>    </a>  '); } ; __p.push('  <h2 class="venue"><a href="#venues/', checkin.venue.id ,'">', checkin.venue.name ,'</a></h2>  <h4><time datetime="', window.moment.unix(checkin.createdAt).format() ,'">', window.moment.unix(checkin.createdAt).fromNow() ,'</time></h4>    '); if (checkin.shout) { ; __p.push('    <p class="shout">', checkin.shout ,'</p>  '); } ; __p.push('</div>');}return __p.join('');}});
 
@@ -17102,7 +17175,7 @@ define('tpl!templates/venues/show-list-item.html.ejs', function() {return functi
         if (!user) {
           user = window.GLOBALS.Users.getSelf();
         }
-        return $.when(user.checkIn(this.options.venueID, this.options.shout)).done(function(checkin) {
+        return user.checkIn(this.options.venueID, this.options.shout).done(function(checkin) {
           window.router.navigate("/venues/" + checkin.venue.id, {
             replace: true,
             trigger: true
@@ -17592,13 +17665,13 @@ define('tpl!templates/users/show.html.ejs', function() {return function(obj) { v
 
 }).call(this);
 
-define('tpl!templates/venues/create-tip.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<div>  <h2>', venue.name ,'</h2>  <label for="tip-text" class="hide">', l('Leave a tip for this venue') ,'</label>  <textarea id="tip-text" data-venue="', venue.id ,'" placeholder="', l('Leave a tip for this place') ,'" maxlength="200"></textarea></div><button class="cancel">', l('Cancel') ,'</button><button class="accept" data-venue="', venue.id ,'">', l('Check in') ,'</button>');}return __p.join('');}});
+define('tpl!templates/venues/create-tip.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<div>  <h2>', venue.name ,'</h2>  <label for="tip-text" class="hide">', l('Leave a tip for this venue') ,'</label>  <textarea id="tip-text" data-venue="', venue.id ,'" placeholder="', l('Leave a tip for this place') ,'" maxlength="200"></textarea></div><button class="cancel">', l('Cancel') ,'</button><button class="accept" data-venue="', venue.id ,'">', l('Leave tip') ,'</button>');}return __p.join('');}});
 
 define('tpl!templates/venues/explore.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('<div class="area-container">  <p class="data-attribution">', ('Data from ') ,'<a href="https://foursquare.com/" target="_blank">Foursquare</a></p>  '); if (sections) { ; __p.push('    <div id="sections">      <span>', l('Find:') ,'</span>      <select>        '); for (var s in sections) { ; __p.push('          <option value="', sections[s] ,'" ', sectionEnabled === sections[s] ? 'selected' : '' ,'>', s ,'</option>        '); } ; __p.push('      </select>    </div>  '); } ; __p.push('</div>'); if (venues && venues.length) { ; __p.push('  <ul class="venues">    '); venues.forEach(function(venue) { ; __p.push('      ', VenueShowListItemTemplate({        showLink: true,        venue: venue      }) ,'    '); }) ; __p.push('  </ul>'); } ; __p.push('');}return __p.join('');}});
 
 define('tpl!templates/venues/list.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push('');}return __p.join('');}});
 
-define('tpl!templates/venues/show.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push(''); if (venue && venue.id) { ; __p.push('  <div class="map venue" style="background-image: url(\'', mapURL ,'\')"></div>  <div class="venue-summary summary" id="venue-', venue.id ,'">    <div class="center">      <h1>', venue.name ,'</h1>      '); if (venue.categories.length || venue.location.city) { ; __p.push('        <h3 class="category subheader">          '); if (venue.categories.length) { ; __p.push('            ', venue.categories[0].name ,'          '); } ; __p.push('          '); if (!isLocal) { ; __p.push('            '); if (venue.categories.length || venue.location.city) { ; __p.push('              <small>', l('in') ,'            '); } ; __p.push('            '); if (venue.location.city) { ; __p.push('              ', venue.location.city ,'              '); if (venue.categories.length) { ; __p.push('                </small>              '); } ; __p.push('            '); } ; __p.push('          '); } ; __p.push('        </h3>      '); } ; __p.push('      '); if (hours) { ; __p.push('        <h3 class="hours subheader"></h3>      '); } else if (venue.hours && venue.hours.length && !venue.hours.isOpen) { ; __p.push('        <h3 class="hours subheader">', l('Closed right now') ,'</h3>      '); } ; __p.push('      '); if (venue.price && venue.price.tier) { ; __p.push('        <h3 title="', venue.price.message ,'">          ', l('Price:') ,'          '); for (var i = 1; i <= venue.price.tier; i++) { ; __p.push('            <i class="fa fa-circle"></i>          '); } ; __p.push('          '); for (var i = 1; i <= (4 - venue.price.tier); i++) { ; __p.push('            <i class="fa fa-circle-o"></i>          '); } ; __p.push('        </h3>      '); } ; __p.push('      <button class="check-in" data-venue="', venue.id ,'">', l('Check in here') ,'</button>      <div class="like-buttons">        '); if (venue.like) { ; __p.push('          <button class="like" data-venue="', venue.id ,'" title="', l('You liked this place!') ,'"><i class="fa fa-thumbs-up"></i> ', l('Liked!') ,'</button>        '); } else { ; __p.push('          <button class="like" data-venue="', venue.id ,'" title="', l('Like this place to get better recommendations.') ,'"><i class="fa fa-thumbs-o-up"></i> ', l('Like') ,'</button>        '); } ; __p.push('        '); if (venue.dislike) { ; __p.push('          <button class="dislike" data-venue="', venue.id ,'" title="', l("Sorry you didn't like this place :-(") ,'"><i class="fa fa-thumbs-down"></i> ', l('Disliked') ,'</button>        '); } else { ; __p.push('          <button class="dislike" data-venue="', venue.id ,'" title="', l("Didn't have a good time?") ,'"><i class="fa fa-thumbs-o-down"></i> ', l('Dislike') ,'</button>        '); } ; __p.push('      </div>    </div>    <p>', venue.description ,'</p>  </div>  '); if (tips && tips.length) { ; __p.push('    <h1>', l('Tips') ,'</h1>    <ul class="venue tips">      '); _.first(tips, 3).forEach(function(tip) { ; __p.push('        <li class="tip">          <p class="text">', tip.text ,'</p>          <p class="author"><cite><a href="#/users/', tip.user.id ,'">', tip.user.firstName ,'</a></cite></p>        </li>      '); }) ; __p.push('    </ul>    <div class="more-tips center">      <button class="leave-tip" data-venue="', venue.id ,'">', l('Leave a tip') ,'</button>      '); if (tips && tips.length > 3) { ; __p.push('        <a class="read-all-tips" href="#venues/', venue.id ,'/tips">', l('Read all tips') ,'</a>      '); } ; __p.push('    </div>  '); } else { ; __p.push('    <h1>', l('Tips') ,'</h1>    <div class="more-tips center">      <button class="leave-tip" data-venue="', venue.id ,'">', l('Leave a tip') ,'</button>    </div>  '); } ; __p.push('  '); if (venue.photos && venue.photos.length) { ; __p.push('    <h1>', l('Photos') ,'</h1>    <ul class="venue photos">      '); venue.photos.forEach(function(photo) { ; __p.push('        <!-- TODO: Obviously, add a modal photo viewer -->        <li><a class="photo" style="background-image: url(', photo.prefix ,'', photo.width ,'x', photo.height ,'', photo.suffix ,');" href="', photo.prefix ,'', photo.width ,'x', photo.height ,'', photo.suffix ,'" target="_blank"></a></li>      '); }) ; __p.push('    </ul>  '); } ; __p.push('  <p class="attribution"><a href="https://foursquare.com/v/', venue.id ,'?ref=', window.GLOBALS.CLIENT_ID ,'" target="_blank">', l("See this venue on Foursquare's website.") ,'</a></p>'); } else if (isLoading) { ; __p.push('  <div class="map venue"></div>  <div class="venue-summary summary">    <div class="center">      <h1>', l('Loading') ,'<span class="circle-small"></span></h1>    </div>  </div>'); } else { ; __p.push('  <h2>', l('Error') ,'</h2>  <p>', l('Venue not found.') ,'</p>'); } ; __p.push('');}return __p.join('');}});
+define('tpl!templates/venues/show.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push(''); if (venue && venue.id) { ; __p.push('  <div class="map venue" style="background-image: url(\'', mapURL ,'\')"></div>  <div class="venue-summary summary" id="venue-', venue.id ,'">    <div class="center">      <h1>', venue.name ,'</h1>      '); if (venue.categories.length || venue.location.city) { ; __p.push('        <h3 class="category subheader">          '); if (venue.categories.length) { ; __p.push('            ', venue.categories[0].name ,'          '); } ; __p.push('          '); if (!isLocal) { ; __p.push('            '); if (venue.categories.length || venue.location.city) { ; __p.push('              <small>', l('in') ,'            '); } ; __p.push('            '); if (venue.location.city) { ; __p.push('              ', venue.location.city ,'              '); if (venue.categories.length) { ; __p.push('                </small>              '); } ; __p.push('            '); } ; __p.push('          '); } ; __p.push('        </h3>      '); } ; __p.push('      '); if (hours) { ; __p.push('        <h3 class="hours subheader"></h3>      '); } else if (venue.hours && venue.hours.length && !venue.hours.isOpen) { ; __p.push('        <h3 class="hours subheader">', l('Closed right now') ,'</h3>      '); } ; __p.push('      '); if (venue.price && venue.price.tier) { ; __p.push('        <h3 title="', venue.price.message ,'">          ', l('Price:') ,'          '); for (var i = 1; i <= venue.price.tier; i++) { ; __p.push('            <i class="fa fa-circle"></i>          '); } ; __p.push('          '); for (var i = 1; i <= (4 - venue.price.tier); i++) { ; __p.push('            <i class="fa fa-circle-o"></i>          '); } ; __p.push('        </h3>      '); } ; __p.push('      '); if (!user.currentLocation || (user.currentLocation.venue.id !== venue.id && user.currentLocation.timestamp + (window.GLOBALS.HOUR * 1.5) < window.timestamp())) { ; __p.push('        <button class="check-in" data-venue="', venue.id ,'">', l('Check in here') ,'</button>      '); } else { ; __p.push('        <span class="you-are-here">', l("You're here!") ,'</span>      '); } ; __p.push('      <div class="like-buttons">        '); if (venue.like) { ; __p.push('          <button class="like" data-venue="', venue.id ,'" title="', l('You liked this place!') ,'"><i class="fa fa-thumbs-up"></i> ', l('Liked!') ,'</button>        '); } else { ; __p.push('          <button class="like" data-venue="', venue.id ,'" title="', l('Like this place to get better recommendations.') ,'"><i class="fa fa-thumbs-o-up"></i> ', l('Like') ,'</button>        '); } ; __p.push('        '); if (venue.dislike) { ; __p.push('          <button class="dislike" data-venue="', venue.id ,'" title="', l("Sorry you didn't like this place :-(") ,'"><i class="fa fa-thumbs-down"></i> ', l('Disliked') ,'</button>        '); } else { ; __p.push('          <button class="dislike" data-venue="', venue.id ,'" title="', l("Didn't have a good time?") ,'"><i class="fa fa-thumbs-o-down"></i> ', l('Dislike') ,'</button>        '); } ; __p.push('      </div>    </div>    <p>', venue.description ,'</p>  </div>  '); if (tips && tips.length) { ; __p.push('    <h1>', l('Tips') ,'</h1>    <ul class="venue tips">      '); _.first(tips, 3).forEach(function(tip) { ; __p.push('        <li class="tip">          <p class="text">', tip.text ,'</p>          <p class="author"><cite><a href="#/users/', tip.user.id ,'">', tip.user.firstName ,'</a></cite></p>        </li>      '); }) ; __p.push('    </ul>    <div class="more-tips center">      <button class="leave-tip" data-venue="', venue.id ,'">', l('Leave a tip') ,'</button>      '); if (tips && tips.length > 3) { ; __p.push('        <a class="read-all-tips" href="#venues/', venue.id ,'/tips">', l('Read all tips') ,'</a>      '); } ; __p.push('    </div>  '); } else { ; __p.push('    <h1>', l('Tips') ,'</h1>    <div class="more-tips center">      <button class="leave-tip" data-venue="', venue.id ,'">', l('Leave a tip') ,'</button>    </div>  '); } ; __p.push('  '); if (venue.photos && venue.photos.length) { ; __p.push('    <h1>', l('Photos') ,'</h1>    <ul class="venue photos">      '); venue.photos.forEach(function(photo) { ; __p.push('        <!-- TODO: Obviously, add a modal photo viewer -->        <li><a class="photo" style="background-image: url(', photo.prefix ,'', photo.width ,'x', photo.height ,'', photo.suffix ,');" href="', photo.prefix ,'', photo.width ,'x', photo.height ,'', photo.suffix ,'" target="_blank"></a></li>      '); }) ; __p.push('    </ul>  '); } ; __p.push('  <div class="center">    <label for="upload-photo" class="hide">', l('Upload a photo') ,'</label>    <input type="file" id="upload-photo" name="upload-photo" data-venue="', venue.id ,'" class="hide">    <button class="upload-photo" data-venue="', venue.id ,'">', l('Upload a photo') ,'</button>  </div>  <p class="attribution"><a href="https://foursquare.com/v/', venue.id ,'?ref=', window.GLOBALS.CLIENT_ID ,'" target="_blank">', l("See this venue on Foursquare's website.") ,'</a></p>'); } else if (isLoading) { ; __p.push('  <div class="map venue"></div>  <div class="venue-summary summary">    <div class="center">      <h1>', l('Loading') ,'<span class="circle-small"></span></h1>    </div>  </div>'); } else { ; __p.push('  <h2>', l('Error') ,'</h2>  <p>', l('Venue not found.') ,'</p>'); } ; __p.push('');}return __p.join('');}});
 
 define('tpl!templates/venues/tips.html.ejs', function() {return function(obj) { var __p=[],print=function(){__p.push.apply(__p,arguments);};with(obj||{}){__p.push(''); if (venue && venue.id) { ; __p.push('  <div class="venue-summary summary" id="venue-', venue.id ,'">    '); if (tips) { ; __p.push('      <div class="center">        <h1>', l('Tips left at ') ,'', venue.name ,'</h1>      </div>      <ul class="venue tips">        '); tips.forEach(function(tip) { ; __p.push('          <li class="tip">            <p class="text">', tip.text ,'</p>            <p class="author"><cite><a href="#/users/', tip.user.id ,'">', tip.user.firstName ,'</a></cite></p>          </li>        '); }) ; __p.push('      </ul>    '); } else { ; __p.push('      <div class="center">        <h1>', l('No tips for ') ,'', venue.name ,'</h1>      </div>    '); } ; __p.push('  </div>  <p class="attribution"><a href="https://foursquare.com/v/', venue.id ,'?ref=', window.GLOBALS.CLIENT_ID ,'" target="_blank">', l("See this venue on Foursquare's website.") ,'</a></p>'); } else if (isLoading) { ; __p.push('  <div class="venue-summary summary">    <div class="center">      <h1>', l('Loading') ,'<span class="circle-small"></span></h1>    </div>  </div>'); } else { ; __p.push('  <h2>', l('Error') ,'</h2>  <p>', l('Venue not found.') ,'</p>'); } ; __p.push('');}return __p.join('');}});
 
@@ -17809,7 +17882,9 @@ define('tpl!templates/venues/tips.html.ejs', function() {return function(obj) { 
         'click .photos.venue .photo': 'showPhoto',
         'click .venue-summary .like': 'like',
         'click .more-tips .leave-tip': 'leaveTip',
-        'click .venue-summary .dislike': 'dislike'
+        'click .venue-summary .dislike': 'dislike',
+        'click .upload-photo': 'activateUpload',
+        'change #upload-photo': 'uploadPhoto'
       },
       mapURL: null,
       initialize: function() {
@@ -17847,9 +17922,13 @@ define('tpl!templates/venues/tips.html.ejs', function() {return function(obj) { 
           isLocal: this.isLocal,
           mapURL: this.mapURL,
           tips: this.tips,
+          user: window.GLOBALS.Users.getSelf(),
           venue: this.model
         });
         return $(this.$el).html(html);
+      },
+      activateUpload: function() {
+        return $('#upload-photo').click();
       },
       checkIn: function(event) {
         if ($(event.target).data('venue') !== this.model.id) {
@@ -17893,6 +17972,15 @@ define('tpl!templates/venues/tips.html.ejs', function() {return function(obj) { 
             }
           });
         }
+      },
+      uploadPhoto: function(event) {
+        if ($(event.target).data('venue') !== this.model.id) {
+          return;
+        }
+        if (!event.target.files.length) {
+          return;
+        }
+        return this.model.addPhoto(event.target.files[0]).done(this.render).fail(window.alert);
       }
     });
     TipsView = Backbone.View.extend({
@@ -17970,8 +18058,7 @@ define('tpl!templates/venues/tips.html.ejs', function() {return function(obj) { 
         return this;
       },
       after: function(route) {
-        this._historyCleanup(route);
-        return this._modifyTitle(route);
+        return this._historyCleanup(route);
       },
       index: function() {
         var startingScope;
@@ -18040,13 +18127,6 @@ define('tpl!templates/venues/tips.html.ejs', function() {return function(obj) { 
           return $('body').addClass('hide-back-button');
         } else {
           return $('body').removeClass('hide-back-button');
-        }
-      },
-      _modifyTitle: function(route) {
-        if (route === 'explore' || route === 'explore/:section') {
-          return $('x-appbar').addClass('explore');
-        } else {
-          return $('x-appbar').removeClass('explore');
         }
       }
     });
@@ -18709,8 +18789,6 @@ require.config({
         }
     }
 });
-
-window._FORCE_LOCALSTORAGE = true;
 
 require(['backbone_promises', 'cs!app']);
 

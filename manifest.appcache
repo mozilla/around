@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# v 1.1 / 1387475382
+# v 1.1 / 1387475687
 
 CACHE:
 css/app.css
@@ -46,6 +46,7 @@ img/icon-32.png
 img/icon-60.png
 img/icon-64.png
 img/icon-90.png
+img/icon-120.png
 img/icon-128.png
 img/icon-256.png
 img/vendor/foursquare/connect-blue.png

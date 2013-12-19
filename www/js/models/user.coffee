@@ -66,6 +66,7 @@ define ['zepto', 'cs!lib/geo', 'human_model', 'cs!lib/api', 'cs!models/checkin']
       bio: ['string']
       # tips: null
       checkins: ['object']
+      currentLocation: ['object']
 
       access_token: ['string', true]
 
@@ -89,7 +90,7 @@ define ['zepto', 'cs!lib/geo', 'human_model', 'cs!lib/api', 'cs!models/checkin']
 
       # Try to get the user's exact location to send to Foursquare. Regardless
       # of location data, we will check-in the user.
-      Geo.getCurrentPosition().done (position, latLng, accuracy) ->
+      Geo.getCurrentPosition().done (position, latLng, accuracy) =>
         postData = {venueId: venue}
 
         # If location has a code and no coords object, the geolocation request
@@ -110,10 +111,19 @@ define ['zepto', 'cs!lib/geo', 'human_model', 'cs!lib/api', 'cs!models/checkin']
         API.request 'checkins/add',
           data: postData
           requestMethod: "POST"
-        .done (data) ->
+        .done (data) =>
+          # Set the user's current location.
+          @currentLocation = {
+            timestamp: window.timestamp()
+            venue: data.response.checkin.venue
+          }
+
+          @save()
+
           # Add a checkin to this user's collection.
           checkin = new Checkin(data.response.checkin)
           checkin.isFromFriend = true
+          checkin.response = data.response
 
           window.GLOBALS.Checkins.add(checkin)
           checkin.save()

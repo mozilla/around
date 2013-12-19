@@ -275,6 +275,7 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'localfor
         isLocal: @isLocal
         mapURL: @mapURL
         tips: @tips
+        user: window.GLOBALS.Users.getSelf()
         venue: @model
       $(@$el).html(html)
 

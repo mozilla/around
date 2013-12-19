@@ -5,4 +5,14 @@
   <strong><%= checkin.venue.name %></strong>!
 </p>
 
+<% if (checkin.response.checkin.score.total) { %>
+  <ul class="points">
+    <% checkin.response.checkin.score.scores.forEach(function (score) { %>
+      <li><img src="<%= score.icon %>"> <%= score.message %> <strong>+<%= score.points %></strong></li>
+    <% }) %>
+  </ul>
+<% } else { %>
+  <p class="points"><%= l('Awwww, no points for this checkin.') %></p>
+<% } %>
+
 <button class="cancel"><%= l('Dismiss') %></button>

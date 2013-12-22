@@ -50,7 +50,7 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
     checkinShow: ->
       return
 
-    # The famous "Explore" view, where users can see what's in the area; from
+    # The "Explore" view, where users can see what's in the area; from
     # popular venues to coffee to trending.
     explore: (section) ->
       appView.currentView = new VenueViews.Explore
@@ -66,6 +66,10 @@ define ['zepto', 'backbone', 'backbone_routefilter', 'cs!views/app', 'cs!views/c
           replace: true
           trigger: true
 
+    # The login/intro screen view, shown on first-run of the app when no
+    # user authentication info is available. Shouldn't be accessible to auth'd
+    # users, so we check for authorization and redirect to the timeline view
+    # if it exists.
     userLogin: ->
       # Don't allow authorized users to access the login page.
       if window.GLOBALS.Users.getSelf()

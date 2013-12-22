@@ -16,6 +16,9 @@ define ['zepto', 'localforage', 'moment'], ($, localForage, moment, UserCollecti
         "WebkitOverflowScrolling" in window.document.createElement("div").style
       )()
     HOUR: 3600
+    # These are the officially supported locales for around. If the user's UA
+    # returns a separate locale (or one that doesn't fallback to one like en-ca
+    # might fallback to en-us), the "default" locale (of en-US) will be used.
     LOCALES: [
       'en-GB'
       'en-US'

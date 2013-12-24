@@ -1,0 +1,286 @@
+# Language en-CA translations for PACKAGE package.
+# Copyright (C) 2013 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Matthew Riley MacPherson <matt@lonelyvegan.com>, 2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-12-19 12:09-0500\n"
+"PO-Revision-Date: 2013-12-23 20:40-0500\n"
+"Last-Translator: Matthew Riley MacPherson <matt@lonelyvegan.com>\n"
+"Language-Team: Language en-CA\n"
+"Language: en-CA\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: www/js/templates/app.html.ejs:3
+msgid "Back"
+msgstr ""
+
+#: www/js/templates/app.html.ejs:5
+msgid "Explore"
+msgstr ""
+
+#: www/js/templates/checkins/confirm.html.ejs:4
+msgid "Comment on your check-in"
+msgstr ""
+
+#: www/js/templates/checkins/confirm.html.ejs:5
+msgid "What are you up to?"
+msgstr ""
+
+#: www/js/templates/checkins/confirm.html.ejs:8
+#: www/js/templates/modal.html.ejs:13
+#: www/js/templates/venues/create-tip.html.ejs:8
+msgid "Cancel"
+msgstr ""
+
+#: www/js/templates/checkins/confirm.html.ejs:9
+msgid "Check in"
+msgstr ""
+
+#: www/js/templates/checkins/create-from-venues.html.ejs:11
+msgid "No venues found."
+msgstr ""
+
+#: www/js/templates/checkins/create-from-venues.html.ejs:13
+msgid "Finding places near you."
+msgstr ""
+
+#: www/js/templates/checkins/create-from-venues.html.ejs:15
+msgid "Getting your location."
+msgstr ""
+
+#: www/js/templates/checkins/header.html.ejs:5
+msgid "Search for a venue"
+msgstr ""
+
+#: www/js/templates/checkins/header.html.ejs:6
+msgid "Search places"
+msgstr ""
+
+#: www/js/templates/checkins/insight.html.ejs:1
+msgid "Right on!"
+msgstr ""
+
+#: www/js/templates/checkins/insight.html.ejs:4
+msgid "We have you checked in at"
+msgstr ""
+
+#: www/js/templates/checkins/insight.html.ejs:15
+msgid "Awwww, no points for this checkin."
+msgstr ""
+
+#: www/js/templates/checkins/insight.html.ejs:18
+msgid "Dismiss"
+msgstr ""
+
+#: www/js/templates/timeline/show.html.ejs:4
+msgid "What's Happening"
+msgstr ""
+
+#: www/js/templates/timeline/show.html.ejs:8
+msgid "Refresh"
+msgstr ""
+
+#: www/js/templates/timeline/show.html.ejs:13
+msgid "Near me"
+msgstr ""
+
+#: www/js/templates/timeline/show.html.ejs:14
+msgid "Worldwide"
+msgstr ""
+
+#: www/js/templates/timeline/show.html.ejs:22
+msgid "No friends are nearby."
+msgstr ""
+
+#: www/js/templates/timeline/show.html.ejs:24
+msgid "Tap “Worldwide” to see all of your friend’s recent checkins."
+msgstr ""
+
+#: www/js/templates/timeline/show.html.ejs:40
+msgid "Data from "
+msgstr ""
+
+#: www/js/templates/timeline/show.html.ejs:40
+msgid "Learn more"
+msgstr ""
+
+#: www/js/templates/timeline/show.html.ejs:43
+msgid "Check In"
+msgstr ""
+
+#: www/js/templates/users/login.html.ejs:2
+msgid "Sign in to Foursquare"
+msgstr ""
+
+#: www/js/templates/users/login.html.ejs:4
+msgid ""
+"around is a Foursquare app for Firefox OS, mobile phones, and web browsers."
+msgstr ""
+
+#: www/js/templates/users/login.html.ejs:6
+msgid ""
+"Tap the connect button below to link your Foursquare account and start "
+"exploring venues nearby."
+msgstr ""
+
+#: www/js/templates/users/login.html.ejs:9
+msgid "Sign in with Foursquare"
+msgstr ""
+
+#: www/js/templates/users/show.html.ejs:2
+msgid "Profile photo for "
+msgstr ""
+
+#: www/js/templates/users/show.html.ejs:6
+msgid "From:"
+msgstr ""
+
+#: www/js/templates/users/show.html.ejs:16
+msgid "Currently at:"
+msgstr ""
+
+#: www/js/templates/users/show.html.ejs:16
+msgid "Last at:"
+msgstr ""
+
+#: www/js/templates/users/show.html.ejs:24
+msgid "History"
+msgstr ""
+
+#: www/js/templates/users/show.html.ejs:34
+#: www/js/templates/venues/show.html.ejs:126
+#: www/js/templates/venues/tips.html.ejs:32
+msgid "Error"
+msgstr ""
+
+#: www/js/templates/users/show.html.ejs:36
+msgid "User not found."
+msgstr ""
+
+#: www/js/templates/venues/create-tip.html.ejs:4
+msgid "Leave a tip for this venue"
+msgstr ""
+
+#: www/js/templates/venues/create-tip.html.ejs:5
+msgid "Leave a tip for this place"
+msgstr ""
+
+#: www/js/templates/venues/create-tip.html.ejs:9
+msgid "Leave tip"
+msgstr ""
+
+#: www/js/templates/venues/explore.html.ejs:6
+msgid "Find:"
+msgstr ""
+
+#: www/js/templates/venues/show-list-item.html.ejs:31
+msgid "person is here."
+msgstr ""
+
+#: www/js/templates/venues/show-list-item.html.ejs:33
+msgid "people are here."
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:15
+msgid "in"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:31
+msgid "Closed right now"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:36
+msgid "Price:"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:48
+msgid "Check in here"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:50
+msgid "You're here!"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:55
+msgid "You liked this place!"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:55
+msgid "Liked!"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:57
+msgid "Like this place to get better recommendations."
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:57
+msgid "Like"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:61
+msgid "Sorry you didn't like this place :-("
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:61
+msgid "Disliked"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:63
+msgid "Didn't have a good time?"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:63
+msgid "Dislike"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:72
+#: www/js/templates/venues/show.html.ejs:92
+msgid "Tips"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:85
+#: www/js/templates/venues/show.html.ejs:95
+msgid "Leave a tip"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:88
+msgid "Read all tips"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:100
+msgid "Photos"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:111
+#: www/js/templates/venues/show.html.ejs:113
+msgid "Upload a photo"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:116
+#: www/js/templates/venues/tips.html.ejs:24
+msgid "See this venue on Foursquare's website."
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:122
+#: www/js/templates/venues/tips.html.ejs:28
+msgid "Loading"
+msgstr ""
+
+#: www/js/templates/venues/show.html.ejs:128
+#: www/js/templates/venues/tips.html.ejs:34
+msgid "Venue not found."
+msgstr ""
+
+#: www/js/templates/venues/tips.html.ejs:5
+msgid "Tips left at "
+msgstr ""
+
+#: www/js/templates/venues/tips.html.ejs:19
+msgid "No tips for "
+msgstr ""

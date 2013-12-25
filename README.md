@@ -20,7 +20,7 @@ Then head to [localhost:8008](http://localhost:8008/).
 # License #
 
 This program is free software; it is distributed under an
-[Apache 2.0 License](http://github.com/tofumatt/around/blob/master/LICENSE).
+[Apache 2.0 License](http://github.com/mozilla/around/blob/master/LICENSE).
 
 ---
 

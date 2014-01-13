@@ -29,7 +29,7 @@
 
   <!-- Content gets replaced by the app.ejs template. -->
   <body>
-    <x-layout>
+    <x-layout style="display: block; height: auto; overflow: auto;">
       <x-appbar>
         <div class="text"></div>
         <header style="display: block; visibility: visible;">around Beta for Firefox OS</header>
@@ -54,7 +54,6 @@
   </body>
 
   <!-- Let's load 'er up! -->
-  <script src="js/vendor/brick.js"></script>
   <script>
       // Inline installation prompt and script, cribbled from https://github.com/robnyman/Firefox-OS-Boilerplate-App
       window.addEventListener('load', function() {

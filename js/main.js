@@ -9953,6 +9953,7 @@ define('localforage',['async_storage', 'promise'], function(asyncStorage, promis
       TOKEN: void 0
     };
     GLOBALS.AUTH_URL = "https://foursquare.com/oauth2/authenticate?client_id=" + GLOBALS.CLIENT_ID + "&response_type=token&redirect_uri=" + window.location.origin;
+    alert(window.location.origin);
     GLOBALS.LANGUAGE = window.navigator.language;
     if (!_.contains(GLOBALS.LOCALES, GLOBALS.LANGUAGE)) {
       GLOBALS.LANGUAGE = 'en-US';

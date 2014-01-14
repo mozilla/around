@@ -28,11 +28,11 @@ define ['zepto', 'localforage', 'moment'], ($, localForage, moment, UserCollecti
     MAX_DOWNLOADS: 2 # Maximum number of podcast downloads at one time.
     MINUTE: 60
     RECENT_CHECKIN_TIME: 120 # Consider checkins less than two hours old to still be good (i.e. the user is still at that venue). TODO: Tweak this for venue type.
+    REDIRECT_URL: "http://10.0.1.7:8000"
     OBJECT_STORE_NAME: "around"
     SEARCH_NUMBER_VENUES_WITH_PHOTO: 6 # Number of venues to get photos for when searching
     TOKEN: undefined # Set in app.coffee
-  GLOBALS.AUTH_URL = "https://foursquare.com/oauth2/authenticate?client_id=#{GLOBALS.CLIENT_ID}&response_type=token&redirect_uri=#{window.location.origin}"
-  alert window.location.origin
+  GLOBALS.AUTH_URL = "https://foursquare.com/oauth2/authenticate?client_id=#{GLOBALS.CLIENT_ID}&response_type=token&redirect_uri=#{GLOBALS.REDIRECT_URL}"
 
   # Determine the locale; fallback to en-US if not available.
   # HACK: Better way for this, I assume?

@@ -32,6 +32,7 @@ define ['zepto', 'localforage', 'moment'], ($, localForage, moment, UserCollecti
     SEARCH_NUMBER_VENUES_WITH_PHOTO: 6 # Number of venues to get photos for when searching
     TOKEN: undefined # Set in app.coffee
   GLOBALS.AUTH_URL = "https://foursquare.com/oauth2/authenticate?client_id=#{GLOBALS.CLIENT_ID}&response_type=token&redirect_uri=#{window.location.origin}"
+  alert window.location.origin
 
   # Determine the locale; fallback to en-US if not available.
   # HACK: Better way for this, I assume?

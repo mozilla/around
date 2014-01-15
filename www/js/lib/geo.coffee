@@ -14,6 +14,9 @@ define ['zepto', 'localforage'], ($, localForage) ->
   # Multiplier for determining what's "nearby".
   GEO_PADDING = 350
 
+  # Only make one of these requests at a time, and be able to cancel it.
+  requestToIPService = null
+
   getCurrentPosition = (successCallback, failureCallback, forceUpdate = false) ->
     d = $.Deferred()
 
@@ -27,8 +30,36 @@ define ['zepto', 'localforage'], ($, localForage) ->
           console.info "Using cached geodata while we update."
           successCallback(geoCache, geoCache.coords, geoCache.coords.accuracy) if successCallback
           d.resolve(geoCache, geoCache.coords, geoCache.coords.accuracy)
+        else if !requestToIPService
+          # Store the request so we can cancel it later, if needed.
+          # We use JSONP because the server doesn't send out CORS headers.
+          #
+          # TODO: Change this from JSONP to JSON when CORS works.
+          console.info "Requesting IP-based lat/lng from freegeoip.net."
+          requestToIPService = $.ajax
+            type: "GET"
+            dataType: 'jsonp'
+            url: "https://freegeoip.net/json/?callback=?"
+          .done (response) ->
+            position =
+              coords:
+                accuracy: null
+                lat: response.latitude
+                latitude: response.latitude
+                lng: response.longitude
+                longitude: response.longitude
+              lastUpdated: window.timestamp()
+              timestamp: window.timestamp()
+
+            successCallback(position, position.coords, position.coords.accuracy) if successCallback
+            d.resolve(position, position.coords, position.coords.accuracy)
+
+            requestToIPService = null
 
         window.navigator.geolocation.getCurrentPosition (position) ->
+          # First, cancel our AJAX request.
+          requestToIPService.abort() if requestToIPService
+
           # Extend the position object with some shortcuts.
           position.coords.lat = position.coords.latitude
           position.coords.lng = position.coords.longitude

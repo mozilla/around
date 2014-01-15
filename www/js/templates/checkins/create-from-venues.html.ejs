@@ -8,7 +8,7 @@
     <% }) %>
   </ul>
 <% } else if (position && venues === null) { %>
-  <p id="loading-text"><%= l('No venues found.') %></p>
+  <p id="loading-text"><%= l('No venues found in your area. Sorry!') %></p>
 <% } else if (position) { %>
   <p id="loading-text"><%= l('Finding places near you.') %><span class="circle-small"></span></p>
 <% } else { %>

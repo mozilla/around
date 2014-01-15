@@ -176,6 +176,11 @@ define ['zepto', 'underscore', 'backbone', 'cs!lib/api', 'cs!lib/geo', 'cs!model
         if @venues.length
           @_originalVenues = @venues
           @render()
+        else if @section is null
+          # If the section is null, we tried searching for everything and still
+          # found nothing, so instead we should display an error.
+          @venues = null
+          @render()
         else
           console.info "Nothing available for #{@section}; searching for everything instead."
           @section = null

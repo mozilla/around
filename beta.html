@@ -71,7 +71,7 @@
                           installButton.style.display = "none";
                       }
                   } else {
-                      var manifestURL = window.location.href.substring(0, window.location.href.lastIndexOf("/")) + "/manifest.webapp";
+                      var manifestURL = window.location.protocol + "//" + window.location.host + "/manifest.webapp";
 
                       installButton.addEventListener('click', function () {
                           var installApp = window.navigator.mozApps.install(manifestURL);

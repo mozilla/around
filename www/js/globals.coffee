@@ -28,7 +28,7 @@ define ['zepto', 'localforage', 'moment'], ($, localForage, moment, UserCollecti
     MAX_DOWNLOADS: 2 # Maximum number of podcast downloads at one time.
     MINUTE: 60
     RECENT_CHECKIN_TIME: 120 # Consider checkins less than two hours old to still be good (i.e. the user is still at that venue). TODO: Tweak this for venue type.
-    REDIRECT_URL: "http://10.0.1.7:8000"
+    REDIRECT_URL: "#{window.location.protocol}//#{window.location.host}#{window.location.pathname}" # This needs to be registered as an authorized redirect URI in this app's settings on http://developer.foursquare.com
     OBJECT_STORE_NAME: "around"
     SEARCH_NUMBER_VENUES_WITH_PHOTO: 6 # Number of venues to get photos for when searching
     TOKEN: undefined # Set in app.coffee

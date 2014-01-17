@@ -14,6 +14,15 @@ define ['zepto', 'localforage'], ($, localForage) ->
   # Multiplier for determining what's "nearby".
   GEO_PADDING = 350
 
+  # Amount of time to fallback to an IP-based lat/lng pair (happens on some
+  # Firefox OS phones with bad GPS support). In ms, as it's used in a
+  # `setTimeout()` call.
+  GPS_TIMEOUT = 10000
+
+  # Only make one of these requests at a time, and be able to cancel it.
+  _requestToIPService = null
+  _requestToIPServiceTimeout = null
+
   getCurrentPosition = (successCallback, failureCallback, forceUpdate = false) ->
     d = $.Deferred()
 
@@ -28,7 +37,22 @@ define ['zepto', 'localforage'], ($, localForage) ->
           successCallback(geoCache, geoCache.coords, geoCache.coords.accuracy) if successCallback
           d.resolve(geoCache, geoCache.coords, geoCache.coords.accuracy)
 
+        unless _requestToIPServiceTimeout
+          _requestToIPServiceTimeout = setTimeout ->
+            getLocationFromIP().done (position) ->
+              _requestToIPService = null
+              _requestToIPServiceTimeout = null
+
+              successCallback(position, position.coords, position.coords.accuracy) if successCallback
+              d.resolve(position, position.coords, position.coords.accuracy)
+          , GPS_TIMEOUT
+
         window.navigator.geolocation.getCurrentPosition (position) ->
+          # First, cancel our AJAX request (and unqueue the timeout).
+          clearTimeout _requestToIPServiceTimeout
+          _requestToIPServiceTimeout = null
+          _requestToIPService.abort() if _requestToIPService
+
           # Extend the position object with some shortcuts.
           position.coords.lat = position.coords.latitude
           position.coords.lng = position.coords.longitude
@@ -53,6 +77,39 @@ define ['zepto', 'localforage'], ($, localForage) ->
         console.info "Getting cached geodata."
         successCallback(geoCache, geoCache.coords, geoCache.coords.accuracy) if successCallback
         d.resolve(geoCache, geoCache.coords, geoCache.coords.accuracy)
+
+    d.promise()
+
+  # Request VERY approximate location info from the user's IP address. Used
+  # only when GPS requests take a long time.
+  getLocationFromIP = ->
+    d = $.Deferred()
+
+    # Store the request so we can cancel it later, if needed.
+    # We use JSONP because the server doesn't send out CORS headers.
+    #
+    # TODO: Change this from JSONP to JSON when CORS works.
+    console.info "Requesting IP-based lat/lng from freegeoip.net."
+
+    _requestToIPService = $.ajax
+      type: "GET"
+      dataType: 'jsonp'
+      url: "https://freegeoip.net/json/?callback=?"
+    .done (response) ->
+      position =
+        coords:
+          accuracy: null
+          lat: response.latitude
+          latitude: response.latitude
+          lng: response.longitude
+          longitude: response.longitude
+        lastUpdated: window.timestamp()
+        timestamp: window.timestamp()
+
+      d.resolve(position)
+
+      requestToIPService = null
+    .fail d.reject
 
     d.promise()
 

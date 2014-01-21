@@ -17,7 +17,7 @@ define ['zepto', 'jed', 'localforage', 'deferred', 'cs!globals', 'cs!routes', 'c
   # Fire it up!
   $.when(localForage.getItem('_ACCESS_TOKEN').then (token) ->
     window.GLOBALS.TOKEN = token
-  ).then(window.setLanguage).done ->
+  ).then(window.setLanguage).then ->
     # Preload all of our main collections.
     # TODO: Putting this in the early deferred chain causes bugs. Find out why.
     $.when(Checkins.fetch(), Tips.fetch(), Users.fetch(), Venues.fetch()).done ->

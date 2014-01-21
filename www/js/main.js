@@ -8,7 +8,6 @@
 // Require.js shortcuts to our libraries.
 require.config({
     paths: {
-        'async_storage': 'vendor/async_storage',
         'backbone': 'vendor/backbone',
         'backbone_promises': 'vendor/backbone.promises',
         'backbone_routefilter': 'vendor/backbone.routefilter',
@@ -29,12 +28,6 @@ require.config({
     // The shim config allows us to configure dependencies for scripts that do
     // not call define() to register a module.
     shim: {
-        async_storage: {
-            deps: [
-                'promise'
-            ],
-            exports: 'asyncStorage'
-        },
         backbone: {
             deps: [
                 'underscore',
@@ -62,11 +55,16 @@ require.config({
             ],
             exports: 'HumanModel'
         },
+        localforage: {
+            deps: [
+                'promise'
+            ]
+        },
         moment: {
             exports: 'moment'
         },
         promise: {
-            exports: 'promise'
+            exports: 'Promise'
         },
         underscore: {
             exports: '_'

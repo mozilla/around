@@ -12,7 +12,7 @@ require.config({
         'backbone_promises': 'vendor/backbone.promises',
         'backbone_routefilter': 'vendor/backbone.routefilter',
         'backbone_store': 'vendor/backbone.localforage',
-        'brick': 'vendor/brick',
+        'brick': 'vendor/brick-0.10.0',
         'coffee-script': 'vendor/coffee-script',
         'cs': 'vendor/cs',
         'deferred': 'vendor/deferred',

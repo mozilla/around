@@ -1,4 +1,4 @@
-define ['zepto', 'localforage', 'moment'], ($, localForage, moment, UserCollection) ->
+define ['zepto', 'localforage', 'moment'], ($, localForage, moment) ->
   mapID = "tofumatt.map-tdyvgkb6"
   # mapID = "mozilla-webprod.g7in06ib"
 
@@ -16,6 +16,7 @@ define ['zepto', 'localforage', 'moment'], ($, localForage, moment, UserCollecti
         "WebkitOverflowScrolling" in window.document.createElement("div").style
       )()
     HOUR: 3600
+    
     # These are the officially supported locales for around. If the user's UA
     # returns a separate locale (or one that doesn't fallback to one like en-ca
     # might fallback to en-us), the "default" locale (of en-US) will be used.
@@ -25,7 +26,6 @@ define ['zepto', 'localforage', 'moment'], ($, localForage, moment, UserCollecti
     ]
     MAP_ID: mapID
     MAP_URL: "http://a.tiles.mapbox.com/v3/#{mapID}/"
-    MAX_DOWNLOADS: 2 # Maximum number of podcast downloads at one time.
     MINUTE: 60
     RECENT_CHECKIN_TIME: 120 # Consider checkins less than two hours old to still be good (i.e. the user is still at that venue). TODO: Tweak this for venue type.
     REDIRECT_URL: "#{window.location.protocol}//#{window.location.host}#{window.location.pathname}" # This needs to be registered as an authorized redirect URI in this app's settings on http://developer.foursquare.com
@@ -36,8 +36,7 @@ define ['zepto', 'localforage', 'moment'], ($, localForage, moment, UserCollecti
 
   # Determine the locale; fallback to en-US if not available.
   # HACK: Better way for this, I assume?
-  GLOBALS.LANGUAGE = window.navigator.language
-  GLOBALS.LANGUAGE = 'en-US' unless _.contains GLOBALS.LOCALES, GLOBALS.LANGUAGE
+  GLOBALS.LANGUAGE = if _.contains(GLOBALS.LOCALES, GLOBALS.LANGUAGE) then window.navigator.language else 'en-US'
 
   # We want the moment library available everywhere, especially inside
   # templates.

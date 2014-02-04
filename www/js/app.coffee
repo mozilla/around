@@ -1,4 +1,4 @@
-define ['zepto', 'jed', 'localforage', 'deferred', 'cs!globals', 'cs!routes', 'cs!collections/checkins', 'cs!collections/tips', 'cs!collections/users', 'cs!collections/venues'], ($, Jed, localForage, Deferred, GLOBALS, Routes, CheckinCollection, TipCollection, UserCollection, VenueCollection) ->
+define ['zepto', 'jed', 'localforage', 'deferred', 'backbone_promises', 'backbone', 'cs!routes', 'cs!collections/checkins', 'cs!collections/tips', 'cs!collections/users', 'cs!collections/venues'], ($, Jed, localForage, Deferred, BackbonePromises, Backbone, Routes, CheckinCollection, TipCollection, UserCollection, VenueCollection) ->
   'use strict'
 
   # Set some browser/device classes so we can add specific bits of "feel" to

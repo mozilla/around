@@ -20,7 +20,6 @@ require.config({
         'jed': 'vendor/jed',
         'localforage': 'vendor/localforage',
         'moment': 'vendor/moment',
-        'promise': 'vendor/promise',
         'tpl': 'vendor/tpl',
         'underscore': 'vendor/lodash',
         'zepto': 'vendor/zepto'
@@ -55,16 +54,8 @@ require.config({
             ],
             exports: 'HumanModel'
         },
-        localforage: {
-            deps: [
-                'promise'
-            ]
-        },
         moment: {
             exports: 'moment'
-        },
-        promise: {
-            exports: 'Promise'
         },
         underscore: {
             exports: '_'
@@ -75,4 +66,4 @@ require.config({
     }
 });
 
-require(['backbone_promises', 'cs!app']);
+require(['underscore', 'backbone_promises', 'cs!globals', 'cs!app']);

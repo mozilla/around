@@ -48,6 +48,9 @@ require.config({
             ],
             exports: 'deferred'
         },
+        localforage: {
+            exports: 'localForage'
+        },
         human_model: {
             deps: [
                 'backbone'

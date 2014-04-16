@@ -61,8 +61,6 @@ locale/en-US.json
 # catch-all for anything else
 NETWORK:
 *
-http://*
-https://*
 
 # FALLBACK:
 # /main.py /static.html

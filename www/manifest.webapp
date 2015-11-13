@@ -9,7 +9,8 @@
     "90": "/img/icon-90.png",
     "120": "/img/icon-120.png",
     "128": "/img/icon-128.png",
-    "256": "/img/icon-256.png"
+    "256": "/img/icon-256.png",
+    "512": "/img/icon-512.png"
   },
   "developer": {
     "name": "Mozilla",
